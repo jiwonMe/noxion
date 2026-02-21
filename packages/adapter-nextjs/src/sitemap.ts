@@ -25,5 +25,21 @@ export function generateNoxionSitemap(
     });
   }
 
+  const tagSet = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      tagSet.add(tag);
+    }
+  }
+
+  for (const tag of tagSet) {
+    entries.push({
+      url: `${baseUrl}/tag/${encodeURIComponent(tag)}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    });
+  }
+
   return entries;
 }

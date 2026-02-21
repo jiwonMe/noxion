@@ -70,7 +70,7 @@ describe("generateNoxionMetadata", () => {
 describe("generateNoxionListMetadata", () => {
   it("generates site-level metadata", () => {
     const meta = generateNoxionListMetadata(stubConfig);
-    expect(meta.title).toBe("Test Blog");
+    expect((meta.title as { default: string }).default).toBe("Test Blog");
     expect(meta.description).toBe("A test blog");
   });
 
@@ -124,12 +124,12 @@ describe("generateBlogPostingLD", () => {
     expect(ld["@type"]).toBe("BlogPosting");
     expect(ld.headline).toBe("My First Post");
     expect(ld.author).toBeDefined();
-    expect(ld.datePublished).toBe("2024-01-15");
+    expect(ld.datePublished).toBe("2024-01-15T00:00:00.000Z");
   });
 
   it("includes image when cover is present", () => {
     const ld = generateBlogPostingLD(stubPost, stubConfig);
-    expect(ld.image).toBe("https://example.com/cover.jpg");
+    expect((ld.image as { url: string }).url).toBe("https://example.com/cover.jpg");
   });
 });
 
