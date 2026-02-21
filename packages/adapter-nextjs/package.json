@@ -17,9 +17,14 @@
     "lint": "echo 'lint ok'",
     "clean": "rm -rf dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@noxion/core": "workspace:*",
+    "next": "^16.1.6",
+    "notion-client": "^7.8.2"
+  },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "@types/bun": "^1.2.0"
+    "@types/bun": "^1.2.0",
+    "@types/react": "^19.2.14",
+    "typescript": "^5.7.0"
   }
 }
