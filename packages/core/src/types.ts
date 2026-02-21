@@ -1,4 +1,5 @@
 import type { ExtendedRecordMap } from "notion-types";
+import type { PluginConfigEntry } from "./plugin";
 
 export type { ExtendedRecordMap } from "notion-types";
 
@@ -57,7 +58,7 @@ export interface NoxionPageData {
   post: BlogPost;
 }
 
-export type PluginConfig = unknown;
+export type PluginConfig = PluginConfigEntry;
 
 export type NoxionThemeConfig = unknown;
 

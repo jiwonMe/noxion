@@ -5,6 +5,20 @@ export { generateSlug, parseNotionPageId, buildPageUrl, resolveSlug } from "./sl
 export { extractImageUrls, generateImageFilename, downloadImages } from "./image-downloader";
 export type { DownloadImagesOptions } from "./image-downloader";
 export { mapImages } from "./image-mapper";
+export { definePlugin, loadPlugins } from "./plugin-loader";
+export { executeHook, executeTransformHook } from "./plugin-executor";
+export type {
+  NoxionPlugin,
+  PluginFactory,
+  PluginModule,
+  PluginConfigEntry,
+  PluginActions,
+  AllContent,
+  HeadTag,
+  SitemapEntry,
+  RouteInfo,
+  NoxionMetadata,
+} from "./plugin";
 export type {
   NoxionConfig,
   NoxionConfigInput,
