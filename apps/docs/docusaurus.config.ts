@@ -69,6 +69,57 @@ const config: Config = {
         searchBarPosition: 'right',
       },
     ],
+    [
+      'docusaurus-plugin-llms',
+      {
+        generateLLMsTxt: true,
+        generateLLMsFullTxt: true,
+        excludeImports: true,
+        removeDuplicateHeadings: true,
+        title: 'Noxion',
+        description:
+          'Open-source, self-hosted Notion-powered blog builder. Point it at a Notion database and get a fully-rendered, SEO-optimized website — built with Next.js App Router.',
+        rootContent: `Noxion uses Notion as a CMS via the unofficial Notion API, with Next.js ISR for caching and @noxion/adapter-nextjs for SEO (Open Graph, JSON-LD, sitemap).
+
+Key packages:
+- @noxion/core: data fetching, config, plugin system
+- @noxion/renderer: React components (NotionPage, PostList, ThemeProvider)
+- @noxion/adapter-nextjs: Next.js metadata, JSON-LD, sitemap, robots
+- create-noxion: CLI scaffolding tool`,
+        includeOrder: [
+          'learn/introduction',
+          'learn/quick-start',
+          'learn/notion-setup',
+          'learn/configuration',
+          'learn/image-optimization',
+          'learn/seo',
+          'learn/themes',
+          'learn/plugins/overview',
+          'learn/plugins/analytics',
+          'learn/plugins/comments',
+          'learn/plugins/rss',
+          'learn/deployment/vercel',
+          'learn/deployment/docker',
+          'reference/overview',
+          'reference/core/config',
+          'reference/core/fetcher',
+          'reference/core/frontmatter',
+          'reference/core/plugins',
+          'reference/core/types',
+          'reference/renderer/notion-page',
+          'reference/renderer/post-list',
+          'reference/renderer/post-card',
+          'reference/renderer/theme-provider',
+          'reference/adapter-nextjs/metadata',
+          'reference/adapter-nextjs/structured-data',
+          'reference/adapter-nextjs/sitemap',
+          'reference/cli/create-noxion',
+        ],
+        pathTransformation: {
+          ignorePaths: ['docs'],
+        },
+      },
+    ],
   ],
 
   presets: [
