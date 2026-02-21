@@ -56,7 +56,8 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "katex": "^0.16.0"
+    "katex": "^0.16.0",
+    "shiki": "^3.0.0"
   },
   "devDependencies": {
     "@types/bun": "^1.2.0",

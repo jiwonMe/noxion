@@ -27,6 +27,7 @@ export function NotionRenderer({
   defaultPageIcon,
   defaultPageCover,
   defaultPageCoverPosition,
+  highlightCode,
 }: NotionRendererProps) {
   const blockIds = Object.keys(recordMap.block);
   const resolvedRootId = rootPageId ?? blockIds[0];
@@ -44,6 +45,7 @@ export function NotionRenderer({
     fullPage,
     darkMode,
     previewImages,
+    highlightCode,
     rootPageId: resolvedRootId,
     defaultPageIcon,
     defaultPageCover,

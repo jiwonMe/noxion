@@ -28,9 +28,12 @@ export {
   ToggleBlock,
   PageBlock,
   EquationBlock,
+  CodeBlock,
 } from "./blocks";
 
 export { InlineEquation } from "./components/inline-equation";
+
+export { createShikiHighlighter, normalizeLanguage } from "./shiki";
 
 export {
   formatNotionDate,
@@ -46,6 +49,7 @@ export type {
   NotionComponents,
   MapPageUrlFn,
   MapImageUrlFn,
+  HighlightCodeFn,
   ExtendedRecordMap,
   Block,
   BlockType,

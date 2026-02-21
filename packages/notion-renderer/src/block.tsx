@@ -15,6 +15,7 @@ import { DividerBlock } from "./blocks/divider";
 import { ToggleBlock } from "./blocks/toggle";
 import { PageBlock } from "./blocks/page";
 import { EquationBlock } from "./blocks/equation";
+import { CodeBlock } from "./blocks/code";
 
 const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = {
   text: TextBlock,
@@ -30,6 +31,7 @@ const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = 
   toggle: ToggleBlock,
   page: PageBlock,
   equation: EquationBlock,
+  code: CodeBlock,
 };
 
 export interface NotionBlockRendererProps {

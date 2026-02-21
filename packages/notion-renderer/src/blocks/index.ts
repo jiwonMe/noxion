@@ -9,3 +9,4 @@ export { DividerBlock } from "./divider";
 export { ToggleBlock } from "./toggle";
 export { PageBlock } from "./page";
 export { EquationBlock } from "./equation";
+export { CodeBlock } from "./code";

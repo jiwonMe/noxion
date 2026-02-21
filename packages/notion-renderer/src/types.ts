@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 
 export type MapPageUrlFn = (pageId: string) => string;
 export type MapImageUrlFn = (url: string, block: Block) => string;
+export type HighlightCodeFn = (code: string, language: string) => string;
 
 export interface NotionBlockProps {
   block: Block;
@@ -42,6 +43,7 @@ export interface NotionRendererProps {
   previewImages?: boolean;
   mapPageUrl?: MapPageUrlFn;
   mapImageUrl?: MapImageUrlFn;
+  highlightCode?: HighlightCodeFn;
   components?: Partial<NotionComponents>;
   className?: string;
   bodyClassName?: string;
@@ -65,6 +67,7 @@ export interface NotionRendererContextValue {
   fullPage: boolean;
   darkMode: boolean;
   previewImages: boolean;
+  highlightCode?: HighlightCodeFn;
   rootPageId?: string;
   defaultPageIcon?: string | null;
   defaultPageCover?: string | null;
