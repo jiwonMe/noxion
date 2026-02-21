@@ -88,9 +88,10 @@ html {
 }
 
 .navbar {
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
-  box-shadow: none;
-  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300) !important;
+  box-shadow: none !important;
+  padding: 0 1.5rem !important;
+  height: 48px !important;
 }
 
 .navbar__inner {
@@ -302,9 +303,14 @@ html {
   background: #2f2f2f !important;
 }
 
-.prism-code {
+pre.prism-code,
+pre[class*='codeBlock'] {
   font-size: 14px !important;
   line-height: 1.6 !important;
+  padding: 32px 24px !important;
+}
+
+.thin-scrollbar {
   padding: 32px 24px !important;
 }
 
@@ -453,14 +459,23 @@ html {
   font-size: 15px;
 }
 
-.footer {
-  border-top: 1px solid var(--ifm-color-emphasis-300);
-  background: var(--ifm-footer-background-color);
-  padding: 2.5rem 0 2rem;
+.footer,
+.footer--dark,
+.footer.footer--dark {
+  border-top: 1px solid var(--ifm-color-emphasis-300) !important;
+  background: #ffffff !important;
+  --ifm-footer-background-color: #ffffff;
+  --ifm-footer-title-color: rgba(0, 0, 0, 0.35);
+  padding: 2.5rem 0 2rem !important;
 }
 
-.footer--dark {
-  background: var(--ifm-footer-background-color);
+[data-theme='dark'] .footer,
+[data-theme='dark'] .footer--dark,
+[data-theme='dark'] .footer.footer--dark {
+  background: #191919 !important;
+  --ifm-footer-background-color: #191919;
+  --ifm-footer-title-color: rgba(255, 255, 255, 0.3);
+  border-top-color: rgba(255, 255, 255, 0.07) !important;
 }
 
 .footer__title {
