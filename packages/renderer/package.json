@@ -1,7 +1,8 @@
 {
   "name": "@noxion/renderer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React rendering components and theme system for Noxion",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,18 +12,49 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
+    "release": "npm publish",
     "test": "bun test",
     "lint": "echo 'lint ok'",
     "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "blog",
+    "react",
+    "components",
+    "noxion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/renderer"
+  },
+  "homepage": "https://github.com/jiwonme/noxion#readme",
+  "bugs": {
+    "url": "https://github.com/jiwonme/noxion/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "dependencies": {
     "katex": "^0.16.28",
     "notion-types": "^7.8.2",
     "prismjs": "^1.30.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
     "react-notion-x": "^7.8.2"
   },
   "devDependencies": {
@@ -31,6 +63,8 @@
     "@types/prismjs": "^1.26.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "typescript": "^5.7.0"
   }
 }

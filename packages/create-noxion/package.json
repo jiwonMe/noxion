@@ -1,6 +1,6 @@
 {
   "name": "create-noxion",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CLI scaffolding tool for Noxion projects",
   "license": "MIT",
   "type": "module",
