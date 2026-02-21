@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f9fa" />
+      <stop offset="100%" stop-color="#e9ecef" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg-gradient)" rx="10" ry="10" />
+
+  <!-- Original MoE Model -->
+  <g transform="translate(50, 60)">
+    <rect width="200" height="120" fill="#4361ee" rx="8" ry="8" opacity="0.9" />
+    <text x="100" y="40" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">원본 MoE 모델</text>
+    
+    <!-- Experts -->
+    <g transform="translate(20, 60)">
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="22" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="44" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="66" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="88" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="110" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="132" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="154" />
+    </g>
+    
+    <!-- k=8 Indicator -->
+    <text x="180" y="115" font-family="Arial" font-size="12" fill="white" text-anchor="end">k=8</text>
+  </g>
+
+  <!-- Process Arrow 1 -->
+  <path d="M255,120 L305,120" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 Z" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- Expert Pruning -->
+  <g transform="translate(310, 60)">
+    <rect width="200" height="120" fill="#3a0ca3" rx="8" ry="8" opacity="0.9" />
+    <text x="100" y="40" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">전문가 가지치기</text>
+    
+    <!-- Remaining Experts -->
+    <g transform="translate(25, 60)">
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="30" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="60" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="90" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="120" />
+      
+      <!-- Pruned Experts (Faded) -->
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="150" opacity="0.2" />
+    </g>
+  </g>
+
+  <!-- Process Arrow 2 -->
+  <path d="M515,120 L565,120" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Post-Training with Increased k -->
+  <g transform="translate(570, 60)">
+    <rect width="200" height="120" fill="#7209b7" rx="8" ry="8" opacity="0.9" />
+    <text x="100" y="40" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Post-Training</text>
+    
+    <!-- Post-Trained Experts -->
+    <g transform="translate(25, 60)">
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="30" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="60" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="90" />
+      <rect width="20" height="40" fill="#f72585" rx="3" ry="3" x="120" />
+    </g>
+    
+    <!-- k=16 Indicator -->
+    <text x="175" y="115" font-family="Arial" font-size="12" fill="white" text-anchor="end">k=16</text>
+  </g>
+
+  <!-- GRPO Section -->
+  <g transform="translate(250, 240)">
+    <rect width="300" height="180" fill="#560bad" rx="8" ry="8" opacity="0.9" />
+    <text x="150" y="30" font-family="Arial" font-size="16" fill="white" text-anchor="middle" font-weight="bold">GRPO</text>
+    
+    <!-- Expert Groups -->
+    <g transform="translate(50, 60)">
+      <!-- Group A -->
+      <rect width="80" height="80" fill="#4cc9f0" rx="5" ry="5" opacity="0.7" />
+      <text x="40" y="45" font-family="Arial" font-size="12" fill="white" text-anchor="middle">A</text>
+      
+      <!-- Group B -->
+      <rect width="80" height="80" fill="#4361ee" rx="5" ry="5" opacity="0.7" x="120" />
+      <text x="160" y="45" font-family="Arial" font-size="12" fill="white" text-anchor="middle">B</text>
+    </g>
+    
+    <!-- Routing Policy -->
+    <text x="150" y="165" font-family="Arial" font-size="14" fill="white" text-anchor="middle">라우팅 정책 최적화</text>
+  </g>
+
+  <!-- Connecting Lines -->
+  <path d="M410,180 L400,240" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="5,3" />
+  <path d="M670,180 L550,240" stroke="#333" stroke-width="2" fill="none" stroke-dasharray="5,3" />
+
+  <!-- Final Result -->
+  <g transform="translate(250, 450)">
+    <rect width="300" height="40" fill="#f72585" rx="8" ry="8" opacity="0.9" />
+    <text x="150" y="25" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">최적화된 MoE 모델</text>
+  </g>
+  
+  <!-- Final Arrow -->
+  <path d="M400,420 L400,450" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+</svg>
