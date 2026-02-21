@@ -27,10 +27,12 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | undefined>
   }
 }
 
+const downloadImagesAtBuild = process.env.NOXION_DOWNLOAD_IMAGES === "true";
+
 export async function getPageRecordMap(pageId: string): Promise<ExtendedRecordMap> {
   const recordMap = await fetchPage(notion, pageId);
 
-  if (process.env.NODE_ENV === "production") {
+  if (downloadImagesAtBuild && process.env.NODE_ENV === "production") {
     try {
       const outputDir = join(process.cwd(), "public");
       const urlMap = await downloadImages(recordMap, outputDir, { concurrency: 5 });

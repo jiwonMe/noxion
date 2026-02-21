@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import { NotionRenderer } from "react-notion-x";
 import type { ExtendedRecordMap } from "notion-types";
 import { useNoxionComponents, useNoxionTheme } from "../theme/ThemeProvider";
@@ -14,6 +13,7 @@ export interface NotionPageProps {
   showTableOfContents?: boolean;
   minTableOfContentsItems?: number;
   pageUrlPrefix?: string;
+  nextImage?: unknown;
   className?: string;
 }
 
@@ -26,6 +26,7 @@ export function NotionPage({
   showTableOfContents = false,
   minTableOfContentsItems = 3,
   pageUrlPrefix = "/",
+  nextImage,
   className,
 }: NotionPageProps) {
   const theme = useNoxionTheme();
@@ -33,19 +34,10 @@ export function NotionPage({
 
   const resolvedDarkMode = darkMode ?? theme.name === "dark";
 
-  const signedUrls = (recordMap as unknown as Record<string, unknown>).signed_urls as Record<string, string> | undefined;
-
-  const imageUrlMapper = useCallback(
-    (url: string | undefined, block: { id?: string }) => {
-      if (signedUrls && block?.id && signedUrls[block.id]) {
-        return signedUrls[block.id];
-      }
-      return url ?? "";
-    },
-    [signedUrls]
-  );
-
   const notionComponents: Record<string, unknown> = {};
+  if (nextImage) {
+    notionComponents.nextImage = nextImage;
+  }
   if (overrides.NotionBlock) {
     for (const [blockType, component] of Object.entries(overrides.NotionBlock)) {
       notionComponents[blockType] = component;
@@ -63,7 +55,7 @@ export function NotionPage({
         showTableOfContents={showTableOfContents}
         minTableOfContentsItems={minTableOfContentsItems}
         mapPageUrl={(pageId: string) => `${pageUrlPrefix}${pageId}`}
-        mapImageUrl={imageUrlMapper}
+        
         components={notionComponents}
       />
     </div>

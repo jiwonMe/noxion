@@ -23,25 +23,30 @@ export function PostCard({
         transition: "box-shadow 0.2s ease",
       }}
     >
-      {coverImage ? (
-        <div
-          style={{
-            width: "100%",
-            height: "200px",
-            backgroundImage: `url(${coverImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            width: "100%",
-            height: "200px",
-            background: "linear-gradient(135deg, var(--noxion-primary, #2563eb), var(--noxion-accent, #f5f5f5))",
-          }}
-        />
-      )}
+      <div style={{ position: "relative", width: "100%", height: "200px", overflow: "hidden" }}>
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(135deg, var(--noxion-primary, #2563eb), var(--noxion-accent, #f5f5f5))",
+            }}
+          />
+        )}
+      </div>
 
       <div style={{ padding: "1rem" }}>
         {category && (
