@@ -1,0 +1,14 @@
+.navbarTwoRow {
+  height: auto !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+}
+
+.navbarHideable {
+  transition: transform var(--ifm-transition-fast) ease;
+}
+
+.navbarHidden {
+  transform: translate3d(0, calc(-100% - 2px), 0);
+}

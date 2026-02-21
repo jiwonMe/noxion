@@ -1,0 +1,47 @@
+.navbarWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bottomRow {
+  display: flex;
+  align-items: stretch;
+  height: 40px;
+  padding: 0 1.5rem;
+}
+
+@media (max-width: 996px) {
+  .colorModeToggle {
+    display: none;
+  }
+
+  .bottomRow {
+    display: none;
+  }
+}
+
+:global(.navbar__items--right) > :last-child {
+  padding-right: 0;
+}

@@ -58,6 +58,19 @@ const config: Config = {
     },
   },
 
+  plugins: [
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        language: ['en', 'ko'],
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+        searchBarPosition: 'right',
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',
@@ -86,11 +99,10 @@ const config: Config = {
       defaultMode: 'light',
       respectPrefersColorScheme: true,
     },
-    algolia: undefined,
     navbar: {
-      title: 'Noxion',
+      title: '',
       logo: {
-        alt: 'Noxion Logo',
+        alt: 'Noxion',
         src: 'img/logo.svg',
       },
       items: [

@@ -1,109 +1,93 @@
 import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
-import Translate from '@docusaurus/Translate';
 import styles from './index.module.css';
 
 const features = [
   {
-    icon: '📝',
-    titleKey: 'homepage.feature.notion.title',
-    title: 'Notion as CMS',
-    descriptionKey: 'homepage.feature.notion.description',
-    description: 'Write in Notion, publish to the web. Your database schema becomes your blog — no migration needed.',
+    title: 'Write in Notion',
+    description: 'Use Notion as your CMS. Your database becomes your blog — no migration, no friction.',
   },
   {
-    icon: '🚀',
-    titleKey: 'homepage.feature.seo.title',
-    title: 'Extreme SEO',
-    descriptionKey: 'homepage.feature.seo.description',
-    description: 'Open Graph, JSON-LD (BlogPosting, BreadcrumbList, SearchAction), RSS, sitemap — all generated automatically.',
+    title: 'Instant deploy',
+    description: 'One command to scaffold. ISR keeps content fresh. On-demand revalidation for instant updates.',
   },
   {
-    icon: '🖼️',
-    titleKey: 'homepage.feature.images.title',
-    title: 'Image Optimization',
-    descriptionKey: 'homepage.feature.images.description',
-    description: 'Next.js Image with AVIF/WebP auto-conversion. Or opt-in build-time download for full URL independence.',
+    title: 'SEO out of the box',
+    description: 'Open Graph, JSON-LD, RSS, sitemap, robots.txt — all generated automatically from your Notion data.',
   },
   {
-    icon: '🔌',
-    titleKey: 'homepage.feature.plugins.title',
-    title: 'Plugin System',
-    descriptionKey: 'homepage.feature.plugins.description',
-    description: 'Analytics (Google, Plausible, Umami), RSS, Comments (Giscus, Utterances, Disqus) — plug and play.',
+    title: 'Image optimization',
+    description: 'AVIF/WebP via Next.js Image. Optional build-time download for full URL independence.',
   },
   {
-    icon: '🎨',
-    titleKey: 'homepage.feature.themes.title',
-    title: 'Theme System',
-    descriptionKey: 'homepage.feature.themes.description',
-    description: 'CSS variable-based colors and fonts. Dark / light / system mode. Full component override support.',
+    title: 'Plugin system',
+    description: 'Analytics, comments, RSS — add with a single line. Build your own with the plugin API.',
   },
   {
-    icon: '⚡',
-    titleKey: 'homepage.feature.isr.title',
-    title: 'ISR + On-demand',
-    descriptionKey: 'homepage.feature.isr.description',
-    description: 'Incremental Static Regeneration every hour. On-demand revalidation API for instant refreshes.',
+    title: 'Own your stack',
+    description: 'Open-source, self-hosted. Deploy to Vercel, Docker, or static export. No vendor lock-in.',
   },
 ];
 
-export default function Home() {
-  const { siteConfig } = useDocusaurusContext();
-
+function Hero(): React.ReactElement {
   return (
-    <Layout
-      title={siteConfig.title}
-      description={siteConfig.tagline}
-    >
-      <main>
-        <section className="hero-section">
-          <h1 className="hero-title">Noxion</h1>
-          <p className="hero-tagline">
-            <Translate id="homepage.tagline">
-              Notion-powered blog builder for developers.
-              Point it at a Notion database and get a fully-rendered, SEO-optimized blog website.
-            </Translate>
-          </p>
-          <div className="hero-actions">
-            <Link className="button button--primary button--lg" to="/docs/learn/quick-start">
-              <Translate id="homepage.getStarted">Get Started</Translate> →
-            </Link>
-            <Link className="button button--secondary button--lg" to="/docs/reference/overview">
-              <Translate id="homepage.apiRef">API Reference</Translate>
-            </Link>
-            <Link
-              className="button button--secondary button--lg"
-              href="https://github.com/jiwonme/noxion"
-            >
-              GitHub
-            </Link>
+    <section className={styles.hero}>
+      <div className={styles.heroInner}>
+        <h1 className={styles.heroTitle}>
+          Your Notion database,<br />
+          your blog.
+        </h1>
+        <p className={styles.heroSubtitle}>
+          Noxion turns a Notion database into a fast, SEO-optimized blog you fully own.
+          Open-source. Self-hosted. Zero lock-in.
+        </p>
+        <div className={styles.heroActions}>
+          <Link className={styles.primaryBtn} to="/docs/learn/quick-start">
+            Get started
+          </Link>
+          <Link className={styles.secondaryBtn} href="https://github.com/jiwonme/noxion">
+            GitHub
+          </Link>
+        </div>
+      </div>
+      <div className={styles.heroIllust}>
+        <img
+          src={useBaseUrl('/img/hero.png')}
+          alt="Noxion — Notion to blog"
+          className={styles.heroImage}
+        />
+      </div>
+    </section>
+  );
+}
+
+function Features(): React.ReactElement {
+  return (
+    <section className={styles.features}>
+      <div className={styles.featuresGrid}>
+        {features.map((f) => (
+          <div key={f.title} className={styles.featureCard}>
+            <h3 className={styles.featureTitle}>{f.title}</h3>
+            <p className={styles.featureDesc}>{f.description}</p>
           </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-          <div style={{ marginTop: '2.5rem', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <CodeBlock language="bash">
-              {`bun create noxion my-blog\ncd my-blog && bun run dev`}
-            </CodeBlock>
-          </div>
-        </section>
-
-        <section className="feature-grid">
-          {features.map((f) => (
-            <div key={f.icon} className="feature-card">
-              <div className="feature-icon">{f.icon}</div>
-              <div className="feature-title">{f.title}</div>
-              <div className="feature-description">{f.description}</div>
-            </div>
-          ))}
-        </section>
-
-        <section style={{ padding: '3rem 2rem', maxWidth: '900px', margin: '0 auto' }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <Translate id="homepage.howItWorks">How it works</Translate>
-          </h2>
-          <CodeBlock language="ts" title="noxion.config.ts">
+function Config(): React.ReactElement {
+  return (
+    <section className={styles.configSection}>
+      <h2 className={styles.sectionTitle}>One config file. That's it.</h2>
+      <p className={styles.sectionSubtitle}>
+        Point Noxion at your Notion page, add plugins, deploy.
+      </p>
+      <div className={styles.configCode}>
+        <CodeBlock language="ts" title="noxion.config.ts">
 {`import { defineConfig, createRSSPlugin } from "@noxion/core";
 
 export default defineConfig({
@@ -117,8 +101,41 @@ export default defineConfig({
     createRSSPlugin({ feedPath: "/feed.xml" }),
   ],
 });`}
-          </CodeBlock>
-        </section>
+        </CodeBlock>
+      </div>
+    </section>
+  );
+}
+
+function CTA(): React.ReactElement {
+  return (
+    <section className={styles.cta}>
+      <h2 className={styles.ctaTitle}>Ready to ship?</h2>
+      <p className={styles.ctaSubtitle}>
+        Set up your blog in under 5 minutes.
+      </p>
+      <div className={styles.heroActions}>
+        <Link className={styles.primaryBtn} to="/docs/learn/quick-start">
+          Read the docs
+        </Link>
+        <Link className={styles.secondaryBtn} to="/docs/reference/overview">
+          API Reference
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+export default function Home(): React.ReactElement {
+  const { siteConfig } = useDocusaurusContext();
+
+  return (
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+      <main>
+        <Hero />
+        <Features />
+        <Config />
+        <CTA />
       </main>
     </Layout>
   );
