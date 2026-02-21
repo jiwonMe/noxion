@@ -1,6 +1,6 @@
 ---
 title: PostCard
-description: "@noxion/renderer PostCard component"
+description: "@noxion/renderer PostCard component — individual blog post card"
 ---
 
 # `<PostCard />`
@@ -9,22 +9,128 @@ description: "@noxion/renderer PostCard component"
 import { PostCard } from "@noxion/renderer";
 ```
 
-Renders a single blog post card with cover image, title, date, and tags.
+Renders a single blog post card, typically used inside `<PostList>`. Displays the post cover image, title, publication date, category, tags, and description excerpt.
+
+---
 
 ## Props (`PostCardProps`)
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | ✅ | Notion page ID (used as React key) |
-| `title` | `string` | ✅ | Post title |
-| `slug` | `string` | ✅ | URL slug |
-| `date` | `string` | ✅ | Display date |
-| `tags` | `string[]` | ✅ | Post tags |
-| `coverImage` | `string` | — | Cover image URL |
-| `category` | `string` | — | Post category |
-| `description` | `string` | — | Post description |
-| `author` | `string` | — | Post author |
+| `id` | `string` | ✅ | Notion page ID. Used as the React `key` when rendered in a list. |
+| `title` | `string` | ✅ | Post title. |
+| `slug` | `string` | ✅ | URL slug. The card links to `/${slug}`. |
+| `date` | `string` | ✅ | Publication date string. Displayed as-is (e.g. `"2025-02-01"`). |
+| `tags` | `string[]` | ✅ | Post tags. Rendered as clickable links to `/tag/[tag]`. |
+| `coverImage` | `string` | — | Cover image URL (from `post.coverImage`). If absent, no image is shown. |
+| `category` | `string` | — | Post category. Shown as a badge above the title. |
+| `description` | `string` | — | Post description/excerpt. Shown below the title. |
+| `author` | `string` | — | Author name. Shown below the description. |
 
-## Cover image
+---
 
-The cover image is rendered as an `<img>` tag with `loading="lazy"` and `decoding="async"`. Pass a `next/image`-optimized URL for best performance.
+## Usage
+
+```tsx
+// Used directly (without PostList)
+import { PostCard } from "@noxion/renderer";
+
+<PostCard
+  id={post.id}
+  title={post.title}
+  slug={post.slug}
+  date={post.date}
+  tags={post.tags}
+  coverImage={post.coverImage}
+  category={post.category}
+  description={post.description}
+/>
+```
+
+---
+
+## Card anatomy
+
+```
+┌──────────────────────────────────────┐
+│ [Cover Image]                         │
+│                                       │
+│ [Category Badge]                      │
+│ Post Title                            │
+│ Description excerpt text...           │
+│                                       │
+│ Feb 1, 2025  ·  Jane Doe             │
+│ [react] [typescript] [tutorial]       │
+└──────────────────────────────────────┘
+```
+
+- **Cover image** — rendered as `<img loading="lazy" decoding="async">`. Pass `next/image`-proxied URLs for optimized loading. The image is contained within a fixed aspect-ratio container (16:9 by default) to prevent layout shift.
+- **Category badge** — shown as a small pill above the title, links to `/tag/[category]`
+- **Tags** — each tag is a link to `/tag/[tag]`
+
+---
+
+## Cover image behavior
+
+The cover image is rendered as an `<img>` tag (not `next/image`) in `<PostCard>`. This is intentional — cover images in the post list are typically small thumbnails and the overhead of `next/image` optimization is not worth it for list pages.
+
+However, if you're using [build-time image download](../../learn/image-optimization#option-build-time-image-download) (`NOXION_DOWNLOAD_IMAGES=true`), the `coverImage` URL will already be a local path (`/images/[hash].webp`), which is served as a static asset.
+
+For post detail pages, cover images **are** optimized via `next/image` in the `<NotionPage>` renderer.
+
+---
+
+## Date formatting
+
+The `date` prop is displayed as-is. If you want localized date formatting, format it before passing:
+
+```tsx
+<PostList
+  posts={posts.map((p) => ({
+    ...p,
+    date: new Date(p.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    // "February 1, 2025"
+  }))}
+/>
+```
+
+---
+
+## Customizing the card
+
+To customize `<PostCard>` styling, use CSS variable overrides:
+
+```css
+/* globals.css */
+.notion-post-card {
+  --card-radius: 0.75rem;
+  border: 1px solid var(--noxion-border);
+  transition: transform 0.2s ease;
+}
+
+.notion-post-card:hover {
+  transform: translateY(-2px);
+}
+```
+
+For structural changes (different layout, additional metadata fields), create your own card component and use it alongside or instead of `<PostList>`:
+
+```tsx
+// components/CustomPostCard.tsx
+import type { BlogPost } from "@noxion/core";
+import Link from "next/link";
+
+export function CustomPostCard({ post }: { post: BlogPost }) {
+  return (
+    <Link href={`/${post.slug}`} className="custom-card">
+      <time>{post.date}</time>
+      <h2>{post.title}</h2>
+      <p>{post.description}</p>
+    </Link>
+  );
+}
+```
