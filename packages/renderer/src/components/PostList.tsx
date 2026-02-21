@@ -24,7 +24,7 @@ export function PostList({ posts }: PostListProps) {
       }}
     >
       {posts.map((post) => (
-        <Card key={post.id} {...post} />
+        <Card key={post.slug} {...post} />
       ))}
     </div>
   );
