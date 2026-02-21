@@ -203,7 +203,7 @@ Parallel Speedup: ~50% faster than sequential
 
 ---
 
-- [ ] 1. Monorepo Foundation Setup
+- [x] 1. Monorepo Foundation Setup
 
   **What to do**:
   - Turborepo + Bun workspaces 모노레포 초기화

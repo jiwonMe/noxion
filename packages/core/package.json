@@ -17,7 +17,9 @@
     "lint": "echo 'lint ok'",
     "clean": "rm -rf dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "notion-types": "^7.8.2"
+  },
   "devDependencies": {
     "typescript": "^5.7.0",
     "@types/bun": "^1.2.0"
