@@ -1,0 +1,18 @@
+{
+  "name": "@noxion/web",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Demo blog application for Noxion",
+  "scripts": {
+    "build": "echo 'web build placeholder'",
+    "dev": "echo 'web dev placeholder'",
+    "test": "echo 'web test placeholder'",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf .next out"
+  },
+  "dependencies": {
+    "@noxion/core": "workspace:*",
+    "@noxion/renderer": "workspace:*",
+    "@noxion/adapter-nextjs": "workspace:*"
+  }
+}
