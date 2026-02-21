@@ -39,7 +39,7 @@ export function parseKeyValuePairs(text: string): Record<string, string> {
 
   for (const line of text.split("\n")) {
     const trimmed = line.trim();
-    if (!trimmed || !trimmed.includes(":")) continue;
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes(":")) continue;
 
     const colonIndex = trimmed.indexOf(":");
     const key = trimmed.slice(0, colonIndex).trim();

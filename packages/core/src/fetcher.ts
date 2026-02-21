@@ -1,7 +1,8 @@
 import type { NotionAPI } from "notion-client";
 import type { ExtendedRecordMap, CollectionPropertySchemaMap, Block, Collection } from "notion-types";
-import { getTextContent } from "notion-utils";
+import { getTextContent, defaultMapImageUrl } from "notion-utils";
 import type { BlogPost } from "./types";
+import { applyFrontmatter, parseKeyValuePairs } from "./frontmatter";
 
 function unwrapValue<T>(boxed: { value: T | { role: string; value: T }; role?: string } | undefined): T | undefined {
   if (!boxed) return undefined;
@@ -59,8 +60,7 @@ function extractPostsFromRecordMap(
   if (!collectionId) return [];
 
   const queryResults = collectionQuery?.[collectionId];
-  const firstView = queryResults ? Object.values(queryResults)[0] : undefined;
-  const blockIds: string[] = (firstView as { blockIds?: string[] })?.blockIds ?? [];
+  const blockIds: string[] = collectAllBlockIds(queryResults);
 
   const schemaMap = buildSchemaMap(schema);
 
@@ -72,7 +72,13 @@ function extractPostsFromRecordMap(
     const properties = block.properties as Record<string, unknown[][]> | undefined;
     if (!properties) continue;
 
-    const post = extractPost(blockId, properties, schemaMap, block);
+    let post = extractPost(blockId, properties, schemaMap, block);
+
+    const frontmatter = extractInlineFrontmatter(recordMap, block);
+    if (frontmatter) {
+      post = applyFrontmatter(post, frontmatter);
+    }
+
     if (post.published) {
       posts.push(post);
     }
@@ -87,6 +93,21 @@ function extractPostsFromRecordMap(
   return posts;
 }
 
+type ViewResult = {
+  blockIds?: string[];
+  collection_group_results?: { blockIds?: string[] };
+};
+
+function collectAllBlockIds(queryResults: Record<string, unknown> | undefined): string[] {
+  if (!queryResults) return [];
+  const seen = new Set<string>();
+  for (const view of Object.values(queryResults) as ViewResult[]) {
+    const ids = view?.blockIds ?? view?.collection_group_results?.blockIds ?? [];
+    for (const id of ids) seen.add(id);
+  }
+  return [...seen];
+}
+
 interface SchemaMap {
   titleKey: string | null;
   slugKey: string | null;
@@ -95,6 +116,8 @@ interface SchemaMap {
   categoryKey: string | null;
   publishedKey: string | null;
   coverKey: string | null;
+  descriptionKey: string | null;
+  authorKey: string | null;
 }
 
 function buildSchemaMap(schema: CollectionPropertySchemaMap): SchemaMap {
@@ -106,17 +129,21 @@ function buildSchemaMap(schema: CollectionPropertySchemaMap): SchemaMap {
     categoryKey: null,
     publishedKey: null,
     coverKey: null,
+    descriptionKey: null,
+    authorKey: null,
   };
 
   for (const [key, value] of Object.entries(schema)) {
     const name = value.name?.toLowerCase();
     if (value.type === "title") map.titleKey = key;
     else if (name === "slug") map.slugKey = key;
-    else if (name === "date") map.dateKey = key;
     else if (name === "tags") map.tagsKey = key;
     else if (name === "category") map.categoryKey = key;
-    else if (name === "published" || name === "public") map.publishedKey = key;
     else if (name === "cover") map.coverKey = key;
+    else if (name === "description") map.descriptionKey = key;
+    else if (name === "author") map.authorKey = key;
+    else if ((name === "public" || name === "published") && value.type === "checkbox") map.publishedKey = key;
+    else if ((name === "date" || name === "published") && (value.type === "date" || value.type === "last_edited_time")) map.dateKey = key;
   }
 
   return map;
@@ -126,22 +153,33 @@ function extractPost(
   id: string,
   properties: Record<string, unknown[][]>,
   schema: SchemaMap,
-  block: { last_edited_time?: number; format?: { page_cover?: string } }
+  block: { id?: string; space_id?: string; last_edited_time?: number; format?: { page_cover?: string } }
 ): BlogPost {
   const title = schema.titleKey ? getTextContent(properties[schema.titleKey] as never) : "";
-  const slug = schema.slugKey ? getTextContent(properties[schema.slugKey] as never) : "";
-  const date = schema.dateKey ? getTextContent(properties[schema.dateKey] as never) : "";
+  const rawSlug = schema.slugKey ? getTextContent(properties[schema.slugKey] as never) : "";
+  const slug = rawSlug || id;
+  const dateRaw = schema.dateKey ? getTextContent(properties[schema.dateKey] as never) : "";
+  const date = parseDateValue(dateRaw, properties[schema.dateKey ?? ""] as unknown[][]);
   const tagsRaw = schema.tagsKey ? getTextContent(properties[schema.tagsKey] as never) : "";
   const tags = tagsRaw ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
   const category = schema.categoryKey
     ? getTextContent(properties[schema.categoryKey] as never)
+    : undefined;
+  const description = schema.descriptionKey
+    ? getTextContent(properties[schema.descriptionKey] as never)
+    : undefined;
+  const author = schema.authorKey
+    ? getTextContent(properties[schema.authorKey] as never)
     : undefined;
   const publishedRaw = schema.publishedKey
     ? getTextContent(properties[schema.publishedKey] as never)
     : "";
   const published = publishedRaw === "Yes" || publishedRaw === "yes" || publishedRaw === "true";
 
-  const coverImage = block.format?.page_cover ?? undefined;
+  const rawCover = block.format?.page_cover;
+  const coverImage = rawCover
+    ? defaultMapImageUrl(rawCover, block as Parameters<typeof defaultMapImageUrl>[1])
+    : undefined;
   const lastEditedTime = block.last_edited_time
     ? new Date(block.last_edited_time).toISOString()
     : new Date().toISOString();
@@ -153,8 +191,48 @@ function extractPost(
     date,
     tags,
     category: category || undefined,
+    description: description || undefined,
+    author: author || undefined,
     coverImage,
     published,
     lastEditedTime,
   };
+}
+
+function extractInlineFrontmatter(
+  recordMap: ExtendedRecordMap,
+  pageBlock: Block
+): Record<string, string> | null {
+  const childIds = (pageBlock as { content?: string[] }).content;
+  if (!childIds || childIds.length === 0) return null;
+
+  const firstChild = unwrapValue<Block>(recordMap.block[childIds[0]] as never);
+  if (!firstChild || firstChild.type !== "code") return null;
+
+  const props = firstChild.properties as Record<string, unknown[][]> | undefined;
+  if (!props?.title) return null;
+
+  const codeText = getTextContent(props.title as never);
+  if (!codeText.trim()) return null;
+
+  return parseKeyValuePairs(codeText);
+}
+
+function parseDateValue(textContent: string, rawProperty: unknown[][] | undefined): string {
+  if (rawProperty) {
+    for (const segment of rawProperty) {
+      if (Array.isArray(segment) && segment.length >= 2) {
+        const annotations = segment[1] as unknown[];
+        if (Array.isArray(annotations)) {
+          for (const ann of annotations) {
+            if (Array.isArray(ann) && ann[0] === "d" && ann[1]?.start_date) {
+              return ann[1].start_date;
+            }
+          }
+        }
+      }
+    }
+  }
+  if (textContent) return textContent;
+  return "";
 }

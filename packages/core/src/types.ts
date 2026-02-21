@@ -50,6 +50,7 @@ export interface BlogPost {
   category?: string;
   coverImage?: string;
   description?: string;
+  author?: string;
   published: boolean;
   lastEditedTime: string;
   frontmatter?: Record<string, string>;
