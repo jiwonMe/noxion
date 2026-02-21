@@ -20,7 +20,7 @@
     "description": "Footer link label"
   },
   "copyright": {
-    "message": "Copyright © {year} Noxion. Docusaurus로 제작.",
+    "message": "Copyright © 2025 Noxion. Docusaurus로 제작.",
     "description": "The footer copyright"
   }
 }
