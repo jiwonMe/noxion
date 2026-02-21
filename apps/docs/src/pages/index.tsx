@@ -1,6 +1,7 @@
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useColorMode } from '@docusaurus/theme-common';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
 import styles from './index.module.css';
@@ -33,6 +34,9 @@ const features = [
 ];
 
 function Hero(): React.ReactElement {
+  const { colorMode } = useColorMode();
+  const heroSrc = useBaseUrl(colorMode === 'dark' ? '/img/hero-dark.png' : '/img/hero.png');
+
   return (
     <section className={styles.hero}>
       <div className={styles.heroInner}>
@@ -55,7 +59,7 @@ function Hero(): React.ReactElement {
       </div>
       <div className={styles.heroIllust}>
         <img
-          src={useBaseUrl('/img/hero.png')}
+          src={heroSrc}
           alt="Noxion — Notion to blog"
           className={styles.heroImage}
         />
