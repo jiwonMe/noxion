@@ -1,0 +1,371 @@
+:root {
+  --noxion-primary: #2563eb;
+  --noxion-primaryForeground: #ffffff;
+  --noxion-background: #ffffff;
+  --noxion-foreground: #0a0a0a;
+  --noxion-muted: #f5f5f5;
+  --noxion-mutedForeground: #737373;
+  --noxion-border: #e5e5e5;
+  --noxion-accent: #f5f5f5;
+  --noxion-accentForeground: #171717;
+  --noxion-card: #ffffff;
+  --noxion-cardForeground: #0a0a0a;
+
+  --noxion-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --noxion-font-serif: Georgia, "Times New Roman", serif;
+  --noxion-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  --noxion-spacing-content: 720px;
+  --noxion-spacing-sidebar: 280px;
+  --noxion-border-radius: 0.5rem;
+
+  --noxion-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --noxion-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --noxion-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  --noxion-transition-fast: 150ms ease;
+  --noxion-transition-normal: 200ms ease;
+  --noxion-transition-slow: 300ms ease;
+
+  --noxion-breakpoint-sm: 640px;
+  --noxion-breakpoint-md: 768px;
+  --noxion-breakpoint-lg: 1024px;
+  --noxion-breakpoint-xl: 1280px;
+}
+
+[data-theme="dark"] {
+  --noxion-primary: #3b82f6;
+  --noxion-primaryForeground: #ffffff;
+  --noxion-background: #0a0a0a;
+  --noxion-foreground: #fafafa;
+  --noxion-muted: #262626;
+  --noxion-mutedForeground: #a3a3a3;
+  --noxion-border: #262626;
+  --noxion-accent: #262626;
+  --noxion-accentForeground: #fafafa;
+  --noxion-card: #0a0a0a;
+  --noxion-cardForeground: #fafafa;
+}
+
+.noxion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--noxion-border);
+  background-color: var(--noxion-background);
+}
+
+.noxion-header__logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--noxion-foreground);
+  text-decoration: none;
+}
+
+.noxion-header__nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.noxion-header__nav-link {
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+  text-decoration: none;
+}
+
+.noxion-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.noxion-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-top: 1px solid var(--noxion-border);
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-footer__copyright {
+  color: inherit;
+}
+
+.noxion-footer__powered-by {
+  color: var(--noxion-mutedForeground);
+  text-decoration: none;
+}
+
+.noxion-post-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--noxion-border-radius);
+  border: 1px solid var(--noxion-border);
+  overflow: hidden;
+  background-color: var(--noxion-card);
+  transition: box-shadow var(--noxion-transition-normal);
+}
+
+.noxion-post-card:hover {
+  box-shadow: var(--noxion-shadow-md);
+}
+
+.noxion-post-card__cover {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.noxion-post-card__cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.noxion-post-card__cover-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--noxion-primary), var(--noxion-accent));
+}
+
+.noxion-post-card__body {
+  padding: 1rem;
+}
+
+.noxion-post-card__category {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--noxion-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.noxion-post-card__title {
+  margin: 0.25rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--noxion-cardForeground);
+  line-height: 1.4;
+}
+
+.noxion-post-card__date {
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-post-card__tags {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.noxion-post-card__tag {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--noxion-muted);
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-post-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.noxion-post-list--list {
+  grid-template-columns: 1fr;
+}
+
+.noxion-search {
+  position: relative;
+  width: 100%;
+}
+
+.noxion-search__input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  padding-right: 3rem;
+  border-radius: var(--noxion-border-radius);
+  border: 1px solid var(--noxion-border);
+  background-color: var(--noxion-background);
+  color: var(--noxion-foreground);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.noxion-search__input:focus {
+  border-color: var(--noxion-primary);
+}
+
+.noxion-search__kbd {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--noxion-border);
+  color: var(--noxion-mutedForeground);
+  pointer-events: none;
+}
+
+.noxion-tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.noxion-tag-filter__tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--noxion-border);
+  background-color: transparent;
+  color: var(--noxion-foreground);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--noxion-transition-fast);
+}
+
+.noxion-tag-filter__tag--selected {
+  background-color: var(--noxion-primary);
+  color: var(--noxion-primaryForeground);
+  border-color: var(--noxion-primary);
+}
+
+.noxion-toc {
+  padding: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.noxion-toc__heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--noxion-mutedForeground);
+  margin-bottom: 0.75rem;
+}
+
+.noxion-toc__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.noxion-toc__item {
+  margin-bottom: 0.375rem;
+}
+
+.noxion-toc__link {
+  color: var(--noxion-mutedForeground);
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.noxion-toc__link:hover {
+  color: var(--noxion-foreground);
+}
+
+.noxion-toc__item--active > .noxion-toc__link {
+  color: var(--noxion-primary);
+  font-weight: 500;
+}
+
+.noxion-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--noxion-border-radius);
+  border: 1px solid var(--noxion-border);
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.noxion-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.noxion-empty-state__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--noxion-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.noxion-empty-state__message {
+  font-size: 1rem;
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.noxion-layout__header {
+  flex-shrink: 0;
+}
+
+.noxion-layout__content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--noxion-spacing-content);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.noxion-layout__footer {
+  flex-shrink: 0;
+}
+
+.noxion-layout__sidebar {
+  width: var(--noxion-spacing-sidebar);
+  flex-shrink: 0;
+  padding: 2rem 1.5rem;
+}
+
+.noxion-layout__hero {
+  width: 100%;
+}
+
+.noxion-layout--single-column {
+  flex-direction: column;
+}
+
+.noxion-layout--sidebar-left > .noxion-layout__main {
+  display: flex;
+  flex: 1;
+}
+
+.noxion-layout--sidebar-left > .noxion-layout__main > .noxion-layout__sidebar {
+  order: -1;
+  border-right: 1px solid var(--noxion-border);
+}
+
+.noxion-layout--sidebar-right > .noxion-layout__main {
+  display: flex;
+  flex: 1;
+}
+
+.noxion-layout--sidebar-right > .noxion-layout__main > .noxion-layout__sidebar {
+  border-left: 1px solid var(--noxion-border);
+}

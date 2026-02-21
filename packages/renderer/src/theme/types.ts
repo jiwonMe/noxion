@@ -27,6 +27,29 @@ export interface NoxionThemeSpacing {
   sidebar: string;
 }
 
+export interface NoxionThemeShadows {
+  sm?: string;
+  md?: string;
+  lg?: string;
+  xl?: string;
+  [key: string]: string | undefined;
+}
+
+export interface NoxionThemeTransitions {
+  fast?: string;
+  normal?: string;
+  slow?: string;
+  [key: string]: string | undefined;
+}
+
+export interface NoxionThemeBreakpoints {
+  sm?: string;
+  md?: string;
+  lg?: string;
+  xl?: string;
+  [key: string]: string | undefined;
+}
+
 export interface NoxionTheme {
   name: string;
   colors: NoxionThemeColors;
@@ -34,6 +57,12 @@ export interface NoxionTheme {
   spacing?: NoxionThemeSpacing;
   borderRadius?: string;
   dark?: Partial<Omit<NoxionTheme, "name" | "dark">>;
+}
+
+export interface NoxionThemeTokens extends NoxionTheme {
+  shadows?: NoxionThemeShadows;
+  transitions?: NoxionThemeTransitions;
+  breakpoints?: NoxionThemeBreakpoints;
 }
 
 export interface HeaderProps {
@@ -95,3 +124,43 @@ export interface ComponentOverrides {
 }
 
 export type NoxionLayout = "single-column" | "sidebar-left" | "sidebar-right";
+
+export interface NoxionSlotMap {
+  header?: ComponentType<any> | null;
+  footer?: ComponentType<any> | null;
+  sidebar?: ComponentType<any> | null;
+  hero?: ComponentType<any> | null;
+  breadcrumb?: ComponentType<any> | null;
+  toc?: ComponentType<any> | null;
+  [key: string]: ComponentType<any> | null | undefined;
+}
+
+export interface NoxionTemplateProps {
+  data: Record<string, unknown>;
+  layout?: ComponentType<NoxionLayoutProps>;
+  slots?: Partial<NoxionSlotMap>;
+  className?: string;
+}
+
+export interface NoxionTemplateMap {
+  home?: ComponentType<NoxionTemplateProps>;
+  post?: ComponentType<NoxionTemplateProps>;
+  archive?: ComponentType<NoxionTemplateProps>;
+  tag?: ComponentType<NoxionTemplateProps>;
+  [key: string]: ComponentType<NoxionTemplateProps> | undefined;
+}
+
+export interface NoxionLayoutProps {
+  slots: Partial<NoxionSlotMap>;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export interface NoxionThemePackage {
+  name: string;
+  tokens: NoxionThemeTokens;
+  layouts: Record<string, ComponentType<NoxionLayoutProps>>;
+  templates: Partial<NoxionTemplateMap>;
+  components: Partial<ComponentOverrides>;
+  stylesheet?: string;
+}
