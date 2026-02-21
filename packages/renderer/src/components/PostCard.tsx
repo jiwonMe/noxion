@@ -7,15 +7,17 @@ export function PostCard({
   tags,
   coverImage,
   category,
+  description,
   className,
 }: PostCardProps & { className?: string }) {
+  const hasImage = Boolean(coverImage);
+  const baseClass = hasImage ? "noxion-post-card" : "noxion-post-card noxion-post-card--text-only";
+  const cardClass = className ? `${baseClass} ${className}` : baseClass;
+
   return (
-    <a
-      href={`/${slug}`}
-      className={className ? `noxion-post-card ${className}` : "noxion-post-card"}
-    >
-      <div className="noxion-post-card__cover">
-        {coverImage ? (
+    <a href={`/${slug}`} className={cardClass}>
+      {hasImage && (
+        <div className="noxion-post-card__cover">
           <img
             src={coverImage}
             alt={title}
@@ -23,10 +25,8 @@ export function PostCard({
             decoding="async"
             className="noxion-post-card__cover-image"
           />
-        ) : (
-          <div className="noxion-post-card__cover-placeholder" />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="noxion-post-card__body">
         {category && (
@@ -35,19 +35,25 @@ export function PostCard({
 
         <h3 className="noxion-post-card__title">{title}</h3>
 
-        <time dateTime={date} className="noxion-post-card__date">
-          {date}
-        </time>
-
-        {tags.length > 0 && (
-          <div className="noxion-post-card__tags">
-            {tags.map((tag) => (
-              <span key={tag} className="noxion-post-card__tag">
-                {tag}
-              </span>
-            ))}
-          </div>
+        {description && (
+          <p className="noxion-post-card__description">{description}</p>
         )}
+
+        <div className="noxion-post-card__meta">
+          <time dateTime={date} className="noxion-post-card__date">
+            {date}
+          </time>
+
+          {tags.length > 0 && (
+            <div className="noxion-post-card__tags">
+              {tags.map((tag) => (
+                <span key={tag} className="noxion-post-card__tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </a>
   );

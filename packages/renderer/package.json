@@ -10,14 +10,18 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./styles": "./src/styles/noxion.css"
   },
   "files": [
     "dist",
+    "src/styles",
     "README.md",
     "LICENSE"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "src/styles/**/*.css"
+  ],
   "scripts": {
     "build": "tsc",
     "release": "npm publish",
