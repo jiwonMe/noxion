@@ -16,6 +16,13 @@ import { ToggleBlock } from "./blocks/toggle";
 import { PageBlock } from "./blocks/page";
 import { EquationBlock } from "./blocks/equation";
 import { CodeBlock } from "./blocks/code";
+import { ImageBlock } from "./blocks/image";
+import { VideoBlock } from "./blocks/video";
+import { AudioBlock } from "./blocks/audio";
+import { EmbedBlock } from "./blocks/embed";
+import { BookmarkBlock } from "./blocks/bookmark";
+import { FileBlock } from "./blocks/file";
+import { PdfBlock } from "./blocks/pdf";
 
 const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = {
   text: TextBlock,
@@ -32,6 +39,23 @@ const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = 
   page: PageBlock,
   equation: EquationBlock,
   code: CodeBlock,
+  image: ImageBlock,
+  video: VideoBlock,
+  audio: AudioBlock,
+  embed: EmbedBlock,
+  gist: EmbedBlock,
+  figma: EmbedBlock,
+  typeform: EmbedBlock,
+  replit: EmbedBlock,
+  codepen: EmbedBlock,
+  excalidraw: EmbedBlock,
+  tweet: EmbedBlock,
+  maps: EmbedBlock,
+  miro: EmbedBlock,
+  drive: EmbedBlock,
+  bookmark: BookmarkBlock,
+  file: FileBlock,
+  pdf: PdfBlock,
 };
 
 export interface NotionBlockRendererProps {

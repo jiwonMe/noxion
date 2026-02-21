@@ -29,6 +29,13 @@ export {
   PageBlock,
   EquationBlock,
   CodeBlock,
+  ImageBlock,
+  VideoBlock,
+  AudioBlock,
+  EmbedBlock,
+  BookmarkBlock,
+  FileBlock,
+  PdfBlock,
 } from "./blocks";
 
 export { InlineEquation } from "./components/inline-equation";
