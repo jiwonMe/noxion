@@ -1,11 +1,10 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { NotionPage } from "@noxion/renderer";
 import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD, generateBreadcrumbLD } from "@noxion/adapter-nextjs";
 import { createNotionClient, parseFrontmatter, applyFrontmatter } from "@noxion/core";
 import { getPostBySlug, getPageRecordMap } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
+import { NotionPageClient } from "./notion-page-client";
 
 export const revalidate = 3600;
 
@@ -67,13 +66,9 @@ export default async function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <NotionPage
+      <NotionPageClient
         recordMap={recordMap}
         rootPageId={post.id}
-        fullPage
-        previewImages
-        showTableOfContents
-        nextImage={Image}
       />
     </article>
   );
