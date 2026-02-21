@@ -1,8 +1,7 @@
 {
-  "name": "apps-docs",
+  "name": "docs",
   "version": "0.0.0",
   "private": true,
-  "name": "docs",
   "scripts": {
     "docusaurus": "docusaurus",
     "dev": "docusaurus start",
