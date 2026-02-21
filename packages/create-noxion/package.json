@@ -16,11 +16,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "echo 'no tests yet'",
+    "test": "bun test",
     "lint": "echo 'lint ok'",
     "clean": "rm -rf dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@clack/prompts": "^0.10.0"
+  },
   "devDependencies": {
     "typescript": "^5.7.0",
     "@types/bun": "^1.2.0"

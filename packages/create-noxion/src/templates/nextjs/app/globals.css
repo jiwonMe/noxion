@@ -1,0 +1,53 @@
+@import "react-notion-x/src/styles.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--noxion-font-sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--noxion-background, #fff);
+  color: var(--noxion-foreground, #0a0a0a);
+  min-height: 100vh;
+}
+
+[data-theme="dark"] body {
+  background-color: var(--noxion-background, #0a0a0a);
+  color: var(--noxion-foreground, #fafafa);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.notion-page {
+  padding: 0 !important;
+}
+
+.notion-title {
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+}
+
+.notion-collection-page-properties {
+  display: none !important;
+}
+
+.notion-viewport {
+  z-index: -1 !important;
+}
+
+[data-theme="dark"] .notion {
+  --bg-color: var(--noxion-background, #0a0a0a) !important;
+  --fg-color: var(--noxion-foreground, #fafafa) !important;
+}
