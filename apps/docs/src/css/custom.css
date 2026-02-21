@@ -653,11 +653,12 @@ pre[class*='codeBlock'] {
 .markdown table th {
   font-weight: 600;
   font-size: 14px;
-  padding: 0 8px 10px 0;
+  padding: 10px 8px 10px 0;
   color: rgb(17, 24, 39);
   border: none;
   text-align: left;
   background: transparent;
+  vertical-align: middle;
 }
 
 [data-theme='dark'] .markdown table th {
