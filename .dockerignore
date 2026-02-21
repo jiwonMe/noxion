@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+dist
+.turbo
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.example
+.sisyphus

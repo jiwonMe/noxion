@@ -1,0 +1,16 @@
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NOTION_PAGE_ID=${NOTION_PAGE_ID}
+      - NOTION_TOKEN=${NOTION_TOKEN:-}
+      - SITE_NAME=${SITE_NAME:-Noxion Blog}
+      - SITE_DOMAIN=${SITE_DOMAIN:-localhost:3000}
+      - SITE_AUTHOR=${SITE_AUTHOR:-Noxion}
+      - SITE_DESCRIPTION=${SITE_DESCRIPTION:-A blog powered by Notion and Noxion}
+      - REVALIDATE_SECRET=${REVALIDATE_SECRET:-}
+    restart: unless-stopped
