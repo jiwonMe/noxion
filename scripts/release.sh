@@ -17,7 +17,7 @@ fi
 echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc.release
 
 echo "Building packages..."
-bun run build
+bunx turbo build --filter='./packages/*'
 
 echo ""
 for PKG in "${PACKAGES[@]}"; do
