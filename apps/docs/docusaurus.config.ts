@@ -97,7 +97,7 @@ const config: Config = {
     image: 'img/og-card.png',
     colorMode: {
       defaultMode: 'light',
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: '',

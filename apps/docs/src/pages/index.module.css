@@ -172,12 +172,37 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1.25rem 2.5rem;
+  }
+
   .heroTitle {
-    font-size: 2.25rem;
+    font-size: 2rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .heroIllust {
+    margin-top: 2rem;
+    padding: 0;
+  }
+
+  .features {
+    padding: 2.5rem 1.25rem;
   }
 
   .featuresGrid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .configSection {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .cta {
+    padding: 2.5rem 1.25rem;
   }
 }

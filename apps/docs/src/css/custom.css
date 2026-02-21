@@ -378,8 +378,15 @@ a.button,
   padding-right: 2.5rem !important;
 }
 
+@media (max-width: 996px) {
+  .container.padding-top--md.padding-bottom--lg {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
 article {
-  padding: 0 1rem;
+  padding: 0 0.75rem;
 }
 
 @media (min-width: 997px) {
