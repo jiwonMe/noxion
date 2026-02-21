@@ -11,6 +11,24 @@ export type {
 export { Text } from "./components/text";
 export type { TextProps } from "./components/text";
 
+export { NotionRenderer } from "./renderer";
+
+export { NotionBlock, NotionBlockList } from "./block";
+export type { NotionBlockRendererProps } from "./block";
+
+export {
+  TextBlock,
+  HeadingBlock,
+  BulletedListBlock,
+  NumberedListBlock,
+  ToDoBlock,
+  QuoteBlock,
+  CalloutBlock,
+  DividerBlock,
+  ToggleBlock,
+  PageBlock,
+} from "./blocks";
+
 export {
   formatNotionDate,
   unwrapBlockValue,
