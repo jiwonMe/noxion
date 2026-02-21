@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useMemo } from "react";
 import type { NoxionTheme, ComponentOverrides, NoxionLayout } from "./types";
 import { defaultTheme } from "./define-theme";

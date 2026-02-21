@@ -1,3 +1,5 @@
+"use client";
+
 import { NotionRenderer } from "react-notion-x";
 import type { ExtendedRecordMap } from "notion-types";
 import { useNoxionComponents, useNoxionTheme } from "../theme/ThemeProvider";

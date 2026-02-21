@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentType } from "react";
 import type { PostListProps, PostCardProps } from "../theme/types";
 import { useNoxionComponents } from "../theme/ThemeProvider";

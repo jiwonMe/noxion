@@ -1,3 +1,5 @@
+"use client";
+
 import { useThemePreference, type ThemePreference } from "../hooks/useTheme";
 
 const ICONS: Record<ThemePreference, string> = {

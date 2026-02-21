@@ -4,8 +4,9 @@
   "private": true,
   "description": "Demo blog application for Noxion",
   "scripts": {
-    "build": "echo 'web build placeholder'",
-    "dev": "echo 'web dev placeholder'",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "echo 'web test placeholder'",
     "lint": "echo 'lint ok'",
     "clean": "rm -rf .next out"
@@ -13,6 +14,19 @@
   "dependencies": {
     "@noxion/core": "workspace:*",
     "@noxion/renderer": "workspace:*",
-    "@noxion/adapter-nextjs": "workspace:*"
+    "@noxion/adapter-nextjs": "workspace:*",
+    "next": "^16.1.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-notion-x": "^7.8.2",
+    "notion-client": "^7.8.2",
+    "prismjs": "^1.30.0",
+    "katex": "^0.16.28"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.7.0"
   }
 }

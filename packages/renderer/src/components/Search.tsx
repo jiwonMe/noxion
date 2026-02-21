@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useEffect, useCallback } from "react";
 import type { SearchProps } from "../theme/types";
 
