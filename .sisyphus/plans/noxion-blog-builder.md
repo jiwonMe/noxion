@@ -369,7 +369,7 @@ Parallel Speedup: ~50% faster than sequential
 
 ---
 
-- [ ] 3. @noxion/core — Notion Client + Data Fetchers
+- [x] 3. @noxion/core — Notion Client + Data Fetchers
 
   **What to do**:
   - `packages/core/src/client.ts` — Notion 클라이언트 래퍼:

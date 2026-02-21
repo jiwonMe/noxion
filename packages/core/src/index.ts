@@ -1,6 +1,7 @@
 export { defineConfig, loadConfig } from "./config";
 export { createNotionClient } from "./client";
 export { fetchBlogPosts, fetchPage, fetchAllSlugs, fetchPostBySlug } from "./fetcher";
+export { generateSlug, parseNotionPageId, buildPageUrl, resolveSlug } from "./slug";
 export type {
   NoxionConfig,
   NoxionConfigInput,
