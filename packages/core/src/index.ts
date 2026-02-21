@@ -32,3 +32,17 @@ export type {
   ExtendedRecordMap,
 } from "./types";
 export type { NotionClientOptions } from "./client";
+export {
+  createAnalyticsPlugin,
+  createRSSPlugin,
+  generateRSSXml,
+  createCommentsPlugin,
+} from "./plugins/index";
+export type {
+  AnalyticsPluginOptions,
+  RSSPluginOptions,
+  CommentsPluginOptions,
+  GiscusConfig,
+  UtterancesConfig,
+  DisqusConfig,
+} from "./plugins/index";
