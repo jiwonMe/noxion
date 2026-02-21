@@ -1,0 +1,26 @@
+{
+  "link.item.label.Introduction": {
+    "message": "소개",
+    "description": "Footer link label"
+  },
+  "link.item.label.Quick Start": {
+    "message": "빠른 시작",
+    "description": "Footer link label"
+  },
+  "link.item.label.API Reference": {
+    "message": "API 레퍼런스",
+    "description": "Footer link label"
+  },
+  "link.item.label.GitHub Discussions": {
+    "message": "GitHub 토론",
+    "description": "Footer link label"
+  },
+  "link.item.label.GitHub Issues": {
+    "message": "GitHub 이슈",
+    "description": "Footer link label"
+  },
+  "copyright": {
+    "message": "Copyright © {year} Noxion. Docusaurus로 제작.",
+    "description": "The footer copyright"
+  }
+}

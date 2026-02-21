@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Noxion",
+    "description": "The title in the navbar"
+  },
+  "item.label.Learn": {
+    "message": "배우기",
+    "description": "Navbar item with label Learn"
+  },
+  "item.label.Reference": {
+    "message": "레퍼런스",
+    "description": "Navbar item with label Reference"
+  }
+}
