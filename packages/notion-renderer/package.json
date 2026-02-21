@@ -1,0 +1,71 @@
+{
+  "name": "@noxion/notion-renderer",
+  "version": "0.0.1",
+  "description": "Custom Notion block renderer for Noxion — replaces react-notion-x with full styling control, KaTeX SSR, and Shiki code highlighting",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./src/styles/notion-renderer.css"
+  },
+  "files": [
+    "dist",
+    "src/styles",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "src/styles/**/*.css"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "blog",
+    "renderer",
+    "noxion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/notion-renderer"
+  },
+  "homepage": "https://github.com/jiwonme/noxion#readme",
+  "bugs": {
+    "url": "https://github.com/jiwonme/noxion/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "notion-types": ">=7.0.0",
+    "notion-utils": ">=7.0.0",
+    "react": ">=18.0.0"
+  },
+  "dependencies": {
+    "katex": "^0.16.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "@types/katex": "^0.16.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "notion-types": "^7.8.2",
+    "notion-utils": "^7.8.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.7.0"
+  }
+}
