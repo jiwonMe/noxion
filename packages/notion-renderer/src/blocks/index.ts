@@ -8,3 +8,4 @@ export { CalloutBlock } from "./callout";
 export { DividerBlock } from "./divider";
 export { ToggleBlock } from "./toggle";
 export { PageBlock } from "./page";
+export { EquationBlock } from "./equation";

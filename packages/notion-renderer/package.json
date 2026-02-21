@@ -11,7 +11,8 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": "./src/styles/notion-renderer.css"
+    "./styles": "./src/styles/notion-renderer.css",
+    "./katex-css": "./node_modules/katex/dist/katex.min.css"
   },
   "files": [
     "dist",

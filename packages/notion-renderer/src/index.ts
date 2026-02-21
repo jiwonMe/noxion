@@ -27,7 +27,10 @@ export {
   DividerBlock,
   ToggleBlock,
   PageBlock,
+  EquationBlock,
 } from "./blocks";
+
+export { InlineEquation } from "./components/inline-equation";
 
 export {
   formatNotionDate,
