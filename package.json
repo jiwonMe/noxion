@@ -7,6 +7,7 @@
     "test": "turbo test",
     "lint": "turbo lint",
     "dev": "turbo dev",
+    "release": "bash scripts/release.sh",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
