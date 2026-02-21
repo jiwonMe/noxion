@@ -1,7 +1,8 @@
 {
   "name": "create-noxion",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI scaffolding tool for Noxion projects",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,11 +15,36 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "tsc",
-    "test": "bun test",
+    "build": "tsc && rm -rf dist/templates && cp -r src/templates dist/templates",
+    "release": "npm publish",
     "lint": "echo 'lint ok'",
     "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "blog",
+    "create",
+    "scaffold",
+    "noxion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/create-noxion"
+  },
+  "homepage": "https://github.com/jiwonme/noxion#readme",
+  "bugs": {
+    "url": "https://github.com/jiwonme/noxion/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0"

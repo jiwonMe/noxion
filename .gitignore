@@ -16,6 +16,7 @@ bun.lockb
 .env
 .env.local
 .env.*.local
+!packages/create-noxion/src/templates/**/.env
 
 # OS
 .DS_Store

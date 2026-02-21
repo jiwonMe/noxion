@@ -1,10 +1,10 @@
 import * as p from "@clack/prompts";
 import { join } from "node:path";
-import { scaffoldProject, getTemplateDir } from "./scaffold";
-import type { ScaffoldOptions } from "./scaffold";
+import { scaffoldProject, getTemplateDir } from "./scaffold.js";
+import type { ScaffoldOptions } from "./scaffold.js";
 
-export { scaffoldProject, resolveTemplateVariables, getTemplateDir } from "./scaffold";
-export type { ScaffoldOptions, ScaffoldResult } from "./scaffold";
+export { scaffoldProject, resolveTemplateVariables, getTemplateDir } from "./scaffold.js";
+export type { ScaffoldOptions, ScaffoldResult } from "./scaffold.js";
 
 export async function run(args: string[] = process.argv.slice(2)): Promise<void> {
   p.intro("create-noxion");
