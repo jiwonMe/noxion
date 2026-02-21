@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "최신",
+    "description": "The label for version current"
+  },
+  "sidebar.learnSidebar.category.Getting Started": {
+    "message": "시작하기",
+    "description": "The label for category 'Getting Started' in sidebar 'learnSidebar'"
+  },
+  "sidebar.learnSidebar.category.Core Concepts": {
+    "message": "핵심 개념",
+    "description": "The label for category 'Core Concepts' in sidebar 'learnSidebar'"
+  },
+  "sidebar.learnSidebar.category.Plugins": {
+    "message": "플러그인",
+    "description": "The label for category 'Plugins' in sidebar 'learnSidebar'"
+  },
+  "sidebar.learnSidebar.category.Deployment": {
+    "message": "배포",
+    "description": "The label for category 'Deployment' in sidebar 'learnSidebar'"
+  },
+  "sidebar.referenceSidebar.category.@noxion/core": {
+    "message": "@noxion/core",
+    "description": "The label for category '@noxion/core' in sidebar 'referenceSidebar'"
+  },
+  "sidebar.referenceSidebar.category.@noxion/renderer": {
+    "message": "@noxion/renderer",
+    "description": "The label for category '@noxion/renderer' in sidebar 'referenceSidebar'"
+  },
+  "sidebar.referenceSidebar.category.@noxion/adapter-nextjs": {
+    "message": "@noxion/adapter-nextjs",
+    "description": "The label for category '@noxion/adapter-nextjs' in sidebar 'referenceSidebar'"
+  },
+  "sidebar.referenceSidebar.category.create-noxion": {
+    "message": "create-noxion",
+    "description": "The label for category 'create-noxion' in sidebar 'referenceSidebar'"
+  }
+}

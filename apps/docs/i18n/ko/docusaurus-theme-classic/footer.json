@@ -1,26 +1,46 @@
 {
   "link.item.label.Introduction": {
     "message": "소개",
-    "description": "Footer link label"
+    "description": "The label of footer link with label=Introduction linking to /docs/learn/introduction"
   },
   "link.item.label.Quick Start": {
     "message": "빠른 시작",
-    "description": "Footer link label"
+    "description": "The label of footer link with label=Quick Start linking to /docs/learn/quick-start"
   },
   "link.item.label.API Reference": {
     "message": "API 레퍼런스",
-    "description": "Footer link label"
+    "description": "The label of footer link with label=API Reference linking to /docs/reference/overview"
   },
   "link.item.label.GitHub Discussions": {
     "message": "GitHub 토론",
-    "description": "Footer link label"
+    "description": "The label of footer link with label=GitHub Discussions linking to https://github.com/jiwonme/noxion/discussions"
   },
   "link.item.label.GitHub Issues": {
     "message": "GitHub 이슈",
-    "description": "Footer link label"
+    "description": "The label of footer link with label=GitHub Issues linking to https://github.com/jiwonme/noxion/issues"
   },
   "copyright": {
     "message": "Copyright © 2025 Noxion. Docusaurus로 제작.",
     "description": "The footer copyright"
+  },
+  "link.title.Docs": {
+    "message": "문서",
+    "description": "The title of the footer links column with title=Docs in the footer"
+  },
+  "link.title.Community": {
+    "message": "커뮤니티",
+    "description": "The title of the footer links column with title=Community in the footer"
+  },
+  "link.title.More": {
+    "message": "더 보기",
+    "description": "The title of the footer links column with title=More in the footer"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/jiwonme/noxion"
+  },
+  "link.item.label.npm": {
+    "message": "npm",
+    "description": "The label of footer link with label=npm linking to https://www.npmjs.com/package/@noxion/core"
   }
 }

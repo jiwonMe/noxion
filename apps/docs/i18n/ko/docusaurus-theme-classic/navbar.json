@@ -10,5 +10,9 @@
   "item.label.Reference": {
     "message": "레퍼런스",
     "description": "Navbar item with label Reference"
+  },
+  "logo.alt": {
+    "message": "Noxion Logo",
+    "description": "The alt text of navbar logo"
   }
 }
