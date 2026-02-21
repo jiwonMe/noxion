@@ -1,6 +1,7 @@
 "use client";
 
-import { NoxionThemeProvider, defaultTheme, Header, Footer } from "@noxion/renderer";
+import { NoxionThemeProvider, Header, Footer, BlogLayout } from "@noxion/renderer";
+import { themeDefault } from "@noxion/theme-default";
 
 interface ProvidersProps {
   siteName: string;
@@ -9,37 +10,33 @@ interface ProvidersProps {
 }
 
 export function Providers({ siteName, author, children }: ProvidersProps) {
+  const SiteHeader = () => (
+    <Header
+      siteName={siteName}
+      navigation={[{ label: "Home", href: "/" }]}
+    />
+  );
+
+  const SiteFooter = () => (
+    <Footer siteName={siteName} author={author} />
+  );
+
   return (
-    <NoxionThemeProvider theme={defaultTheme}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
+    <NoxionThemeProvider
+      themePackage={themeDefault}
+      slots={{
+        header: SiteHeader,
+        footer: SiteFooter,
+      }}
+    >
+      <BlogLayout
+        slots={{
+          header: SiteHeader,
+          footer: SiteFooter,
         }}
       >
-        <Header
-          siteName={siteName}
-          navigation={[
-            { label: "Home", href: "/" },
-          ]}
-        />
-        <main
-          style={{
-            flex: 1,
-            width: "100%",
-            maxWidth: "var(--noxion-content-width, 720px)",
-            margin: "0 auto",
-            padding: "2rem 1.5rem",
-          }}
-        >
-          {children}
-        </main>
-        <Footer
-          siteName={siteName}
-          author={author}
-        />
-      </div>
+        {children}
+      </BlogLayout>
     </NoxionThemeProvider>
   );
 }
