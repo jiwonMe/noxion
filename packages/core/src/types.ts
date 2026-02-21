@@ -63,6 +63,29 @@ export interface NoxionPageData {
 
 export type PluginConfig = PluginConfigEntry;
 
-export type NoxionThemeConfig = unknown;
+export interface NoxionThemeConfig {
+  themePackage?: string;
+  tokens?: {
+    colors?: Record<string, string>;
+    fonts?: Record<string, string>;
+    spacing?: Record<string, string>;
+    shadows?: Record<string, string>;
+    transitions?: Record<string, string>;
+    breakpoints?: Record<string, string>;
+    borderRadius?: string;
+  };
+  slots?: Record<string, unknown>;
+}
 
-export type ComponentOverrides = unknown;
+export interface ComponentOverrides {
+  Header?: unknown;
+  Footer?: unknown;
+  PostCard?: unknown;
+  PostList?: unknown;
+  NotionPage?: unknown;
+  TOC?: unknown;
+  Search?: unknown;
+  TagFilter?: unknown;
+  NotionBlock?: Record<string, unknown>;
+  [key: string]: unknown;
+}

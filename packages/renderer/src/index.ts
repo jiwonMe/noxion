@@ -4,10 +4,19 @@ export { resolveComponents } from "./theme/component-resolver";
 export {
   NoxionThemeProvider,
   useNoxionTheme,
+  useNoxionTokens,
   useNoxionComponents,
   useNoxionLayout,
+  useNoxionSlots,
+  useNoxionTemplate,
 } from "./theme/ThemeProvider";
 export type { NoxionThemeProviderProps } from "./theme/ThemeProvider";
+
+export { resolveSlots } from "./theme/slot-resolver";
+export { resolveTemplate } from "./theme/template-resolver";
+
+export { BaseLayout, BlogLayout, DocsLayout, MagazineLayout } from "./layouts";
+export { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
 export type {
   NoxionTheme,
   NoxionThemeColors,
