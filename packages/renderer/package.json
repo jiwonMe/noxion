@@ -18,11 +18,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "katex": "^0.16.28",
+    "notion-types": "^7.8.2",
+    "prismjs": "^1.30.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-notion-x": "^7.8.2"
   },
   "devDependencies": {
     "@types/bun": "^1.2.0",
+    "@types/katex": "^0.16.8",
+    "@types/prismjs": "^1.26.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.7.0"
