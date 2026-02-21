@@ -23,6 +23,13 @@ import { EmbedBlock } from "./blocks/embed";
 import { BookmarkBlock } from "./blocks/bookmark";
 import { FileBlock } from "./blocks/file";
 import { PdfBlock } from "./blocks/pdf";
+import { TableBlock } from "./blocks/table";
+import { ColumnListBlock } from "./blocks/column-list";
+import { ColumnBlock } from "./blocks/column";
+import { SyncedContainerBlock, SyncedReferenceBlock } from "./blocks/synced-block";
+import { AliasBlock } from "./blocks/alias";
+import { TableOfContentsBlock } from "./blocks/table-of-contents";
+import { CollectionViewPlaceholder } from "./blocks/collection-view-placeholder";
 
 const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = {
   text: TextBlock,
@@ -56,6 +63,18 @@ const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = 
   bookmark: BookmarkBlock,
   file: FileBlock,
   pdf: PdfBlock,
+  table: TableBlock,
+  table_row: TextBlock,
+  column_list: ColumnListBlock,
+  column: ColumnBlock,
+  transclusion_container: SyncedContainerBlock,
+  transclusion_reference: SyncedReferenceBlock,
+  alias: AliasBlock,
+  table_of_contents: TableOfContentsBlock,
+  collection_view: CollectionViewPlaceholder,
+  collection_view_page: CollectionViewPlaceholder,
+  breadcrumb: DividerBlock,
+  external_object_instance: EmbedBlock,
 };
 
 export interface NotionBlockRendererProps {

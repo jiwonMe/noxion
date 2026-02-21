@@ -36,6 +36,14 @@ export {
   BookmarkBlock,
   FileBlock,
   PdfBlock,
+  TableBlock,
+  ColumnListBlock,
+  ColumnBlock,
+  SyncedContainerBlock,
+  SyncedReferenceBlock,
+  AliasBlock,
+  TableOfContentsBlock,
+  CollectionViewPlaceholder,
 } from "./blocks";
 
 export { InlineEquation } from "./components/inline-equation";
