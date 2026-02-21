@@ -1,0 +1,63 @@
+{
+  "name": "@noxion/theme-default",
+  "version": "0.0.2",
+  "description": "Default theme package for Noxion — Notion-powered blog builder",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./styles/theme.css"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "styles/**/*.css"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "blog",
+    "theme",
+    "noxion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/theme-default"
+  },
+  "homepage": "https://github.com/jiwonme/noxion#readme",
+  "bugs": {
+    "url": "https://github.com/jiwonme/noxion/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@noxion/renderer": ">=0.0.2",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@noxion/renderer": "workspace:*",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "typescript": "^5.7.0",
+    "@types/bun": "^1.2.0"
+  }
+}

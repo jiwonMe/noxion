@@ -1,0 +1,13 @@
+:root {
+  --noxion-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --noxion-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --noxion-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --noxion-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --noxion-transition-fast: 150ms ease;
+  --noxion-transition-normal: 250ms ease;
+  --noxion-transition-slow: 350ms ease;
+  --noxion-breakpoint-sm: 640px;
+  --noxion-breakpoint-md: 768px;
+  --noxion-breakpoint-lg: 1024px;
+  --noxion-breakpoint-xl: 1280px;
+}

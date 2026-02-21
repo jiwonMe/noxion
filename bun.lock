@@ -123,6 +123,21 @@
         "react-dom": ">=18.0.0",
       },
     },
+    "packages/theme-default": {
+      "name": "@noxion/theme-default",
+      "version": "0.0.2",
+      "devDependencies": {
+        "@noxion/renderer": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "@types/react": "^19.2.14",
+        "react": "^19.2.4",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/renderer": ">=0.0.2",
+        "react": ">=18.0.0",
+      },
+    },
   },
   "packages": {
     "@algolia/abtesting": ["@algolia/abtesting@1.15.0", "", { "dependencies": { "@algolia/client-common": "5.49.0", "@algolia/requester-browser-xhr": "5.49.0", "@algolia/requester-fetch": "5.49.0", "@algolia/requester-node-http": "5.49.0" } }, "sha512-D1QZ8dQx5zC9yrxNao9ER9bojmmzUdL1i2P9waIRiwnZ5fI26YswcCd6VHR/Q4W3PASfVf2My4YQ2FhGGDewTQ=="],
@@ -716,6 +731,8 @@
     "@noxion/core": ["@noxion/core@workspace:packages/core"],
 
     "@noxion/renderer": ["@noxion/renderer@workspace:packages/renderer"],
+
+    "@noxion/theme-default": ["@noxion/theme-default@workspace:packages/theme-default"],
 
     "@noxion/web": ["@noxion/web@workspace:apps/web"],
 
