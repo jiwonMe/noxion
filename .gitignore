@@ -32,3 +32,4 @@ coverage/
 
 # Misc
 *.tsbuildinfo
+apps/docs/build
