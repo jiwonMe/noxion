@@ -67,7 +67,6 @@ export default async function PostPage({
         fullPage
         previewImages
         showTableOfContents
-        mapPageUrl={(pageId: string) => `/${pageId}`}
       />
     </article>
   );
