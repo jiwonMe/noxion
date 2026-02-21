@@ -1,42 +1,16 @@
 import type { HeaderProps } from "../theme/types";
 
-export function Header({ siteName, navigation = [] }: HeaderProps) {
+export function Header({ siteName, navigation = [], className }: HeaderProps & { className?: string }) {
   return (
-    <header
-      className="noxion-header"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "1rem 1.5rem",
-        borderBottom: "1px solid var(--noxion-border, #e5e5e5)",
-        backgroundColor: "var(--noxion-background, #fff)",
-      }}
-    >
-      <a
-        href="/"
-        style={{
-          fontSize: "1.25rem",
-          fontWeight: 700,
-          color: "var(--noxion-foreground, #000)",
-          textDecoration: "none",
-        }}
-      >
+    <header className={className ? `noxion-header ${className}` : "noxion-header"}>
+      <a href="/" className="noxion-header__logo">
         {siteName}
       </a>
 
       {navigation.length > 0 && (
-        <nav style={{ display: "flex", gap: "1.5rem" }}>
+        <nav className="noxion-header__nav">
           {navigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--noxion-mutedForeground, #737373)",
-                textDecoration: "none",
-              }}
-            >
+            <a key={item.href} href={item.href} className="noxion-header__nav-link">
               {item.label}
             </a>
           ))}

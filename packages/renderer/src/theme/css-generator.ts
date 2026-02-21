@@ -1,4 +1,4 @@
-import type { NoxionTheme } from "./types";
+import type { NoxionTheme, NoxionThemeTokens, NoxionThemePackage } from "./types";
 
 export function generateCSSVariables(theme: NoxionTheme): string {
   const lightVars = buildVariables(theme);
@@ -10,6 +10,24 @@ export function generateCSSVariables(theme: NoxionTheme): string {
       ...theme.dark,
       name: theme.name,
     } as NoxionTheme);
+    css += `\n[data-theme="dark"] {\n${darkVars}}\n`;
+  }
+
+  return css;
+}
+
+export function generateThemeStylesheet(themePackage: NoxionThemePackage): string {
+  const tokens = themePackage.tokens;
+  const lightVars = buildTokenVariables(tokens);
+  let css = `:root {\n${lightVars}}\n`;
+
+  if (tokens.dark) {
+    const darkTokens: NoxionThemeTokens = {
+      ...tokens,
+      ...tokens.dark,
+      name: tokens.name,
+    } as NoxionThemeTokens;
+    const darkVars = buildTokenVariables(darkTokens);
     css += `\n[data-theme="dark"] {\n${darkVars}}\n`;
   }
 
@@ -42,4 +60,39 @@ function buildVariables(theme: NoxionTheme): string {
   }
 
   return lines.join("\n") + "\n";
+}
+
+function buildTokenVariables(tokens: NoxionThemeTokens): string {
+  let result = buildVariables(tokens);
+  const lines: string[] = [];
+
+  if (tokens.shadows) {
+    for (const [key, value] of Object.entries(tokens.shadows)) {
+      if (value) {
+        lines.push(`  --noxion-shadow-${key}: ${value};`);
+      }
+    }
+  }
+
+  if (tokens.transitions) {
+    for (const [key, value] of Object.entries(tokens.transitions)) {
+      if (value) {
+        lines.push(`  --noxion-transition-${key}: ${value};`);
+      }
+    }
+  }
+
+  if (tokens.breakpoints) {
+    for (const [key, value] of Object.entries(tokens.breakpoints)) {
+      if (value) {
+        lines.push(`  --noxion-breakpoint-${key}: ${value};`);
+      }
+    }
+  }
+
+  if (lines.length > 0) {
+    result = result.trimEnd() + "\n" + lines.join("\n") + "\n";
+  }
+
+  return result;
 }

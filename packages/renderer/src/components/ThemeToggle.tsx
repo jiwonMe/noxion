@@ -16,7 +16,7 @@ const LABELS: Record<ThemePreference, string> = {
 
 const CYCLE: ThemePreference[] = ["system", "light", "dark"];
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { preference, setPreference } = useThemePreference();
 
   const nextPreference = () => {
@@ -31,19 +31,7 @@ export function ThemeToggle() {
       type="button"
       aria-label={`Theme: ${LABELS[preference]}. Click to change.`}
       title={LABELS[preference]}
-      className="noxion-theme-toggle"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "2rem",
-        height: "2rem",
-        borderRadius: "var(--noxion-border-radius, 0.5rem)",
-        border: "1px solid var(--noxion-border, #e5e5e5)",
-        backgroundColor: "transparent",
-        cursor: "pointer",
-        fontSize: "1rem",
-      }}
+      className={className ? `noxion-theme-toggle ${className}` : "noxion-theme-toggle"}
     >
       {ICONS[preference]}
     </button>

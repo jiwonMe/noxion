@@ -6,7 +6,8 @@ import type { SearchProps } from "../theme/types";
 export function Search({
   onSearch,
   placeholder = "Search posts...",
-}: SearchProps) {
+  className,
+}: SearchProps & { className?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -30,40 +31,15 @@ export function Search({
   }, []);
 
   return (
-    <div className="noxion-search" style={{ position: "relative", width: "100%" }}>
+    <div className={className ? `noxion-search ${className}` : "noxion-search"}>
       <input
         ref={inputRef}
         type="text"
         placeholder={placeholder}
         onChange={(e) => handleInput(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "0.5rem 0.75rem",
-          paddingRight: "3rem",
-          borderRadius: "var(--noxion-border-radius, 0.5rem)",
-          border: "1px solid var(--noxion-border, #e5e5e5)",
-          backgroundColor: "var(--noxion-background, #fff)",
-          color: "var(--noxion-foreground, #000)",
-          fontSize: "0.875rem",
-          outline: "none",
-        }}
+        className="noxion-search__input"
       />
-      <kbd
-        style={{
-          position: "absolute",
-          right: "0.5rem",
-          top: "50%",
-          transform: "translateY(-50%)",
-          fontSize: "0.75rem",
-          padding: "0.125rem 0.375rem",
-          borderRadius: "0.25rem",
-          border: "1px solid var(--noxion-border, #e5e5e5)",
-          color: "var(--noxion-mutedForeground, #737373)",
-          pointerEvents: "none",
-        }}
-      >
-        ⌘K
-      </kbd>
+      <kbd className="noxion-search__kbd">⌘K</kbd>
     </div>
   );
 }

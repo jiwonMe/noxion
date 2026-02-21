@@ -1,8 +1,8 @@
 import { describe, it, expect } from "bun:test";
 import { defineTheme, defaultTheme } from "../theme/define-theme";
-import { generateCSSVariables } from "../theme/css-generator";
+import { generateCSSVariables, generateThemeStylesheet } from "../theme/css-generator";
 import { resolveComponents } from "../theme/component-resolver";
-import type { NoxionTheme, ComponentOverrides, HeaderProps } from "../theme/types";
+import type { NoxionTheme, NoxionThemeTokens, NoxionThemePackage, ComponentOverrides, HeaderProps, NoxionTemplateProps, NoxionLayoutProps } from "../theme/types";
 import type { ComponentType } from "react";
 
 describe("defineTheme", () => {
@@ -136,6 +136,98 @@ describe("generateCSSVariables", () => {
     expect(css).toContain("[data-theme=\"dark\"]");
     expect(css).toContain("#0a0a0a");
     expect(css).toContain("#60a5fa");
+  });
+});
+
+describe("generateThemeStylesheet", () => {
+  const mockTokens: NoxionThemeTokens = {
+    name: "test",
+    colors: {
+      primary: "#ff0000",
+      primaryForeground: "#ffffff",
+      background: "#ffffff",
+      foreground: "#000000",
+      muted: "#f5f5f5",
+      mutedForeground: "#737373",
+      border: "#e5e5e5",
+      accent: "#f5f5f5",
+      accentForeground: "#171717",
+      card: "#ffffff",
+      cardForeground: "#000000",
+    },
+    shadows: {
+      sm: "0 1px 2px rgba(0,0,0,0.05)",
+      lg: "0 10px 15px rgba(0,0,0,0.1)",
+    },
+    transitions: {
+      fast: "150ms ease",
+      normal: "200ms ease",
+    },
+    breakpoints: {
+      sm: "640px",
+      lg: "1024px",
+    },
+  };
+
+  const MockComponent = (() => null) as ComponentType<any>;
+
+  const mockPackage: NoxionThemePackage = {
+    name: "test-theme",
+    tokens: mockTokens,
+    layouts: {},
+    templates: {},
+    components: {},
+  };
+
+  it("generates shadow variables", () => {
+    const css = generateThemeStylesheet(mockPackage);
+    expect(css).toContain("--noxion-shadow-sm");
+    expect(css).toContain("--noxion-shadow-lg");
+  });
+
+  it("generates transition variables", () => {
+    const css = generateThemeStylesheet(mockPackage);
+    expect(css).toContain("--noxion-transition-fast");
+    expect(css).toContain("--noxion-transition-normal");
+  });
+
+  it("generates breakpoint variables", () => {
+    const css = generateThemeStylesheet(mockPackage);
+    expect(css).toContain("--noxion-breakpoint-sm");
+    expect(css).toContain("--noxion-breakpoint-lg");
+  });
+
+  it("still includes base color variables", () => {
+    const css = generateThemeStylesheet(mockPackage);
+    expect(css).toContain("--noxion-primary: #ff0000");
+    expect(css).toContain(":root");
+  });
+
+  it("generates dark mode block when dark tokens exist", () => {
+    const pkgWithDark: NoxionThemePackage = {
+      ...mockPackage,
+      tokens: {
+        ...mockTokens,
+        dark: {
+          colors: {
+            primary: "#00ff00",
+            primaryForeground: "#ffffff",
+            background: "#0a0a0a",
+            foreground: "#fafafa",
+            muted: "#262626",
+            mutedForeground: "#a3a3a3",
+            border: "#262626",
+            accent: "#262626",
+            accentForeground: "#fafafa",
+            card: "#0a0a0a",
+            cardForeground: "#fafafa",
+          },
+        },
+      },
+    };
+    const css = generateThemeStylesheet(pkgWithDark);
+    expect(css).toContain('[data-theme="dark"]');
+    expect(css).toContain("#00ff00");
   });
 });
 

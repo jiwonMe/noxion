@@ -1,5 +1,5 @@
 export { defineTheme, defaultTheme } from "./theme/define-theme";
-export { generateCSSVariables } from "./theme/css-generator";
+export { generateCSSVariables, generateThemeStylesheet } from "./theme/css-generator";
 export { resolveComponents } from "./theme/component-resolver";
 export {
   NoxionThemeProvider,
