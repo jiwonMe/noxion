@@ -47,12 +47,15 @@ export interface FooterProps {
 }
 
 export interface PostCardProps {
+  id: string;
   title: string;
   slug: string;
   date: string;
   tags: string[];
   coverImage?: string;
   category?: string;
+  description?: string;
+  author?: string;
 }
 
 export interface PostListProps {
