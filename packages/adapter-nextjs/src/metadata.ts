@@ -15,7 +15,7 @@ export function generateNoxionMetadata(
   post: BlogPost,
   config: NoxionConfig
 ): Metadata {
-  const title = post.title;
+  const title = `${post.title} | ${config.name}`;
   const description = buildDescription(post, config);
   const url = `https://${config.domain}/${post.slug}`;
 
