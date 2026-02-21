@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     "@noxion/core",
     "@noxion/renderer",
     "@noxion/adapter-nextjs",
-    "react-notion-x",
+    "@noxion/notion-renderer",
     "notion-client",
     "notion-types",
     "notion-utils",
