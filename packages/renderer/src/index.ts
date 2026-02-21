@@ -19,8 +19,25 @@ export type {
   FooterProps,
   PostCardProps,
   PostListProps,
-  NotionPageProps,
   TOCProps,
   SearchProps,
   TagFilterProps,
 } from "./theme/types";
+
+export { NotionPage } from "./components/NotionPage";
+export type { NotionPageProps } from "./components/NotionPage";
+export { PostCard } from "./components/PostCard";
+export { PostList } from "./components/PostList";
+export { Header } from "./components/Header";
+export { Footer } from "./components/Footer";
+export { TagFilter } from "./components/TagFilter";
+export { EmptyState } from "./components/EmptyState";
+export type { EmptyStateProps } from "./components/EmptyState";
+
+export { ThemeToggle } from "./components/ThemeToggle";
+export { TOC } from "./components/TOC";
+export { Search } from "./components/Search";
+
+export { useThemePreference } from "./hooks/useTheme";
+export type { ThemePreference } from "./hooks/useTheme";
+export { useSearch } from "./hooks/useSearch";
