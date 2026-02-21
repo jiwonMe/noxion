@@ -49,8 +49,10 @@ export interface BlogPost {
   tags: string[];
   category?: string;
   coverImage?: string;
+  description?: string;
   published: boolean;
   lastEditedTime: string;
+  frontmatter?: Record<string, string>;
 }
 
 export interface NoxionPageData {

@@ -2,6 +2,7 @@ export { defineConfig, loadConfig } from "./config";
 export { createNotionClient } from "./client";
 export { fetchBlogPosts, fetchPage, fetchAllSlugs, fetchPostBySlug } from "./fetcher";
 export { generateSlug, parseNotionPageId, buildPageUrl, resolveSlug } from "./slug";
+export { parseFrontmatter, parseKeyValuePairs, applyFrontmatter } from "./frontmatter";
 export { extractImageUrls, generateImageFilename, downloadImages } from "./image-downloader";
 export type { DownloadImagesOptions } from "./image-downloader";
 export { mapImages } from "./image-mapper";

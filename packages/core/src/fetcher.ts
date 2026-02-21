@@ -115,7 +115,7 @@ function buildSchemaMap(schema: CollectionPropertySchemaMap): SchemaMap {
     else if (name === "date") map.dateKey = key;
     else if (name === "tags") map.tagsKey = key;
     else if (name === "category") map.categoryKey = key;
-    else if (name === "published") map.publishedKey = key;
+    else if (name === "published" || name === "public") map.publishedKey = key;
     else if (name === "cover") map.coverKey = key;
   }
 
