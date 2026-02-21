@@ -1,6 +1,34 @@
-import { themes as prismThemes } from 'prism-react-renderer';
+import type { PrismTheme } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+
+const notionLightTheme: PrismTheme = {
+  plain: { color: '#37352f', backgroundColor: '#f7f6f3' },
+  styles: [
+    { types: ['comment', 'prolog', 'doctype', 'cdata'], style: { color: 'rgba(55, 53, 47, 0.4)', fontStyle: 'italic' as const } },
+    { types: ['punctuation'], style: { color: 'rgba(55, 53, 47, 0.6)' } },
+    { types: ['property', 'tag', 'boolean', 'number', 'constant', 'symbol'], style: { color: '#0550ae' } },
+    { types: ['selector', 'attr-name', 'string', 'char', 'builtin'], style: { color: '#0a3069' } },
+    { types: ['operator', 'entity', 'url'], style: { color: 'rgba(55, 53, 47, 0.7)' } },
+    { types: ['atrule', 'attr-value', 'keyword'], style: { color: '#cf222e' } },
+    { types: ['function', 'class-name'], style: { color: '#8250df' } },
+    { types: ['regex', 'important', 'variable'], style: { color: '#0550ae' } },
+  ],
+};
+
+const notionDarkTheme: PrismTheme = {
+  plain: { color: '#e6e6e5', backgroundColor: '#2f2f2f' },
+  styles: [
+    { types: ['comment', 'prolog', 'doctype', 'cdata'], style: { color: 'rgba(255, 255, 255, 0.35)', fontStyle: 'italic' as const } },
+    { types: ['punctuation'], style: { color: 'rgba(255, 255, 255, 0.5)' } },
+    { types: ['property', 'tag', 'boolean', 'number', 'constant', 'symbol'], style: { color: '#79c0ff' } },
+    { types: ['selector', 'attr-name', 'string', 'char', 'builtin'], style: { color: '#a5d6ff' } },
+    { types: ['operator', 'entity', 'url'], style: { color: 'rgba(255, 255, 255, 0.6)' } },
+    { types: ['atrule', 'attr-value', 'keyword'], style: { color: '#ff7b72' } },
+    { types: ['function', 'class-name'], style: { color: '#d2a8ff' } },
+    { types: ['regex', 'important', 'variable'], style: { color: '#79c0ff' } },
+  ],
+};
 
 const config: Config = {
   title: 'Noxion',
@@ -131,8 +159,8 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} Noxion. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: notionLightTheme,
+      darkTheme: notionDarkTheme,
       additionalLanguages: ['bash', 'typescript', 'json', 'yaml'],
     },
   } satisfies Preset.ThemeConfig,
