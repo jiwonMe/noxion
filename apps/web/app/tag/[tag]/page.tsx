@@ -37,12 +37,15 @@ export default async function TagPage({
   const filteredPosts = posts
     .filter((p) => p.tags.includes(decodedTag))
     .map((post) => ({
+      id: post.id,
       title: post.title,
       slug: post.slug,
       date: post.date,
       tags: post.tags,
       coverImage: post.coverImage,
       category: post.category,
+      description: post.description,
+      author: post.author,
     }));
 
   return (

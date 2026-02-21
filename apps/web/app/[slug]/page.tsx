@@ -1,7 +1,8 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { NotionPage } from "@noxion/renderer";
-import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD } from "@noxion/adapter-nextjs";
+import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD, generateBreadcrumbLD } from "@noxion/adapter-nextjs";
 import { createNotionClient, parseFrontmatter, applyFrontmatter } from "@noxion/core";
 import { getPostBySlug, getPageRecordMap } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
@@ -53,13 +54,18 @@ export default async function PostPage({
   if (!data) notFound();
 
   const { post, recordMap } = data;
-  const jsonLd = generateBlogPostingLD(post, siteConfig);
+  const blogPostingLd = generateBlogPostingLD(post, siteConfig);
+  const breadcrumbLd = generateBreadcrumbLD(post, siteConfig);
 
   return (
     <article>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <NotionPage
         recordMap={recordMap}
@@ -67,6 +73,7 @@ export default async function PostPage({
         fullPage
         previewImages
         showTableOfContents
+        nextImage={Image}
       />
     </article>
   );
