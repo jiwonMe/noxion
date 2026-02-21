@@ -287,7 +287,7 @@ Parallel Speedup: ~50% faster than sequential
 
 ---
 
-- [ ] 2. @noxion/core — Config System + Types
+- [x] 2. @noxion/core — Config System + Types
 
   **What to do**:
   - `packages/core/src/types.ts` — 공유 타입 정의:

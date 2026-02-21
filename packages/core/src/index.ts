@@ -1,4 +1,6 @@
 export { defineConfig, loadConfig } from "./config";
+export { createNotionClient } from "./client";
+export { fetchBlogPosts, fetchPage, fetchAllSlugs, fetchPostBySlug } from "./fetcher";
 export type {
   NoxionConfig,
   NoxionConfigInput,
@@ -11,3 +13,4 @@ export type {
   ComponentOverrides,
   ExtendedRecordMap,
 } from "./types";
+export type { NotionClientOptions } from "./client";

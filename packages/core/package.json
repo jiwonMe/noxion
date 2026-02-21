@@ -18,7 +18,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "notion-types": "^7.8.2"
+    "notion-client": "^7.8.2",
+    "notion-types": "^7.8.2",
+    "notion-utils": "^7.8.2"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
