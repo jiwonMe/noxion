@@ -31,7 +31,7 @@ const notionDarkTheme: PrismTheme = {
 };
 
 const config: Config = {
-  title: 'Noxion',
+  title: 'Noxion — Notion-powered Blog Builder',
   tagline: 'Notion-powered blog builder for developers',
   favicon: 'img/favicon.svg',
 
