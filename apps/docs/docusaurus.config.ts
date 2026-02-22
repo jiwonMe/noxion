@@ -146,7 +146,7 @@ Key packages:
   ],
 
   themeConfig: {
-    image: 'img/og-card.png',
+    image: 'img/noxion-og.png',
     colorMode: {
       defaultMode: 'light',
       respectPrefersColorScheme: false,
