@@ -146,7 +146,7 @@ html {
   --search-local-highlight-color: rgb(0, 118, 215);
   --search-local-muted-color: rgba(0, 0, 0, 0.4);
   --search-local-spacing: 12px;
-  --search-local-hit-height: 52px;
+  --search-local-hit-height: 64px;
   --search-local-icon-stroke-width: 1.5;
 }
 
@@ -209,7 +209,8 @@ html {
 
 [class*='suggestion'] {
   border-radius: 8px !important;
-  height: var(--search-local-hit-height) !important;
+  min-height: var(--search-local-hit-height) !important;
+  height: auto !important;
 }
 
 [class*='hitTitle'] {
