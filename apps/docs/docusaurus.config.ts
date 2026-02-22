@@ -114,6 +114,7 @@ Key packages:
           'reference/adapter-nextjs/structured-data',
           'reference/adapter-nextjs/sitemap',
           'reference/cli/create-noxion',
+          'changelog',
         ],
         pathTransformation: {
           ignorePaths: ['docs'],
@@ -168,6 +169,12 @@ Key packages:
           label: 'Reference',
           position: 'left',
           activeBasePath: 'docs/reference',
+        },
+        {
+          to: '/docs/changelog',
+          label: 'Changelog',
+          position: 'left',
+          activeBasePath: 'docs/changelog',
         },
         {
           type: 'localeDropdown',

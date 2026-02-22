@@ -42,6 +42,9 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
+  changelogSidebar: [
+    'changelog',
+  ],
   referenceSidebar: [
     'reference/overview',
     {
