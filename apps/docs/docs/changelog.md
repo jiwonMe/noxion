@@ -10,6 +10,29 @@ All notable changes to the Noxion project are documented here.
 
 ---
 
+## v0.1.1
+
+**Released: 2026-02-22**
+
+Patch release focused on `@noxion/notion-renderer` rendering quality and a new sticky TOC feature.
+
+### Fixed
+
+- **3+ column layout overflow** — added `min-width: 0` and `overflow: hidden` to `.noxion-column`, preventing flex items from exceeding container width when using 3 or more columns.
+- **Image sizing in columns** — changed inline `width` to `maxWidth` on image figures so they shrink to fit narrow column containers while respecting the original Notion-specified width as a cap.
+- **Caption word-break** — replaced `word-break: break-word` with `overflow-wrap: break-word` on image captions for proper word-boundary line wrapping.
+- **Frontmatter code block visible** — the first code block used for frontmatter key:value pairs is now automatically hidden from rendered output.
+
+### New
+
+- **Sticky TOC sidebar** (`floatFirstTOC: right`) — when this frontmatter property is set, the inline `table_of_contents` block is hidden and replaced with a sticky sidebar TOC positioned to the right of the content area. Features active heading tracking on scroll with a 40% viewport threshold. Automatically hidden below 1280px screen width.
+
+### Improved
+
+- **Base typography** — default `line-height` changed from 1.5 to 1.6, added `letter-spacing: -0.01em` for tighter body text.
+
+---
+
 ## v0.1.0
 
 **Released: 2026-02-22**
