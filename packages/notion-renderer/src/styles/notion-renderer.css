@@ -1,0 +1,1242 @@
+.noxion-renderer {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--noxion-foreground);
+  font-family: var(--noxion-font-sans);
+  word-break: break-word;
+}
+
+.noxion-renderer *,
+.noxion-renderer *::before,
+.noxion-renderer *::after {
+  box-sizing: border-box;
+}
+
+.noxion-renderer *::selection {
+  background-color: var(--noxion-primary);
+  color: var(--noxion-primaryForeground);
+}
+
+.noxion-renderer > * {
+  padding: 3px 0;
+}
+
+.noxion-renderer b,
+.noxion-renderer strong {
+  font-weight: 600;
+}
+
+/* ============================================
+   Page (full-page layout)
+   ============================================ */
+
+.noxion-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  padding-left: calc(min(16px, 8vw));
+  padding-right: calc(min(16px, 8vw));
+  margin: 0 auto;
+}
+
+.noxion-page--full-width {
+  padding-left: calc(min(96px, 8vw));
+  padding-right: calc(min(96px, 8vw));
+}
+
+.noxion-page--small-text {
+  font-size: 14px;
+}
+
+.noxion-page--inline {
+  padding: 0;
+}
+
+.noxion-page__cover {
+  width: 100%;
+  height: 30vh;
+  min-height: 30vh;
+  max-height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.noxion-page__cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noxion-page__main {
+  position: relative;
+  width: 100%;
+  max-width: var(--noxion-spacing-content, 720px);
+  margin: 0 auto;
+  padding-bottom: calc(max(10vh, 120px));
+}
+
+.noxion-page__icon {
+  font-size: 78px;
+  line-height: 1.1;
+  margin-top: -42px;
+  margin-bottom: 8px;
+}
+
+.noxion-page__title {
+  width: 100%;
+  font-size: 2.5em;
+  font-weight: 600;
+  margin: 0 0 20px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.noxion-page__content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   Text block
+   ============================================ */
+
+.noxion-text {
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 3px 2px;
+  margin: 1px 0;
+}
+
+.noxion-text:first-child {
+  margin-top: 2px;
+}
+
+/* ============================================
+   Headings
+   ============================================ */
+
+.noxion-heading {
+  position: relative;
+  display: block;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 3px 2px;
+  margin-bottom: 1px;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  width: 100%;
+}
+
+.noxion-heading--h1 {
+  font-size: 1.875em;
+  margin-top: 1.08em;
+}
+
+.noxion-heading--h1:first-child {
+  margin-top: 0;
+}
+
+.noxion-heading--h2 {
+  font-size: 1.5em;
+  margin-top: 1.1em;
+}
+
+.noxion-heading--h3 {
+  font-size: 1.25em;
+  margin-top: 1em;
+}
+
+/* ============================================
+   Lists (bulleted + numbered)
+   ============================================ */
+
+.noxion-list {
+  margin: 0;
+  margin-block-start: 0.6em;
+  margin-block-end: 0.6em;
+}
+
+.noxion-list--bulleted {
+  list-style-type: disc;
+  padding-inline-start: 1.7em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.noxion-list--numbered {
+  list-style-type: decimal;
+  padding-inline-start: 1.6em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.noxion-list-item {
+  padding: 3px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.noxion-list-item--bulleted {
+  padding-left: 0.1em;
+}
+
+.noxion-list-item--numbered {
+  padding-left: 0.2em;
+}
+
+.noxion-list-item__content {
+  display: inline;
+}
+
+/* Nested list disc progression */
+.noxion-list--bulleted .noxion-list--bulleted {
+  list-style-type: circle;
+}
+
+.noxion-list--bulleted .noxion-list--bulleted .noxion-list--bulleted {
+  list-style-type: square;
+}
+
+/* ============================================
+   To-do
+   ============================================ */
+
+.noxion-to-do {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 3px 0;
+}
+
+.noxion-to-do__checkbox {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.noxion-to-do__checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: default;
+  accent-color: var(--noxion-primary);
+}
+
+.noxion-to-do__content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: calc(1.5em + 6px);
+}
+
+.noxion-to-do--checked .noxion-to-do__content {
+  text-decoration: line-through;
+  opacity: 0.375;
+}
+
+/* ============================================
+   Quote
+   ============================================ */
+
+.noxion-quote {
+  display: block;
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-left: 3px solid currentcolor;
+  padding: 0.2em 0.9em;
+  margin: 6px 0;
+  font-size: 1.2em;
+}
+
+.noxion-quote__content {
+  display: block;
+}
+
+/* ============================================
+   Callout
+   ============================================ */
+
+.noxion-callout {
+  padding: 16px 16px 16px 12px;
+  display: inline-flex;
+  width: 100%;
+  border-radius: var(--noxion-border-radius, 3px);
+  align-items: flex-start;
+  margin: 4px 0;
+  border: 1px solid var(--noxion-border);
+  background-color: var(--noxion-muted);
+}
+
+.noxion-callout__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 1.3em;
+  flex-shrink: 0;
+}
+
+.noxion-callout__content {
+  margin-left: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  width: 100%;
+}
+
+.noxion-callout__content > *:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* ============================================
+   Toggle
+   ============================================ */
+
+.noxion-toggle {
+  width: 100%;
+  padding: 3px 2px;
+}
+
+.noxion-toggle__summary {
+  cursor: pointer;
+  outline: none;
+  padding: 3px 0;
+}
+
+.noxion-toggle__summary::-webkit-details-marker {
+  margin-right: 4px;
+}
+
+.noxion-toggle__content {
+  margin-left: 1.1em;
+}
+
+.noxion-toggle--heading .noxion-heading {
+  display: inline;
+}
+
+/* ============================================
+   Divider
+   ============================================ */
+
+.noxion-divider {
+  width: 100%;
+  margin: 6px 0;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid var(--noxion-border);
+}
+
+/* ============================================
+   Equation (KaTeX)
+   ============================================ */
+
+.noxion-equation {
+  position: relative;
+  display: inline-flex;
+  color: inherit;
+  fill: inherit;
+  border-radius: 3px;
+  transition: background var(--noxion-transition-fast, 120ms ease);
+}
+
+.noxion-equation--block {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 8px;
+  margin: 4px 0;
+}
+
+.noxion-equation--block .katex-display {
+  margin: 0;
+}
+
+.noxion-equation--block .katex-display > .katex {
+  white-space: normal;
+}
+
+.noxion-equation--inline {
+  user-select: all;
+}
+
+.noxion-equation--error,
+.noxion-equation-error {
+  color: #eb5757;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.875em;
+  padding: 2px 4px;
+}
+
+/* ============================================
+   Code block
+   ============================================ */
+
+.noxion-code {
+  position: relative;
+  width: 100%;
+  margin: 4px 0;
+  border-radius: var(--noxion-border-radius, 3px);
+  background: var(--noxion-muted);
+  overflow: hidden;
+}
+
+.noxion-code__header {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  color: var(--noxion-mutedForeground);
+  border-bottom: 1px solid var(--noxion-border);
+}
+
+.noxion-code__language {
+  text-transform: lowercase;
+  font-family: var(--noxion-font-mono);
+}
+
+.noxion-code__body {
+  display: block;
+  width: 100%;
+  padding: 1em;
+  margin: 0;
+  tab-size: 2;
+  overflow-x: auto;
+  font-size: 85%;
+  line-height: 1.6;
+  font-family: var(--noxion-font-mono);
+  background: transparent;
+  color: inherit;
+  border: none;
+}
+
+.noxion-code__body code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background: transparent;
+  padding: 0;
+}
+
+.noxion-code__content {
+  font-family: inherit;
+  white-space: pre;
+}
+
+.noxion-code__caption {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+  line-height: 1.4;
+}
+
+/* ============================================
+   Image
+   ============================================ */
+
+.noxion-image {
+  width: 100%;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.noxion-image--full-width {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.noxion-image--page-width {
+  width: 100%;
+}
+
+.noxion-image__img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 1px;
+  object-fit: cover;
+}
+
+.noxion-image--full-width .noxion-image__img {
+  width: 100%;
+}
+
+.noxion-image__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+  width: 100%;
+  text-align: center;
+}
+
+/* ============================================
+   Video
+   ============================================ */
+
+.noxion-video {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.noxion-video__wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--noxion-border-radius, 3px);
+  background-color: var(--noxion-muted);
+}
+
+.noxion-video__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.noxion-video__player {
+  width: 100%;
+  border-radius: var(--noxion-border-radius, 3px);
+}
+
+.noxion-video__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Audio
+   ============================================ */
+
+.noxion-audio {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.noxion-audio__player {
+  width: 100%;
+}
+
+.noxion-audio__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Embed
+   ============================================ */
+
+.noxion-embed {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.noxion-embed__wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--noxion-border-radius, 3px);
+  background-color: var(--noxion-muted);
+}
+
+.noxion-embed__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.noxion-embed__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Bookmark
+   ============================================ */
+
+.noxion-bookmark {
+  margin: 4px 0;
+  width: 100%;
+}
+
+.noxion-bookmark__link {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  border: 1px solid var(--noxion-border);
+  border-radius: var(--noxion-border-radius, 3px);
+  overflow: hidden;
+  color: inherit;
+  transition: border-color var(--noxion-transition-fast, 120ms ease);
+}
+
+.noxion-bookmark__link:hover {
+  border-color: var(--noxion-mutedForeground);
+}
+
+.noxion-bookmark__content {
+  flex: 4 1 180px;
+  padding: 12px 14px 14px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.noxion-bookmark__title {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 24px;
+  margin-bottom: 2px;
+}
+
+.noxion-bookmark__description {
+  font-size: 0.75rem;
+  line-height: 1.33;
+  color: var(--noxion-mutedForeground);
+  height: 32px;
+  overflow: hidden;
+}
+
+.noxion-bookmark__url {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.noxion-bookmark__icon {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  margin-right: 6px;
+  object-fit: contain;
+}
+
+.noxion-bookmark__link-text {
+  font-size: 0.75rem;
+  line-height: 1.33;
+  color: var(--noxion-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noxion-bookmark__cover {
+  flex: 1 1 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.noxion-bookmark__cover-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noxion-bookmark__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   File
+   ============================================ */
+
+.noxion-file {
+  width: 100%;
+  margin: 1px 0;
+}
+
+.noxion-file__link {
+  display: flex;
+  align-items: center;
+  padding: 3px 2px;
+  border-radius: 3px;
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--noxion-transition-fast, 120ms ease);
+}
+
+.noxion-file__link:hover {
+  background-color: var(--noxion-muted);
+}
+
+.noxion-file__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--noxion-border);
+}
+
+.noxion-file__size {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--noxion-mutedForeground);
+  font-size: 0.75rem;
+  line-height: 1.33;
+  margin-left: 6px;
+}
+
+.noxion-file__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   PDF
+   ============================================ */
+
+.noxion-pdf {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.noxion-pdf__viewer {
+  width: 100%;
+  min-height: 500px;
+  border: 1px solid var(--noxion-border);
+  border-radius: var(--noxion-border-radius, 3px);
+}
+
+.noxion-pdf__caption {
+  padding: 6px 0 6px 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Table (simple — not collection view)
+   ============================================ */
+
+.noxion-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 4px 0;
+  overflow-x: auto;
+  display: block;
+}
+
+.noxion-table__head {
+  display: table-header-group;
+}
+
+.noxion-table__body {
+  display: table-row-group;
+}
+
+.noxion-table__row {
+  display: table-row;
+  border-bottom: 1px solid var(--noxion-border);
+}
+
+.noxion-table__cell {
+  display: table-cell;
+  min-height: 32px;
+  padding: 5px 8px 6px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow: hidden;
+  word-break: break-word;
+  border-right: 1px solid var(--noxion-border);
+  vertical-align: top;
+}
+
+.noxion-table__cell:last-child {
+  border-right: none;
+}
+
+.noxion-table__cell--header {
+  font-weight: 500;
+  color: var(--noxion-mutedForeground);
+  border-bottom: 1px solid var(--noxion-border);
+  background-color: var(--noxion-muted);
+}
+
+.noxion-table__cell--row-header {
+  font-weight: 500;
+}
+
+/* ============================================
+   Columns
+   ============================================ */
+
+.noxion-column-list {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  gap: calc(min(32px, 4vw));
+}
+
+.noxion-column {
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.noxion-column > *:first-child {
+  margin-top: 0;
+}
+
+.noxion-column > *:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .noxion-column-list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .noxion-column {
+    width: 100%;
+    flex: none;
+  }
+}
+
+/* ============================================
+   Synced block
+   ============================================ */
+
+.noxion-synced-block {
+  width: 100%;
+}
+
+.noxion-synced-block--reference {
+  width: 100%;
+}
+
+.noxion-synced-block .noxion-heading {
+  display: block;
+}
+
+/* ============================================
+   Page link (alias / sub-page reference)
+   ============================================ */
+
+.noxion-page-link {
+  display: flex;
+  align-items: center;
+  color: var(--noxion-foreground);
+  text-decoration: none;
+  width: 100%;
+  height: 30px;
+  margin: 1px 0;
+  padding: 3px 2px;
+  border-radius: 3px;
+  transition: background var(--noxion-transition-fast, 120ms ease);
+}
+
+.noxion-page-link:hover {
+  background-color: var(--noxion-muted);
+}
+
+.noxion-page-link__icon {
+  margin-right: 6px;
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.noxion-page-link__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  line-height: 1.3;
+  border-bottom: 1px solid var(--noxion-border);
+}
+
+/* ============================================
+   Table of Contents
+   ============================================ */
+
+.noxion-table-of-contents {
+  width: 100%;
+  margin: 4px 0;
+}
+
+.noxion-table-of-contents__item {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: var(--noxion-foreground);
+  opacity: 0.7;
+  text-decoration: none;
+  transition:
+    background var(--noxion-transition-fast, 120ms ease),
+    opacity var(--noxion-transition-fast, 120ms ease);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 3px;
+}
+
+.noxion-table-of-contents__item:hover {
+  background-color: var(--noxion-muted);
+  opacity: 1;
+}
+
+.noxion-table-of-contents__item--level-1 {
+  padding-left: 6px;
+}
+
+.noxion-table-of-contents__item--level-2 {
+  padding-left: 30px;
+  font-size: 0.8125rem;
+}
+
+.noxion-table-of-contents__item--level-3 {
+  padding-left: 54px;
+  font-size: 0.75rem;
+}
+
+/* ============================================
+   Collection view placeholder
+   ============================================ */
+
+.noxion-collection-view-placeholder {
+  width: 100%;
+  padding: 16px;
+  margin: 4px 0;
+  border: 1px dashed var(--noxion-border);
+  border-radius: var(--noxion-border-radius, 3px);
+  text-align: center;
+}
+
+.noxion-collection-view-placeholder__label {
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Unknown block fallback
+   ============================================ */
+
+.noxion-block--unknown {
+  width: 100%;
+  padding: 3px 2px;
+  margin: 1px 0;
+}
+
+/* ============================================
+   Inline text decorations
+   ============================================ */
+
+.noxion-inline-code {
+  color: #eb5757;
+  padding: 0.2em 0.4em;
+  background: var(--noxion-muted);
+  border-radius: 3px;
+  font-size: 85%;
+  font-family: var(--noxion-font-mono);
+}
+
+.noxion-renderer--dark .noxion-inline-code,
+[data-theme="dark"] .noxion-inline-code {
+  color: #ff7b72;
+}
+
+.noxion-inline-underscore {
+  text-decoration: underline;
+}
+
+.noxion-link {
+  color: inherit;
+  word-break: break-word;
+  text-decoration: inherit;
+  border-bottom: 0.05em solid;
+  border-color: var(--noxion-mutedForeground);
+  opacity: 0.7;
+  transition:
+    border-color var(--noxion-transition-fast, 100ms ease),
+    opacity var(--noxion-transition-fast, 100ms ease);
+}
+
+.noxion-link:hover {
+  border-color: var(--noxion-foreground);
+  opacity: 1;
+}
+
+.noxion-link-mention {
+  border-bottom: 0.05em solid;
+  border-color: var(--noxion-mutedForeground);
+}
+
+.noxion-user-mention {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* ============================================
+   Notion color classes
+   Text colors
+   ============================================ */
+
+.noxion-color--gray {
+  color: rgb(155, 154, 151);
+}
+
+.noxion-color--brown {
+  color: rgb(100, 71, 58);
+}
+
+.noxion-color--orange {
+  color: rgb(217, 115, 13);
+}
+
+.noxion-color--yellow {
+  color: rgb(223, 171, 1);
+}
+
+.noxion-color--green {
+  color: rgb(77, 100, 97);
+}
+
+.noxion-color--blue {
+  color: rgb(11, 110, 153);
+}
+
+.noxion-color--purple {
+  color: rgb(105, 64, 165);
+}
+
+.noxion-color--pink {
+  color: rgb(173, 26, 114);
+}
+
+/* Background colors */
+
+.noxion-color--gray_background {
+  background-color: rgb(235, 236, 237);
+}
+
+.noxion-color--brown_background {
+  background-color: rgb(233, 229, 227);
+}
+
+.noxion-color--orange_background {
+  background-color: rgb(250, 235, 221);
+}
+
+.noxion-color--yellow_background {
+  background-color: rgb(251, 243, 219);
+}
+
+.noxion-color--green_background {
+  background-color: rgb(221, 237, 234);
+}
+
+.noxion-color--blue_background {
+  background-color: rgb(221, 235, 241);
+}
+
+.noxion-color--purple_background {
+  background-color: rgb(234, 228, 242);
+}
+
+.noxion-color--pink_background {
+  background-color: rgb(244, 223, 235);
+}
+
+/* ============================================
+   Dark mode color overrides
+   Dual selector: .noxion-renderer--dark (prop-driven)
+   + [data-theme="dark"] (theme-system-driven)
+   ============================================ */
+
+.noxion-renderer--dark .noxion-color--gray,
+[data-theme="dark"] .noxion-color--gray {
+  color: rgba(151, 154, 155, 0.95);
+}
+
+.noxion-renderer--dark .noxion-color--brown,
+[data-theme="dark"] .noxion-color--brown {
+  color: rgb(147, 114, 100);
+}
+
+.noxion-renderer--dark .noxion-color--orange,
+[data-theme="dark"] .noxion-color--orange {
+  color: rgb(255, 163, 68);
+}
+
+.noxion-renderer--dark .noxion-color--yellow,
+[data-theme="dark"] .noxion-color--yellow {
+  color: rgb(255, 220, 73);
+}
+
+.noxion-renderer--dark .noxion-color--green,
+[data-theme="dark"] .noxion-color--green {
+  color: rgb(77, 171, 154);
+}
+
+.noxion-renderer--dark .noxion-color--blue,
+[data-theme="dark"] .noxion-color--blue {
+  color: rgb(82, 156, 202);
+}
+
+.noxion-renderer--dark .noxion-color--purple,
+[data-theme="dark"] .noxion-color--purple {
+  color: rgb(154, 109, 215);
+}
+
+.noxion-renderer--dark .noxion-color--pink,
+[data-theme="dark"] .noxion-color--pink {
+  color: rgb(226, 85, 161);
+}
+
+.noxion-renderer--dark .noxion-color--gray_background,
+[data-theme="dark"] .noxion-color--gray_background {
+  background-color: rgb(69, 75, 78);
+}
+
+.noxion-renderer--dark .noxion-color--brown_background,
+[data-theme="dark"] .noxion-color--brown_background {
+  background-color: rgb(67, 64, 64);
+}
+
+.noxion-renderer--dark .noxion-color--orange_background,
+[data-theme="dark"] .noxion-color--orange_background {
+  background-color: rgb(89, 74, 58);
+}
+
+.noxion-renderer--dark .noxion-color--yellow_background,
+[data-theme="dark"] .noxion-color--yellow_background {
+  background-color: rgb(89, 86, 59);
+}
+
+.noxion-renderer--dark .noxion-color--green_background,
+[data-theme="dark"] .noxion-color--green_background {
+  background-color: rgb(53, 76, 75);
+}
+
+.noxion-renderer--dark .noxion-color--blue_background,
+[data-theme="dark"] .noxion-color--blue_background {
+  background-color: rgb(54, 73, 84);
+}
+
+.noxion-renderer--dark .noxion-color--purple_background,
+[data-theme="dark"] .noxion-color--purple_background {
+  background-color: rgb(68, 63, 87);
+}
+
+.noxion-renderer--dark .noxion-color--pink_background,
+[data-theme="dark"] .noxion-color--pink_background {
+  background-color: rgb(83, 59, 76);
+}
+
+.noxion-renderer--dark .noxion-equation--error,
+.noxion-renderer--dark .noxion-equation-error,
+[data-theme="dark"] .noxion-equation--error,
+[data-theme="dark"] .noxion-equation-error {
+  color: #ff7b72;
+}
+
+/* ============================================
+   Responsive adjustments
+   ============================================ */
+
+@media (max-width: 768px) {
+  .noxion-page__title {
+    font-size: 2em;
+  }
+
+  .noxion-page__icon {
+    font-size: 60px;
+    margin-top: -32px;
+  }
+
+  .noxion-heading--h1 {
+    font-size: 1.625em;
+  }
+
+  .noxion-heading--h2 {
+    font-size: 1.375em;
+  }
+
+  .noxion-heading--h3 {
+    font-size: 1.125em;
+  }
+
+  .noxion-bookmark__cover {
+    display: none;
+  }
+}
+
+@media (max-width: 320px) {
+  .noxion-renderer {
+    font-size: 14px;
+  }
+
+  .noxion-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .noxion-code__body {
+    padding: 0.75em;
+    font-size: 80%;
+  }
+}
