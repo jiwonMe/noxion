@@ -3,6 +3,7 @@ set -e
 
 PACKAGES=(
   "packages/core"
+  "packages/notion-renderer"
   "packages/adapter-nextjs"
   "packages/renderer"
   "packages/create-noxion"
