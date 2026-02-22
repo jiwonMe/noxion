@@ -29,7 +29,7 @@ Noxion solves every one of these. The key architectural decisions:
 
 Noxion uses the **unofficial Notion API** — the same JSON endpoints that power Notion's own web app. This gives significantly richer data access compared to the [official public API](https://developers.notion.com/), including full block tree data with inline styles, collection views, nested page structures, and more.
 
-The trade-off is that this API is undocumented and could change without notice. In practice, the broader ecosystem (react-notion-x, notion-py, etc.) has been stable for years as Notion relies on it for their own app.
+The trade-off is that this API is undocumented and could change without notice. In practice, the broader ecosystem (`notion-client`, `notion-types`, etc.) has been stable for years as Notion relies on it for their own app.
 
 ### ISR (Incremental Static Regeneration)
 
@@ -50,6 +50,8 @@ Notion's official API returns presigned S3 URLs that expire in ~1 hour — unusa
 | **Full SEO stack** | Open Graph, Twitter Cards, JSON-LD (BlogPosting, BreadcrumbList, WebSite + SearchAction), RSS 2.0, XML sitemap, robots.txt — all generated automatically from your Notion data |
 | **Image optimization** | AVIF/WebP auto-conversion via `next/image`, with stable non-expiring proxy URLs. Optional build-time download for full offline independence |
 | **Plugin system** | Analytics (Google, Plausible, Umami), RSS, comments (Giscus, Utterances, Disqus) — each a one-liner in config |
+| **Syntax highlighting** | VS Code-quality code blocks via [Shiki](https://shiki.style) with dual-theme support — no client-side JS |
+| **Math equations** | KaTeX SSR — equations rendered server-side, zero client-side math runtime |
 | **CSS variable theming** | Light/dark/system modes out of the box. Fully customizable without a build step |
 | **Deploy anywhere** | Vercel (one-click), Docker, static export |
 
@@ -62,13 +64,14 @@ Noxion is a **monorepo of composable npm packages**:
 ```
 noxion/
 ├── packages/
-│   ├── @noxion/core            — data fetching, config, plugin system, types
-│   ├── @noxion/renderer        — React components (PostList, NotionPage, ThemeProvider)
-│   ├── @noxion/adapter-nextjs  — SEO utilities (Metadata, JSON-LD, sitemap, robots)
-│   └── create-noxion           — CLI scaffolding tool
+│   ├── @noxion/core              — data fetching, config, plugin system, types
+│   ├── @noxion/notion-renderer   — Notion block renderer (KaTeX SSR, Shiki syntax highlighting)
+│   ├── @noxion/renderer          — React components (PostList, NotionPage, ThemeProvider)
+│   ├── @noxion/adapter-nextjs    — SEO utilities (Metadata, JSON-LD, sitemap, robots)
+│   └── create-noxion             — CLI scaffolding tool
 └── apps/
-    ├── docs/                   — This documentation site (Docusaurus)
-    └── web/                    — Demo/reference Next.js blog
+    ├── docs/                     — This documentation site (Docusaurus)
+    └── web/                      — Demo/reference Next.js blog
 ```
 
 ### Data flow
@@ -87,6 +90,7 @@ Notion database
 Next.js App Router (ISR, revalidate: 3600)
     │
     ├─ @noxion/adapter-nextjs → generateMetadata(), JSON-LD, sitemap
+    ├─ @noxion/notion-renderer → Block rendering (30+ types), KaTeX SSR, Shiki
     └─ @noxion/renderer → <NotionPage />, <PostList />, ThemeProvider
 ```
 

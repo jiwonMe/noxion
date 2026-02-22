@@ -221,29 +221,35 @@ The frontmatter code block is **visible** in your Notion page but hidden in the 
 
 ## Supported Notion block types
 
-Noxion uses [`react-notion-x`](https://github.com/NotionX/react-notion-x) for rendering, which supports the full range of Notion block types:
+Noxion uses its own block renderer ([`@noxion/notion-renderer`](https://github.com/jiwonme/noxion/tree/main/packages/notion-renderer)) which supports 30+ Notion block types:
 
 | Block type | Rendered as |
 |------------|-------------|
-| Paragraph | `<p>` |
-| Heading 1/2/3 | `<h1>` / `<h2>` / `<h3>` |
-| Bulleted list | `<ul><li>` |
-| Numbered list | `<ol><li>` |
-| Toggle | `<details><summary>` |
+| Paragraph | `<p>` with full rich text (bold, italic, code, color, links, mentions) |
+| Heading 1/2/3 | `<h1>` / `<h2>` / `<h3>` with anchor links |
+| Bulleted list | `<ul><li>` with nested list support |
+| Numbered list | `<ol><li>` with nested list support |
+| To-do list | Checkbox list with checked/unchecked states |
+| Toggle | `<details><summary>` with animated expand/collapse |
 | Quote | `<blockquote>` |
-| Callout | Styled callout box with emoji |
-| Code block | Syntax-highlighted code (with copy button) |
-| Image | Optimized via `next/image` |
+| Callout | Styled callout box with emoji/icon |
+| Code block | Syntax-highlighted via [Shiki](https://shiki.style) (38 languages, dual light/dark themes, VS Code quality) |
+| Image | Optimized via `notion.so/image/` proxy URLs |
 | Divider | `<hr>` |
-| Table | HTML table |
+| Table | HTML `<table>` with header row support |
+| Column layout | Multi-column flex layout |
 | Embed | iFrame embed |
-| Video | HTML5 `<video>` or YouTube embed |
-| PDF | PDF embed |
-| File | Download link |
-| Equation (inline/block) | KaTeX |
-| Mention | Linked page reference |
-| Synced blocks | Rendered inline |
+| Video | HTML5 `<video>` or YouTube/Vimeo embed |
+| Audio | HTML5 `<audio>` player |
+| PDF | Embedded PDF viewer |
+| File | Download link with file metadata |
+| Bookmark | Rich link card with title, description, and icon |
+| Equation (block) | Server-side KaTeX rendering (zero client JS) |
+| Equation (inline) | Inline KaTeX within rich text |
+| Mention | Page, user, date, and database mentions |
+| Synced blocks | Rendered inline with source content |
+| Table of contents | Auto-generated from page headings |
 
 :::note Inline databases
-Inline databases and linked database views inside a post are **not** rendered. Only the primary content blocks are supported.
+Inline databases (collection views) inside a post are rendered as a placeholder. Full collection view support is planned for a future release.
 :::

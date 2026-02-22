@@ -199,7 +199,7 @@ export default async function PostPage({ params }) {
 
 ## `fetchPage()`
 
-Fetches the full block data (`ExtendedRecordMap`) for a single Notion page. This is the data needed to render a Notion page with `react-notion-x`.
+Fetches the full block data (`ExtendedRecordMap`) for a single Notion page. This is the data needed to render a Notion page with `@noxion/notion-renderer`.
 
 ### Signature
 
@@ -243,7 +243,6 @@ export default async function PostPage({ params }) {
     <NotionPage
       recordMap={recordMap}
       rootPageId={post.id}
-      nextImage={Image}
     />
   );
 }

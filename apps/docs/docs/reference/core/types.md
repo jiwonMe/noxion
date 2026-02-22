@@ -213,7 +213,7 @@ Combines a `BlogPost` with its `ExtendedRecordMap` for rendering.
 
 ```ts
 interface NoxionPageData {
-  /** Full Notion block data for rendering with react-notion-x */
+  /** Full Notion block data for rendering with @noxion/notion-renderer */
   recordMap: ExtendedRecordMap;
 
   /** Normalized post metadata */
@@ -243,7 +243,7 @@ The type includes:
 - `notion_user` — user data
 - `signed_urls` — Notion image proxy URLs
 
-This type is opaque for most use cases — you pass it directly to `<NotionPage recordMap={...} />` and let `react-notion-x` handle rendering.
+This type is opaque for most use cases — you pass it directly to `<NotionPage recordMap={...} />` and let `@noxion/notion-renderer` handle rendering.
 
 ---
 

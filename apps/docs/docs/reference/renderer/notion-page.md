@@ -9,7 +9,13 @@ description: "@noxion/renderer NotionPage component — renders a full Notion pa
 import { NotionPage } from "@noxion/renderer";
 ```
 
-Renders a complete Notion page using [`react-notion-x`](https://github.com/NotionX/react-notion-x). This is a **Client Component** (`"use client"`), meaning it runs in the browser. The data fetching (`fetchPage()`) should happen in a Server Component; the rendering happens client-side.
+Renders a complete Notion page using [`@noxion/notion-renderer`](https://github.com/jiwonme/noxion/tree/main/packages/notion-renderer). This is a **Client Component** (`"use client"`), meaning it runs in the browser. The data fetching (`fetchPage()`) should happen in a Server Component; the rendering happens client-side.
+
+The component automatically handles:
+- **Dark mode detection** — observes `data-theme` on `<html>` via MutationObserver
+- **Shiki syntax highlighting** — initializes asynchronously with dual-theme support (light + dark)
+- **Image URL mapping** — converts Notion image URLs to stable `notion.so/image/` proxy URLs
+- **KaTeX equations** — rendered server-side via `katex.renderToString()` (zero client-side math JS)
 
 ---
 
@@ -20,12 +26,9 @@ Renders a complete Notion page using [`react-notion-x`](https://github.com/Notio
 | `recordMap` | `ExtendedRecordMap` | ✅ | — | Full page data from `fetchPage()`. Contains all blocks, images, and metadata. |
 | `rootPageId` | `string` | — | `undefined` | The root page ID. Used to resolve internal links to other Notion pages. Should be `post.id`. |
 | `fullPage` | `boolean` | — | `true` | When `true`, renders the full page with the page title header. When `false`, renders only the page body blocks. |
-| `darkMode` | `boolean` | — | auto | Force dark mode rendering. If not provided, auto-detects from `useNoxionTheme()`. |
-| `previewImages` | `boolean` | — | `false` | Enable blur-up image preview (requires `next/image` with placeholder support). |
-| `showTableOfContents` | `boolean` | — | `false` | Show a table of contents sidebar. Only appears if the page has headings. |
-| `minTableOfContentsItems` | `number` | — | `3` | Minimum number of heading items required before TOC is shown. |
+| `darkMode` | `boolean` | — | auto | Force dark mode rendering. If not provided, auto-detects from `document.documentElement.dataset.theme`. |
+| `previewImages` | `boolean` | — | `false` | Enable blur-up image preview. |
 | `pageUrlPrefix` | `string` | — | `"/"` | URL prefix for internal Notion page links. Set to `"/"` to route sub-pages to your app. |
-| `nextImage` | `ComponentType` | — | `undefined` | Pass `next/image` to enable AVIF/WebP optimization for inline images. |
 | `className` | `string` | — | `undefined` | CSS class applied to the outer wrapper `<div>`. |
 
 ---
@@ -34,7 +37,6 @@ Renders a complete Notion page using [`react-notion-x`](https://github.com/Notio
 
 ```tsx
 // app/[slug]/page.tsx (Server Component)
-import Image from "next/image";
 import { fetchPage } from "@noxion/core";
 import { NotionPage } from "@noxion/renderer";
 import { notion } from "@/lib/notion";
@@ -49,8 +51,6 @@ export default async function PostPage({ params }) {
       <NotionPage
         recordMap={recordMap}
         rootPageId={post.id}
-        nextImage={Image}
-        showTableOfContents={true}
       />
     </article>
   );
@@ -59,54 +59,35 @@ export default async function PostPage({ params }) {
 
 ---
 
-## `nextImage` prop
+## Syntax highlighting (Shiki)
 
-Pass the `next/image` component to enable **automatic image optimization** for all inline images in the Notion page:
+The component automatically initializes [Shiki](https://shiki.style) for VS Code-quality syntax highlighting with dual-theme support. No configuration is needed.
 
-```tsx
-import Image from "next/image";
+**How it works internally:**
 
-<NotionPage
-  recordMap={recordMap}
-  rootPageId={post.id}
-  nextImage={Image}  // All images → AVIF/WebP + lazy load
-/>
-```
+1. A module-level promise calls `createShikiHighlighter()` once on import
+2. Shiki loads asynchronously with `github-light` and `github-dark` themes
+3. 38 common languages are preloaded (Python, TypeScript, JavaScript, Go, Rust, etc.)
+4. Languages not preloaded fall back to plain text (no error)
+5. Code blocks render as plain text initially, then re-render with syntax highlighting once Shiki is ready
 
-Without this prop, images are rendered as standard `<img>` tags (no optimization). Always pass this in production for better performance.
+The dual-theme output uses CSS variables (`--shiki-dark`) for instant light/dark transitions without re-highlighting.
 
 ---
 
-## Table of Contents
+## Math equations (KaTeX)
 
-Enable the built-in TOC sidebar:
-
-```tsx
-<NotionPage
-  recordMap={recordMap}
-  rootPageId={post.id}
-  showTableOfContents={true}
-  minTableOfContentsItems={2}  // Show TOC if 2+ headings
-/>
-```
-
-The TOC is rendered as a fixed sidebar on desktop and collapses on mobile. It's auto-generated from all `heading_1`, `heading_2`, and `heading_3` blocks in the page.
-
-Alternatively, use frontmatter to control TOC per-post:
-
-```
-# In Notion code block:
-floatFirstTOC: right
-```
+Block equations (`equation` blocks) and inline equations (within rich text) are rendered via `katex.renderToString()` on the server side. No client-side KaTeX JavaScript is needed — only the KaTeX CSS is loaded.
 
 ---
 
 ## Dark mode
 
-The component auto-detects the current theme from `useNoxionTheme()`. You only need to set `darkMode` manually if you're using `<NotionPage>` outside of a `<NoxionThemeProvider>`:
+The component auto-detects the current theme by observing the `data-theme` attribute on `<html>`. This is set by `<ThemeScript>` before React hydrates, so the correct theme is applied immediately.
+
+You only need to set `darkMode` manually if you're using `<NotionPage>` outside of the standard theme system:
 
 ```tsx
-// Manual dark mode control (not recommended — use ThemeProvider)
 <NotionPage
   recordMap={recordMap}
   darkMode={true}
@@ -117,7 +98,7 @@ The component auto-detects the current theme from `useNoxionTheme()`. You only n
 
 ## Image URL handling
 
-Noxion uses `defaultMapImageUrl()` from `notion-utils` to convert all image references to stable `notion.so/image/` proxy URLs at data-fetch time. This means:
+The component automatically applies `defaultMapImageUrl()` from `notion-utils` to all image references, converting them to stable `notion.so/image/` proxy URLs. This means:
 
 1. S3 presigned URLs (which expire in ~1 hour) are **never** used in the rendered output
 2. All image URLs are stable proxy URLs that don't expire
@@ -129,18 +110,18 @@ See [Image Optimization](../../learn/image-optimization) for the full explanatio
 
 ## Supported Notion block types
 
-`react-notion-x` renders the full range of Notion blocks. See [Notion Setup → Supported block types](../../learn/notion-setup#supported-notion-block-types) for the complete list.
+`@noxion/notion-renderer` renders 30+ Notion block types. See [Notion Setup → Supported block types](../../learn/notion-setup#supported-notion-block-types) for the complete list.
 
 ---
 
 ## Custom block renderers
 
-If you need to customize how specific block types are rendered, `react-notion-x` supports component overrides. You can extend `<NotionPage>` in your own wrapper:
+`@noxion/notion-renderer` supports component overrides via the `components` prop on `NotionRenderer`. You can extend `<NotionPage>` in your own wrapper to customize specific block types:
 
 ```tsx
 // components/CustomNotionPage.tsx
 "use client";
-import { NotionPage } from "@noxion/renderer";
+import { NotionRenderer } from "@noxion/notion-renderer";
 import type { ExtendedRecordMap } from "@noxion/core";
 
 interface Props {
@@ -150,15 +131,28 @@ interface Props {
 
 export function CustomNotionPage({ recordMap, pageId }: Props) {
   return (
-    <NotionPage
+    <NotionRenderer
       recordMap={recordMap}
       rootPageId={pageId}
-      nextImage={require("next/image").default}
-      // Add your customizations here
-      className="notion-custom-theme"
+      fullPage={true}
+      darkMode={false}
     />
   );
 }
 ```
 
-For deeper customization of specific block types (e.g., custom code block renderer), refer to the [react-notion-x documentation](https://github.com/NotionX/react-notion-x#props).
+The `NotionRenderer` accepts a `components` object where you can override individual block renderers. See the [`@noxion/notion-renderer` source](https://github.com/jiwonme/noxion/tree/main/packages/notion-renderer) for the full list of overridable components.
+
+---
+
+## CSS styling
+
+All Notion blocks are styled with pure CSS using BEM naming convention (`noxion-{block}__{element}--{modifier}`). Styles are themed via `--noxion-*` CSS custom properties.
+
+Import the styles in your global CSS:
+
+```css
+@import '@noxion/notion-renderer/styles';
+```
+
+See [Themes](../../learn/themes) for customizing colors, fonts, and spacing.

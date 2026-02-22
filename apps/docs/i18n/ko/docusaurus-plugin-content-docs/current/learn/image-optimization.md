@@ -45,6 +45,10 @@ NOXION_DOWNLOAD_IMAGES=true
 
 개발 환경에서는 이 설정과 무관하게 항상 프록시를 사용합니다.
 
+## 인라인 이미지
+
+Notion 페이지 본문에 삽입된 이미지는 `@noxion/notion-renderer`의 이미지 블록 컴포넌트가 렌더링합니다. `<NotionPage>` 컴포넌트가 `mapImageUrl`을 자동으로 연결하여 모든 이미지 참조를 안정적인 `notion.so/image/` 프록시 URL로 변환합니다.
+
 ## 커버 이미지
 
-포스트 커버 이미지는 `notion-utils`의 `defaultMapImageUrl()`을 사용합니다. 이 함수가 `attachment:` 내부 참조를 올바른 프록시 URL로 변환합니다. `fetchBlogPosts()` 내 데이터 페치 시점에 실행됩니다.
+포스트 커버 이미지는 `notion-utils`의 `defaultMapImageUrl()`을 사용합니다. 이 함수가 `attachment:` 내부 참조를 올바른 프록시 URL로 변환합니다. 렌더링 시점에 실행됩니다.

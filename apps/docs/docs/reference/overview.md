@@ -15,6 +15,7 @@ Noxion is distributed as three npm packages plus a CLI scaffolding tool. This se
 | Package | npm | Purpose |
 |---------|-----|---------|
 | [`@noxion/core`](./core/config) | [![npm](https://img.shields.io/npm/v/@noxion/core)](https://www.npmjs.com/package/@noxion/core) | Config, data fetching, plugin system, TypeScript types |
+| `@noxion/notion-renderer` | — | Notion block renderer: 30+ block types, KaTeX SSR, Shiki syntax highlighting |
 | [`@noxion/renderer`](./renderer/notion-page) | [![npm](https://img.shields.io/npm/v/@noxion/renderer)](https://www.npmjs.com/package/@noxion/renderer) | React components for rendering Notion content and blog UI |
 | [`@noxion/adapter-nextjs`](./adapter-nextjs/metadata) | [![npm](https://img.shields.io/npm/v/@noxion/adapter-nextjs)](https://www.npmjs.com/package/@noxion/adapter-nextjs) | Next.js App Router integration: metadata, JSON-LD, sitemap, robots |
 | [`create-noxion`](./cli/create-noxion) | [![npm](https://img.shields.io/npm/v/create-noxion)](https://www.npmjs.com/package/create-noxion) | CLI scaffolding tool (`bun create noxion`) |
@@ -100,7 +101,7 @@ bun add @noxion/renderer react react-dom
 
 | Export | Description |
 |--------|-------------|
-| [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page via `react-notion-x` |
+| [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page via `@noxion/notion-renderer` |
 | [`<PostList />`](./renderer/post-list) | Responsive grid of `<PostCard>` components |
 | [`<PostCard />`](./renderer/post-card) | Single post card with cover, title, date, tags |
 | [`<NoxionThemeProvider />`](./renderer/theme-provider) | Theme context provider (required wrapper) |
@@ -164,11 +165,14 @@ bun add @noxion/adapter-nextjs @noxion/core
             └── notion-types  (TypeScript types)
 
 @noxion/renderer
-    └── react-notion-x (Notion page renderer)
+    └── @noxion/notion-renderer (Notion block rendering)
+            └── katex     (equation SSR)
+            └── shiki     (syntax highlighting)
     └── notion-types
+    └── notion-utils
 ```
 
-These are the only significant runtime dependencies. Noxion intentionally keeps the dependency tree small.
+These are the only significant runtime dependencies. Noxion intentionally keeps the dependency tree small. The `@noxion/notion-renderer` package replaced the previous `react-notion-x` dependency, giving full control over rendering and styling.
 
 ---
 

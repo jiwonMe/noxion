@@ -129,7 +129,6 @@ my-blog/
 │
 ├── noxion.config.ts                # Your site configuration
 ├── next.config.ts                  # Next.js config (image domains, standalone output)
-├── tailwind.config.ts              # Tailwind CSS config (if CSS framework chosen)
 ├── tsconfig.json                   # TypeScript config
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Pre-configured: .env, .next, node_modules
@@ -162,7 +161,7 @@ Post detail component:
 - `generateStaticParams()` pre-renders all posts at build time
 - `generateMetadata()` generates per-post Open Graph / Twitter metadata
 - Fetches post data and page blocks
-- Renders `<NotionPage recordMap={...} nextImage={Image} />`
+- Renders `<NotionPage recordMap={...} />`
 - Injects `BlogPosting` and `BreadcrumbList` JSON-LD
 
 **`lib/notion.ts`**

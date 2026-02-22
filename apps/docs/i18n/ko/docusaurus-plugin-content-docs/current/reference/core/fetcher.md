@@ -77,7 +77,7 @@ async function fetchPage(
 ): Promise<ExtendedRecordMap>
 ```
 
-Notion 페이지의 전체 레코드 맵(블록, 컬렉션, signed URL)을 페치합니다. `react-notion-x`로 렌더링할 때 사용됩니다.
+Notion 페이지의 전체 레코드 맵(블록, 컬렉션, signed URL)을 페치합니다. `@noxion/notion-renderer`로 렌더링할 때 사용됩니다.
 
 ---
 

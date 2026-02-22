@@ -39,7 +39,7 @@ This proxy URL:
 - Is served from Notion's CDN
 - Supports query parameters for width-based resizing
 
-Noxion uses `defaultMapImageUrl()` from the [`notion-utils`](https://www.npmjs.com/package/notion-utils) package (part of the react-notion-x ecosystem) to convert raw S3 URLs into these stable proxy URLs at data-fetch time.
+Noxion uses `defaultMapImageUrl()` from the [`notion-utils`](https://www.npmjs.com/package/notion-utils) package to convert raw S3 URLs into these stable proxy URLs at render time.
 
 ### next/image optimization on top
 
@@ -155,18 +155,17 @@ For best OG/Twitter Card appearance, Notion covers are displayed at `1200×630` 
 Noxion addresses this by:
 
 1. **`next/image` with `fill` layout** — for cover images in `PostCard`, using CSS aspect-ratio containers prevents layout shift
-2. **Width/height from Notion** — for inline images in posts, `react-notion-x` reads the block dimensions from Notion's data and sets explicit `width` and `height` attributes
+2. **Width/height from Notion** — for inline images in posts, `@noxion/notion-renderer` reads the block dimensions from Notion's data and sets explicit `width` and `height` attributes
 
-For custom image blocks without explicit dimensions, `next/image` defaults to `layout="fill"` with a fixed container, which prevents CLS at the cost of some layout flexibility.
+For custom image blocks without explicit dimensions, the renderer uses a fixed aspect-ratio container to prevent CLS.
 
 ---
 
 ## Inline images in posts
 
-Images inserted directly into a Notion page body (via `/image` block or drag-and-drop) are rendered by `react-notion-x`'s `NotionPage` component. Pass `next/image` as the `nextImage` prop to enable optimization:
+Images inserted directly into a Notion page body (via `/image` block or drag-and-drop) are rendered by `@noxion/notion-renderer`'s image block component. The `<NotionPage>` component from `@noxion/renderer` automatically wires `mapImageUrl` to convert all image references to stable `notion.so/image/` proxy URLs:
 
 ```tsx
-import Image from "next/image";
 import { NotionPage } from "@noxion/renderer";
 
 export default function PostPage({ recordMap, post }) {
@@ -174,10 +173,9 @@ export default function PostPage({ recordMap, post }) {
     <NotionPage
       recordMap={recordMap}
       rootPageId={post.id}
-      nextImage={Image}    // ← enables AVIF/WebP for all inline images
     />
   );
 }
 ```
 
-Without `nextImage`, inline images are rendered as plain `<img>` tags without optimization.
+Image URLs are automatically routed through Notion's image proxy for stable, non-expiring access.
