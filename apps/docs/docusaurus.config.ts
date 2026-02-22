@@ -221,7 +221,7 @@ Key packages:
             },
             {
               label: 'npm',
-              href: 'https://www.npmjs.com/package/@noxion/core',
+              href: 'https://www.npmjs.com/org/noxion',
             },
           ],
         },

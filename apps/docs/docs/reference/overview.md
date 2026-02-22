@@ -6,7 +6,7 @@ description: Noxion package API reference — all exports, types, and functions.
 
 # API Reference
 
-Noxion is distributed as three npm packages plus a CLI scaffolding tool. This section provides exhaustive documentation for every exported function, component, hook, and type.
+Noxion is distributed as four npm packages plus a CLI scaffolding tool. This section provides exhaustive documentation for every exported function, component, hook, and type.
 
 ---
 
@@ -15,7 +15,7 @@ Noxion is distributed as three npm packages plus a CLI scaffolding tool. This se
 | Package | npm | Purpose |
 |---------|-----|---------|
 | [`@noxion/core`](./core/config) | [![npm](https://img.shields.io/npm/v/@noxion/core)](https://www.npmjs.com/package/@noxion/core) | Config, data fetching, plugin system, TypeScript types |
-| `@noxion/notion-renderer` | — | Notion block renderer: 30+ block types, KaTeX SSR, Shiki syntax highlighting |
+| [`@noxion/notion-renderer`](https://www.npmjs.com/package/@noxion/notion-renderer) | [![npm](https://img.shields.io/npm/v/@noxion/notion-renderer)](https://www.npmjs.com/package/@noxion/notion-renderer) | Notion block renderer: 30+ block types, KaTeX SSR, Shiki syntax highlighting |
 | [`@noxion/renderer`](./renderer/notion-page) | [![npm](https://img.shields.io/npm/v/@noxion/renderer)](https://www.npmjs.com/package/@noxion/renderer) | React components for rendering Notion content and blog UI |
 | [`@noxion/adapter-nextjs`](./adapter-nextjs/metadata) | [![npm](https://img.shields.io/npm/v/@noxion/adapter-nextjs)](https://www.npmjs.com/package/@noxion/adapter-nextjs) | Next.js App Router integration: metadata, JSON-LD, sitemap, robots |
 | [`create-noxion`](./cli/create-noxion) | [![npm](https://img.shields.io/npm/v/create-noxion)](https://www.npmjs.com/package/create-noxion) | CLI scaffolding tool (`bun create noxion`) |

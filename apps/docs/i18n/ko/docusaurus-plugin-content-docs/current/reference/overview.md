@@ -13,7 +13,7 @@ Noxion은 네 개의 npm 패키지와 CLI로 배포됩니다. 이 섹션은 모�
 | 패키지 | 목적 |
 |--------|------|
 | [`@noxion/core`](./core/config) | 설정, 데이터 페칭, 플러그인 시스템, 타입 |
-| `@noxion/notion-renderer` | Notion 블록 렌더러: 30+ 블록 타입, KaTeX SSR, Shiki 구문 강조 |
+| [`@noxion/notion-renderer`](https://www.npmjs.com/package/@noxion/notion-renderer) | Notion 블록 렌더러: 30+ 블록 타입, KaTeX SSR, Shiki 구문 강조 |
 | [`@noxion/renderer`](./renderer/notion-page) | Notion 콘텐츠 렌더링용 React 컴포넌트 |
 | [`@noxion/adapter-nextjs`](./adapter-nextjs/metadata) | Next.js SEO 어댑터 (metadata, JSON-LD, sitemap) |
 | [`create-noxion`](./cli/create-noxion) | CLI 스캐폴딩 도구 |
