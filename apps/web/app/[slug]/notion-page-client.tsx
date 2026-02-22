@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { NotionPage } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "@noxion/core";
 
@@ -9,7 +8,6 @@ interface NotionPageClientProps {
   rootPageId: string;
   fullPage?: boolean;
   previewImages?: boolean;
-  showTableOfContents?: boolean;
 }
 
 export function NotionPageClient({
@@ -17,7 +15,6 @@ export function NotionPageClient({
   rootPageId,
   fullPage = true,
   previewImages = true,
-  showTableOfContents = true,
 }: NotionPageClientProps) {
   return (
     <NotionPage
@@ -25,8 +22,6 @@ export function NotionPageClient({
       rootPageId={rootPageId}
       fullPage={fullPage}
       previewImages={previewImages}
-      showTableOfContents={showTableOfContents}
-      nextImage={Image}
     />
   );
 }

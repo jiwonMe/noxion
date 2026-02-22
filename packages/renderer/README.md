@@ -4,7 +4,7 @@ React rendering components and theme system for [Noxion](https://github.com/jiwo
 
 ## Features
 
-- Notion page renderer (via `react-notion-x`)
+- Notion page renderer (via `@noxion/notion-renderer`)
 - Pre-built blog components: `PostCard`, `PostList`, `Header`, `Footer`, `TOC`, `Search`, `TagFilter`
 - CSS variable-based theme system with dark/light/system mode support
 - Fully customizable via component overrides

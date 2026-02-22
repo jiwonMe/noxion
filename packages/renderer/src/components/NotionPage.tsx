@@ -1,8 +1,9 @@
 "use client";
 
-import { NotionRenderer } from "react-notion-x";
+import { useState, useEffect } from "react";
+import { NotionRenderer } from "@noxion/notion-renderer";
 import type { ExtendedRecordMap } from "notion-types";
-import { useNoxionComponents, useNoxionTheme } from "../theme/ThemeProvider";
+import { defaultMapImageUrl } from "notion-utils";
 
 export interface NotionPageProps {
   recordMap: ExtendedRecordMap;
@@ -10,11 +11,28 @@ export interface NotionPageProps {
   fullPage?: boolean;
   darkMode?: boolean;
   previewImages?: boolean;
-  showTableOfContents?: boolean;
-  minTableOfContentsItems?: number;
   pageUrlPrefix?: string;
-  nextImage?: unknown;
   className?: string;
+}
+
+function useDetectDarkMode(): boolean {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      setIsDark(document.documentElement.dataset.theme === "dark");
+    };
+    check();
+
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return isDark;
 }
 
 export function NotionPage({
@@ -23,26 +41,11 @@ export function NotionPage({
   fullPage = true,
   darkMode,
   previewImages = false,
-  showTableOfContents = false,
-  minTableOfContentsItems = 3,
   pageUrlPrefix = "/",
-  nextImage,
   className,
 }: NotionPageProps) {
-  const theme = useNoxionTheme();
-  const overrides = useNoxionComponents();
-
-  const resolvedDarkMode = darkMode ?? theme.name === "dark";
-
-  const notionComponents: Record<string, unknown> = {};
-  if (nextImage) {
-    notionComponents.nextImage = nextImage;
-  }
-  if (overrides.NotionBlock) {
-    for (const [blockType, component] of Object.entries(overrides.NotionBlock)) {
-      notionComponents[blockType] = component;
-    }
-  }
+  const detectedDark = useDetectDarkMode();
+  const resolvedDarkMode = darkMode ?? detectedDark;
 
   return (
     <div className={className}>
@@ -52,11 +55,8 @@ export function NotionPage({
         fullPage={fullPage}
         darkMode={resolvedDarkMode}
         previewImages={previewImages}
-        showTableOfContents={showTableOfContents}
-        minTableOfContentsItems={minTableOfContentsItems}
         mapPageUrl={(pageId: string) => `${pageUrlPrefix}${pageId}`}
-        
-        components={notionComponents}
+        mapImageUrl={(url, block) => defaultMapImageUrl(url, block) ?? url}
       />
     </div>
   );
