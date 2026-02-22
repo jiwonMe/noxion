@@ -193,10 +193,18 @@ html {
   color: var(--ifm-font-color-secondary);
 }
 
+.navbar__search {
+  z-index: 200;
+}
+
 [class*='dropdownMenu'] {
   border-radius: 12px !important;
   margin-top: 6px !important;
   border: 1px solid var(--ifm-color-emphasis-300) !important;
+  background: var(--search-local-modal-background, #ffffff) !important;
+  box-shadow: var(--search-local-modal-shadow) !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
 }
 
 [class*='suggestion'] {
