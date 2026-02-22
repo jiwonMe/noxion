@@ -438,6 +438,21 @@
   white-space: pre;
 }
 
+.noxion-code__body .shiki {
+  margin: 0;
+  padding: 0;
+  background-color: transparent !important;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.noxion-code__body .shiki code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .noxion-code__caption {
   padding: 6px 12px;
   font-size: 0.875rem;
@@ -1192,6 +1207,12 @@
 [data-theme="dark"] .noxion-equation--error,
 [data-theme="dark"] .noxion-equation-error {
   color: #ff7b72;
+}
+
+/* Shiki dual-theme: swap --shiki-dark variables into color in dark mode */
+.noxion-renderer--dark .shiki span,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
 }
 
 /* ============================================

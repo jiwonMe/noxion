@@ -83,20 +83,63 @@ export function normalizeLanguage(notionLanguage: string): string {
   return NOTION_TO_SHIKI_LANG[lower] ?? lower;
 }
 
+const DEFAULT_LANGS = [
+  "bash",
+  "c",
+  "cpp",
+  "csharp",
+  "css",
+  "dart",
+  "diff",
+  "docker",
+  "go",
+  "graphql",
+  "html",
+  "java",
+  "javascript",
+  "json",
+  "jsx",
+  "kotlin",
+  "latex",
+  "lua",
+  "makefile",
+  "markdown",
+  "objective-c",
+  "perl",
+  "php",
+  "python",
+  "r",
+  "ruby",
+  "rust",
+  "sass",
+  "scala",
+  "scss",
+  "shellscript",
+  "sql",
+  "swift",
+  "toml",
+  "tsx",
+  "typescript",
+  "xml",
+  "yaml",
+];
+
 export async function createShikiHighlighter(
   options: {
     theme?: string;
     darkTheme?: string;
+    langs?: string[];
   } = {}
 ): Promise<HighlightCodeFn> {
   const { createHighlighter } = await import("shiki");
 
   const theme = options.theme ?? "github-light";
   const darkTheme = options.darkTheme ?? "github-dark";
+  const langs = options.langs ?? DEFAULT_LANGS;
 
   const highlighter = await createHighlighter({
     themes: [theme, darkTheme],
-    langs: [],
+    langs,
   });
 
   return (code: string, language: string) => {
