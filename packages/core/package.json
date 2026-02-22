@@ -1,6 +1,6 @@
 {
   "name": "@noxion/core",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Core data fetching, config, and plugin system for Noxion",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@noxion/theme-default",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Default theme package for Noxion — Notion-powered blog builder",
   "license": "MIT",
   "type": "module",
@@ -50,7 +50,7 @@
     "node": ">=18.0.0"
   },
   "peerDependencies": {
-    "@noxion/renderer": ">=0.0.2",
+    "@noxion/renderer": ">=0.1.0",
     "react": ">=18.0.0"
   },
   "devDependencies": {
