@@ -109,6 +109,7 @@ export interface TagFilterProps {
   tags: string[];
   selectedTags: string[];
   onToggle: (tag: string) => void;
+  maxVisible?: number;
 }
 
 export interface ComponentOverrides {

@@ -83,11 +83,12 @@ export interface NotionBlockRendererProps {
 }
 
 export function NotionBlock({ blockId, level }: NotionBlockRendererProps) {
-  const { components } = useNotionRenderer();
+  const { components, hiddenBlockIds } = useNotionRenderer();
   const block = useNotionBlock(blockId);
 
   if (!block) return null;
   if (!block.alive) return null;
+  if (hiddenBlockIds?.has(blockId)) return null;
 
   const blockType = block.type;
   const BlockComponent =

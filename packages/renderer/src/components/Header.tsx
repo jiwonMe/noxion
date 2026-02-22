@@ -1,4 +1,7 @@
+"use client";
+
 import type { HeaderProps } from "../theme/types";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header({ siteName, navigation = [], className }: HeaderProps & { className?: string }) {
   return (
@@ -16,6 +19,10 @@ export function Header({ siteName, navigation = [], className }: HeaderProps & {
           ))}
         </nav>
       )}
+
+      <div className="noxion-header__actions">
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

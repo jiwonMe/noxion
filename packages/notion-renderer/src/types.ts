@@ -35,6 +35,8 @@ export interface NotionComponents {
   blockOverrides?: Partial<Record<BlockType | string, ComponentType<NotionBlockProps>>>;
 }
 
+export type FloatTOCPosition = "right";
+
 export interface NotionRendererProps {
   recordMap: ExtendedRecordMap;
   rootPageId?: string;
@@ -57,6 +59,7 @@ export interface NotionRendererProps {
   defaultPageIcon?: string | null;
   defaultPageCover?: string | null;
   defaultPageCoverPosition?: number;
+  floatTOC?: FloatTOCPosition;
 }
 
 export interface NotionRendererContextValue {
@@ -72,6 +75,8 @@ export interface NotionRendererContextValue {
   defaultPageIcon?: string | null;
   defaultPageCover?: string | null;
   defaultPageCoverPosition?: number;
+  hiddenBlockIds?: Set<string>;
+  floatTOC?: FloatTOCPosition;
 }
 
 export type { ExtendedRecordMap, Block, BlockType, Decoration };

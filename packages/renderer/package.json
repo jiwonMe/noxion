@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@noxion/notion-renderer": "workspace:*",
+    "lucide-react": "^0.469.0",
     "notion-types": "^7.8.2",
     "notion-utils": "^7.8.2"
   },

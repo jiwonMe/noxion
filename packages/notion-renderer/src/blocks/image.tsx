@@ -29,10 +29,26 @@ export function ImageBlock({ block }: NotionBlockProps) {
   const src = mapImageUrl(source, block);
   const alt = properties?.alt_text?.map((s) => s[0]).join("") ?? "";
   const width = format?.block_width;
-  const height = format?.block_height;
+  const aspectRatio = format?.block_aspect_ratio;
+  // Compute height from width + aspect_ratio when block_height is missing.
+  // Notion stores aspect_ratio as height/width.
+  const height = format?.block_height
+    ?? (width && aspectRatio ? Math.round(width * aspectRatio) : undefined);
   const isFullWidth = format?.block_full_width ?? false;
   const isPageWidth = format?.block_page_width ?? false;
   const hasCaption = properties?.caption && properties.caption.length > 0;
+
+  // CSS aspect-ratio value (width / height) for responsive layout shift prevention.
+  // Works even when the image scales down from its intrinsic width.
+  const cssAspectRatio = aspectRatio
+    ? `${1 / aspectRatio}`
+    : width && height
+      ? `${width} / ${height}`
+      : undefined;
+
+  const imgStyle: React.CSSProperties | undefined = cssAspectRatio
+    ? { aspectRatio: cssAspectRatio }
+    : undefined;
 
   const ImageComponent = components.Image;
 
@@ -53,6 +69,7 @@ export function ImageBlock({ block }: NotionBlockProps) {
       loading="lazy"
       decoding="async"
       className="noxion-image__img"
+      style={imgStyle}
     />
   );
 
@@ -63,7 +80,7 @@ export function ImageBlock({ block }: NotionBlockProps) {
         isFullWidth && "noxion-image--full-width",
         isPageWidth && "noxion-image--page-width",
       )}
-      style={width && !isFullWidth && !isPageWidth ? { width: `${width}px` } : undefined}
+      style={width && !isFullWidth && !isPageWidth ? { maxWidth: `${width}px` } : undefined}
     >
       {imgElement}
       {hasCaption && (

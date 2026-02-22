@@ -8,6 +8,7 @@ export function PostCard({
   coverImage,
   category,
   description,
+  author,
   className,
 }: PostCardProps & { className?: string }) {
   const hasImage = Boolean(coverImage);
@@ -40,6 +41,9 @@ export function PostCard({
         )}
 
         <div className="noxion-post-card__meta">
+          {author && (
+            <span className="noxion-post-card__author">{author}</span>
+          )}
           <time dateTime={date} className="noxion-post-card__date">
             {date}
           </time>

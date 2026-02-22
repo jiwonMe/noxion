@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import type { FooterProps } from "../theme/types";
 
 export function Footer({ siteName, author, className }: FooterProps & { className?: string }) {
@@ -15,6 +16,7 @@ export function Footer({ siteName, author, className }: FooterProps & { classNam
         className="noxion-footer__powered-by"
       >
         Powered by Noxion
+        <ArrowUpRight size={12} strokeWidth={2} />
       </a>
     </footer>
   );

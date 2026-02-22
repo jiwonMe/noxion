@@ -2,6 +2,7 @@ import type { Decoration } from "notion-types";
 import type { NotionBlockProps } from "../types";
 import { useNotionRenderer } from "../context";
 import { Text } from "../components/text";
+import { StickyTOC } from "../components/sticky-toc";
 import { cs } from "../utils";
 
 export function PageBlock({ block, blockId, level, children }: NotionBlockProps) {
@@ -13,6 +14,7 @@ export function PageBlock({ block, blockId, level, children }: NotionBlockProps)
     defaultPageIcon,
     defaultPageCover,
     defaultPageCoverPosition,
+    floatTOC,
   } = useNotionRenderer();
 
   const properties = block.properties as { title?: Decoration[] } | undefined;
@@ -85,7 +87,7 @@ export function PageBlock({ block, blockId, level, children }: NotionBlockProps)
         </div>
       )}
 
-      <main className="noxion-page__main">
+      <main className={cs("noxion-page__main", floatTOC && "noxion-page__main--has-toc")}>
         {icon && (
           <div className="noxion-page__icon">
             <span role="img" aria-label="page icon">{icon}</span>
@@ -99,6 +101,8 @@ export function PageBlock({ block, blockId, level, children }: NotionBlockProps)
         <div className="noxion-page__content">
           {children}
         </div>
+
+        {floatTOC === "right" && <StickyTOC />}
       </main>
     </div>
   );

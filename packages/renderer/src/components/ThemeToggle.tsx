@@ -1,20 +1,15 @@
 "use client";
 
+import { Sun, Moon, Monitor } from "lucide-react";
 import { useThemePreference, type ThemePreference } from "../hooks/useTheme";
 
-const ICONS: Record<ThemePreference, string> = {
-  light: "\u2600\uFE0F",
-  dark: "\uD83C\uDF19",
-  system: "\uD83D\uDCBB",
-};
+const CYCLE: ThemePreference[] = ["system", "light", "dark"];
 
 const LABELS: Record<ThemePreference, string> = {
   light: "Light",
   dark: "Dark",
   system: "System",
 };
-
-const CYCLE: ThemePreference[] = ["system", "light", "dark"];
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { preference, setPreference } = useThemePreference();
@@ -33,7 +28,9 @@ export function ThemeToggle({ className }: { className?: string }) {
       title={LABELS[preference]}
       className={className ? `noxion-theme-toggle ${className}` : "noxion-theme-toggle"}
     >
-      {ICONS[preference]}
+      {preference === "light" && <Sun size={16} strokeWidth={1.75} />}
+      {preference === "dark" && <Moon size={16} strokeWidth={1.75} />}
+      {preference === "system" && <Monitor size={16} strokeWidth={1.75} />}
     </button>
   );
 }

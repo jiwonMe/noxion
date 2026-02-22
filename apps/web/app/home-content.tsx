@@ -1,6 +1,6 @@
 "use client";
 
-import { PostList, TagFilter, Search, ThemeToggle, useSearch } from "@noxion/renderer";
+import { PostList, TagFilter, Search, useSearch } from "@noxion/renderer";
 import type { PostCardProps } from "@noxion/renderer";
 import { useState, useCallback } from "react";
 
@@ -26,16 +26,8 @@ export function HomeContent({ posts, allTags }: HomeContentProps) {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Posts</h1>
-        <ThemeToggle />
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.03em" }}>Posts</h1>
       </div>
 
       <div style={{ marginBottom: "1.5rem" }}>
@@ -48,6 +40,7 @@ export function HomeContent({ posts, allTags }: HomeContentProps) {
             tags={allTags}
             selectedTags={selectedTags}
             onToggle={handleToggleTag}
+            maxVisible={8}
           />
         </div>
       )}

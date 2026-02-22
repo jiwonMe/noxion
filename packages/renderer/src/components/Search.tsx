@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
+import { Search as SearchIcon } from "lucide-react";
 import type { SearchProps } from "../theme/types";
 
 export function Search({
@@ -32,6 +33,9 @@ export function Search({
 
   return (
     <div className={className ? `noxion-search ${className}` : "noxion-search"}>
+      <span className="noxion-search__icon">
+        <SearchIcon size={14} strokeWidth={2} />
+      </span>
       <input
         ref={inputRef}
         type="text"
