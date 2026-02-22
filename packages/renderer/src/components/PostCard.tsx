@@ -1,5 +1,14 @@
 import type { PostCardProps } from "../theme/types";
 
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr + (dateStr.includes("T") ? "" : "T00:00:00"));
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
+
 export function PostCard({
   title,
   slug,
@@ -26,13 +35,21 @@ export function PostCard({
             decoding="async"
             className="noxion-post-card__cover-image"
           />
+          <div className="noxion-post-card__cover-overlay" />
         </div>
       )}
 
       <div className="noxion-post-card__body">
-        {category && (
-          <span className="noxion-post-card__category">{category}</span>
-        )}
+        <div className="noxion-post-card__header">
+          {category && (
+            <span className="noxion-post-card__category">{category}</span>
+          )}
+          {!hasImage && date && (
+            <time dateTime={date} className="noxion-post-card__date">
+              {formatDate(date)}
+            </time>
+          )}
+        </div>
 
         <h3 className="noxion-post-card__title">{title}</h3>
 
@@ -44,20 +61,22 @@ export function PostCard({
           {author && (
             <span className="noxion-post-card__author">{author}</span>
           )}
-          <time dateTime={date} className="noxion-post-card__date">
-            {date}
-          </time>
-
-          {tags.length > 0 && (
-            <div className="noxion-post-card__tags">
-              {tags.map((tag) => (
-                <span key={tag} className="noxion-post-card__tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
+          {hasImage && date && (
+            <time dateTime={date} className="noxion-post-card__date">
+              {formatDate(date)}
+            </time>
           )}
         </div>
+
+        {tags.length > 0 && (
+          <div className="noxion-post-card__tags">
+            {tags.map((tag) => (
+              <span key={tag} className="noxion-post-card__tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </a>
   );
