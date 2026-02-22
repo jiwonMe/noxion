@@ -56,7 +56,7 @@
   --ifm-global-radius: 8px;
   --ifm-button-border-radius: 9999px;
   --ifm-code-border-radius: 8px;
-  --ifm-alert-border-radius: 16px;
+  --ifm-alert-border-radius: 12px;
   --ifm-card-border-radius: 12px;
 }
 
@@ -81,7 +81,7 @@
   --ifm-heading-color: rgba(255, 255, 255, 0.95);
   --ifm-link-color: var(--ifm-font-color-base);
   --ifm-link-hover-color: var(--ifm-font-color-base);
-  --prism-background-color: #1e1e1e;
+  --prism-background-color: #111111;
   --ifm-code-background: rgba(255, 255, 255, 0.08);
   --ifm-table-border-color: rgba(255, 255, 255, 0.1);
   --ifm-footer-background-color: #111111;
@@ -564,7 +564,8 @@ article {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.markdown pre code {
+.markdown pre code,
+[data-theme='dark'] .markdown pre code {
   color: inherit;
   background: none;
   padding: 0;
@@ -586,6 +587,7 @@ article {
 [data-theme='dark'] .theme-code-block,
 [data-theme='dark'] [class*='codeBlockContainer'] {
   border-color: rgba(255, 255, 255, 0.07) !important;
+  background: #111111 !important;
 }
 
 [class*='codeBlockContent'],
@@ -594,8 +596,13 @@ article {
 }
 
 [data-theme='dark'] [class*='codeBlockContent'],
-[data-theme='dark'] .prism-code {
-  background: #1e1e1e !important;
+[data-theme='dark'] .prism-code,
+[data-theme='dark'] pre[class*='shiki'],
+[data-theme='dark'] pre[style],
+[data-theme='dark'] .theme-code-block pre,
+[data-theme='dark'] [class*='codeBlockContainer'] pre {
+  background: #111111 !important;
+  background-color: #111111 !important;
 }
 
 pre.prism-code,
@@ -694,21 +701,21 @@ pre[class*='codeBlock'] {
   border-bottom: none;
 }
 
-/* ── ADMONITION / CALLOUT ────────────────────────────────── */
+/* ── ADMONITION / CALLOUT (HIG-style) ────────────────────── */
 
 .admonition {
-  --ifm-alert-border-left-width: 0px;
+  --ifm-alert-border-left-width: 0;
   --ifm-alert-border-width: 1px;
-  --ifm-alert-border-radius: 16px;
-  --ifm-alert-padding-vertical: 16px;
-  --ifm-alert-padding-horizontal: 20px;
+  --ifm-alert-border-radius: 12px;
+  --ifm-alert-padding-vertical: 14px;
+  --ifm-alert-padding-horizontal: 16px;
   --ifm-alert-shadow: none;
-  border-radius: 16px;
-  border-width: 1px;
-  border-left-width: 1px;
-  font-size: 1rem;
-  line-height: 1.75;
-  padding: 16px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  padding: 14px 16px;
   box-shadow: none;
   margin: 16px 0;
   color: rgb(62, 62, 62);
@@ -716,107 +723,95 @@ pre[class*='codeBlock'] {
 
 .admonition-note,
 .alert--secondary {
-  --ifm-alert-background-color: rgb(239, 246, 255);
-  --ifm-alert-border-color: rgb(191, 219, 254);
-  --ifm-alert-foreground-color: rgb(30, 64, 175);
-  background-color: rgb(239, 246, 255);
-  border-color: rgb(191, 219, 254);
+  --ifm-alert-foreground-color: rgb(100, 100, 100);
+  --ifm-alert-border-left-width: 0;
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 .admonition-info,
 .alert--info {
-  --ifm-alert-background-color: rgb(239, 246, 255);
-  --ifm-alert-border-color: rgb(191, 219, 254);
-  --ifm-alert-foreground-color: rgb(30, 64, 175);
-  background-color: rgb(239, 246, 255);
-  border-color: rgb(191, 219, 254);
+  --ifm-alert-foreground-color: rgb(0, 122, 255);
+  --ifm-alert-border-left-width: 0;
+  background-color: rgba(0, 122, 255, 0.04) !important;
+  border: 1px solid rgba(0, 122, 255, 0.15) !important;
 }
 
 .admonition-tip,
 .alert--success {
-  --ifm-alert-background-color: rgb(240, 253, 244);
-  --ifm-alert-border-color: rgb(134, 239, 172);
-  --ifm-alert-foreground-color: rgb(21, 128, 61);
-  background-color: rgb(240, 253, 244);
-  border-color: rgb(134, 239, 172);
+  --ifm-alert-foreground-color: rgb(52, 199, 89);
+  --ifm-alert-border-left-width: 0;
+  background-color: rgba(52, 199, 89, 0.04) !important;
+  border: 1px solid rgba(52, 199, 89, 0.18) !important;
 }
 
 .admonition-warning,
-.alert--warning {
-  --ifm-alert-background-color: rgb(255, 251, 235);
-  --ifm-alert-border-color: rgb(253, 230, 138);
-  --ifm-alert-foreground-color: rgb(146, 64, 14);
-  background-color: rgb(255, 251, 235);
-  border-color: rgb(253, 230, 138);
+.alert--warning,
+.admonition-caution {
+  --ifm-alert-foreground-color: rgb(255, 149, 0);
+  --ifm-alert-border-left-width: 0;
+  background-color: rgba(255, 149, 0, 0.04) !important;
+  border: 1px solid rgba(255, 149, 0, 0.18) !important;
 }
 
 .admonition-danger,
 .alert--danger {
-  --ifm-alert-background-color: rgb(255, 241, 242);
-  --ifm-alert-border-color: rgb(254, 202, 202);
-  --ifm-alert-foreground-color: rgb(185, 28, 28);
-  background-color: rgb(255, 241, 242);
-  border-color: rgb(254, 202, 202);
+  --ifm-alert-foreground-color: rgb(255, 59, 48);
+  --ifm-alert-border-left-width: 0;
+  background-color: rgba(255, 59, 48, 0.04) !important;
+  border: 1px solid rgba(255, 59, 48, 0.15) !important;
 }
 
 [data-theme='dark'] .admonition {
   color: rgba(255, 255, 255, 0.72);
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 [data-theme='dark'] .admonition-note,
 [data-theme='dark'] .alert--secondary {
-  --ifm-alert-background-color: rgba(30, 64, 175, 0.1);
-  --ifm-alert-border-color: rgba(96, 130, 230, 0.3);
-  --ifm-alert-foreground-color: rgb(147, 172, 241);
-  background-color: rgba(30, 64, 175, 0.1);
-  border-color: rgba(96, 130, 230, 0.3);
+  --ifm-alert-foreground-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 [data-theme='dark'] .admonition-info,
 [data-theme='dark'] .alert--info {
-  --ifm-alert-background-color: rgba(30, 64, 175, 0.1);
-  --ifm-alert-border-color: rgba(96, 130, 230, 0.3);
-  --ifm-alert-foreground-color: rgb(147, 172, 241);
-  background-color: rgba(30, 64, 175, 0.1);
-  border-color: rgba(96, 130, 230, 0.3);
+  --ifm-alert-foreground-color: rgb(10, 132, 255);
+  background-color: rgba(10, 132, 255, 0.06) !important;
+  border: 1px solid rgba(10, 132, 255, 0.2) !important;
 }
 
 [data-theme='dark'] .admonition-tip,
 [data-theme='dark'] .alert--success {
-  --ifm-alert-background-color: rgba(21, 128, 61, 0.1);
-  --ifm-alert-border-color: rgba(74, 222, 128, 0.3);
-  --ifm-alert-foreground-color: rgb(74, 222, 128);
-  background-color: rgba(21, 128, 61, 0.1);
-  border-color: rgba(74, 222, 128, 0.3);
+  --ifm-alert-foreground-color: rgb(48, 209, 88);
+  background-color: rgba(48, 209, 88, 0.06) !important;
+  border: 1px solid rgba(48, 209, 88, 0.2) !important;
 }
 
 [data-theme='dark'] .admonition-warning,
-[data-theme='dark'] .alert--warning {
-  --ifm-alert-background-color: rgba(146, 64, 14, 0.1);
-  --ifm-alert-border-color: rgba(251, 191, 36, 0.3);
-  --ifm-alert-foreground-color: rgb(251, 191, 36);
-  background-color: rgba(146, 64, 14, 0.1);
-  border-color: rgba(251, 191, 36, 0.3);
+[data-theme='dark'] .alert--warning,
+[data-theme='dark'] .admonition-caution {
+  --ifm-alert-foreground-color: rgb(255, 159, 10);
+  background-color: rgba(255, 159, 10, 0.06) !important;
+  border: 1px solid rgba(255, 159, 10, 0.2) !important;
 }
 
 [data-theme='dark'] .admonition-danger,
 [data-theme='dark'] .alert--danger {
-  --ifm-alert-background-color: rgba(185, 28, 28, 0.1);
-  --ifm-alert-border-color: rgba(248, 113, 113, 0.3);
-  --ifm-alert-foreground-color: rgb(248, 113, 113);
-  background-color: rgba(185, 28, 28, 0.1);
-  border-color: rgba(248, 113, 113, 0.3);
+  --ifm-alert-foreground-color: rgb(255, 69, 58);
+  background-color: rgba(255, 59, 48, 0.06) !important;
+  border: 1px solid rgba(255, 69, 58, 0.2) !important;
 }
 
 .admonition .admonition-heading {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .admonition .admonition-heading h5 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   margin: 0;
   text-transform: none;
@@ -827,6 +822,13 @@ pre[class*='codeBlock'] {
 .admonition-icon svg {
   fill: var(--ifm-alert-foreground-color);
   stroke: var(--ifm-alert-foreground-color);
+  width: 16px;
+  height: 16px;
+  opacity: 0.85;
+}
+
+.admonition .admonition-content p {
+  color: inherit;
 }
 
 .admonition p:last-child {

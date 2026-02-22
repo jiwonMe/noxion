@@ -17,7 +17,7 @@ const notionLightTheme: PrismTheme = {
 };
 
 const notionDarkTheme: PrismTheme = {
-  plain: { color: '#e6e6e5', backgroundColor: '#2f2f2f' },
+  plain: { color: '#e6e6e5', backgroundColor: 'transparent' },
   styles: [
     { types: ['comment', 'prolog', 'doctype', 'cdata'], style: { color: 'rgba(255, 255, 255, 0.35)', fontStyle: 'italic' as const } },
     { types: ['punctuation'], style: { color: 'rgba(255, 255, 255, 0.5)' } },
@@ -106,6 +106,13 @@ Key packages:
           'reference/core/frontmatter',
           'reference/core/plugins',
           'reference/core/types',
+          'reference/notion-renderer/overview',
+          'reference/notion-renderer/renderer-api',
+          'reference/notion-renderer/blocks',
+          'reference/notion-renderer/hooks',
+          'reference/notion-renderer/components',
+          'reference/notion-renderer/utils',
+          'reference/notion-renderer/shiki',
           'reference/renderer/notion-page',
           'reference/renderer/post-list',
           'reference/renderer/post-card',

@@ -13,7 +13,7 @@ const features = [
   },
   {
     title: '즉시 배포',
-    description: '명령어 하나로 스캐폴딩. ISR로 콘텐츠를 최신 상태로 유지. 즉각적인 업데이트를 위한 온디맨드 재검증.',
+    description: '명령어 하나로 프로젝트 생성. ISR로 콘텐츠를 항상 최신으로 유지하고, 필요할 때 즉시 갱신할 수 있습니다.',
   },
   {
     title: '완벽한 SEO',
@@ -21,15 +21,15 @@ const features = [
   },
   {
     title: '이미지 최적화',
-    description: 'Next.js Image를 통한 AVIF/WebP 지원. URL 독립성을 위한 빌드 타임 다운로드 옵션.',
+    description: 'Next.js Image로 AVIF/WebP 자동 변환. 빌드 시 이미지를 다운로드해 외부 의존 없이 서빙할 수도 있습니다.',
   },
   {
     title: '플러그인 시스템',
     description: '분석, 댓글, RSS — 한 줄로 추가. 플러그인 API로 나만의 플러그인을 만드세요.',
   },
   {
-    title: '내 스택, 내 것',
-    description: '오픈소스, 자체 호스팅. Vercel, Docker, 정적 익스포트로 배포. 벤더 종속 없음.',
+    title: '완전한 소유',
+    description: '오픈소스, 셀프호스팅. Vercel, Docker, 정적 빌드 등 원하는 방식으로 배포하세요.',
   },
 ];
 
@@ -41,12 +41,12 @@ function Hero(): React.ReactElement {
     <section className={styles.hero}>
       <div className={styles.heroInner}>
         <h1 className={styles.heroTitle}>
-          내 Notion 데이터베이스,<br />
-          내 블로그.
+          Notion 데이터베이스가<br />
+          블로그가 되는 순간.
         </h1>
         <p className={styles.heroSubtitle}>
-          Noxion은 Notion 데이터베이스를 완전히 소유할 수 있는 빠르고 SEO 최적화된 블로그로 변환합니다.
-          오픈소스. 자체 호스팅. 종속 없음.
+          Noxion은 Notion 데이터베이스를 빠르고 SEO에 강한 블로그로 만들어 줍니다.
+          오픈소스. 셀프호스팅. 온전히 내 것.
         </p>
         <div className={styles.heroActions}>
           <Link className={styles.primaryBtn} to="/docs/learn/quick-start">
@@ -114,7 +114,7 @@ export default defineConfig({
 function CTA(): React.ReactElement {
   return (
     <section className={styles.cta}>
-      <h2 className={styles.ctaTitle}>바로 시작할 준비가 되셨나요?</h2>
+      <h2 className={styles.ctaTitle}>지금 바로 시작하세요.</h2>
       <p className={styles.ctaSubtitle}>
         5분 안에 블로그를 설정하세요.
       </p>
@@ -134,7 +134,7 @@ export default function Home(): React.ReactElement {
   const { siteConfig } = useDocusaurusContext();
 
   return (
-    <Layout title={siteConfig.title} description="Notion 데이터베이스를 빠르고 SEO 최적화된 블로그로 변환하세요">
+    <Layout title={siteConfig.title} description="Notion 데이터베이스를 빠르고 SEO에 강한 블로그로 만들어 주는 오픈소스 빌더">
       <main>
         <Hero />
         <Features />

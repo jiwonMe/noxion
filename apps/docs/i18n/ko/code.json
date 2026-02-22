@@ -1,6 +1,6 @@
 {
   "homepage.tagline": {
-    "message": "개발자를 위한 Notion 기반 블로그 빌더. Notion 데이터베이스를 연결하면 완전히 렌더링된 SEO 최적화 블로그를 얻습니다."
+    "message": "Notion 데이터베이스를 연결하면 SEO까지 갖춘 블로그가 바로 완성됩니다. 오픈소스 블로그 빌더."
   },
   "homepage.getStarted": {
     "message": "시작하기"

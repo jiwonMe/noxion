@@ -61,6 +61,20 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: '@noxion/notion-renderer',
+      collapsed: false,
+      items: [
+        'reference/notion-renderer/overview',
+        'reference/notion-renderer/renderer-api',
+        'reference/notion-renderer/blocks',
+        'reference/notion-renderer/hooks',
+        'reference/notion-renderer/components',
+        'reference/notion-renderer/utils',
+        'reference/notion-renderer/shiki',
+      ],
+    },
+    {
+      type: 'category',
       label: '@noxion/renderer',
       collapsed: false,
       items: [

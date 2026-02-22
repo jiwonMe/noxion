@@ -6,7 +6,7 @@ description: Noxion package API reference — all exports, types, and functions.
 
 # API Reference
 
-Noxion is distributed as four npm packages plus a CLI scaffolding tool. This section provides exhaustive documentation for every exported function, component, hook, and type.
+Noxion is distributed as five npm packages plus a CLI scaffolding tool. This section provides exhaustive documentation for every exported function, component, hook, and type.
 
 ---
 
@@ -15,7 +15,7 @@ Noxion is distributed as four npm packages plus a CLI scaffolding tool. This sec
 | Package | npm | Purpose |
 |---------|-----|---------|
 | [`@noxion/core`](./core/config) | [![npm](https://img.shields.io/npm/v/@noxion/core)](https://www.npmjs.com/package/@noxion/core) | Config, data fetching, plugin system, TypeScript types |
-| [`@noxion/notion-renderer`](https://www.npmjs.com/package/@noxion/notion-renderer) | [![npm](https://img.shields.io/npm/v/@noxion/notion-renderer)](https://www.npmjs.com/package/@noxion/notion-renderer) | Notion block renderer: 30+ block types, KaTeX SSR, Shiki syntax highlighting |
+| [`@noxion/notion-renderer`](./notion-renderer/overview) | [![npm](https://img.shields.io/npm/v/@noxion/notion-renderer)](https://www.npmjs.com/package/@noxion/notion-renderer) | Notion block renderer: 30+ block types, KaTeX SSR, Shiki syntax highlighting |
 | [`@noxion/renderer`](./renderer/notion-page) | [![npm](https://img.shields.io/npm/v/@noxion/renderer)](https://www.npmjs.com/package/@noxion/renderer) | React components for rendering Notion content and blog UI |
 | [`@noxion/adapter-nextjs`](./adapter-nextjs/metadata) | [![npm](https://img.shields.io/npm/v/@noxion/adapter-nextjs)](https://www.npmjs.com/package/@noxion/adapter-nextjs) | Next.js App Router integration: metadata, JSON-LD, sitemap, robots |
 | [`create-noxion`](./cli/create-noxion) | [![npm](https://img.shields.io/npm/v/create-noxion)](https://www.npmjs.com/package/create-noxion) | CLI scaffolding tool (`bun create noxion`) |
@@ -83,6 +83,99 @@ bun add @noxion/core
 
 ---
 
+## @noxion/notion-renderer
+
+The low-level Notion block renderer. Powers `@noxion/renderer`'s `<NotionPage />`. Use this directly when you need full control over rendering, custom block overrides, or want to embed Notion content outside the standard blog layout.
+
+### Installation
+
+```bash
+npm install @noxion/notion-renderer
+# peer deps
+npm install react notion-types notion-utils
+# or
+bun add @noxion/notion-renderer react notion-types notion-utils
+```
+
+**Peer dependencies**: `react >= 18.0.0`, `notion-types >= 7.0.0`, `notion-utils >= 7.0.0`
+
+### Setup
+
+```css
+/* Import styles in your global CSS */
+@import '@noxion/notion-renderer/styles';
+@import '@noxion/notion-renderer/katex-css'; /* for math equations */
+```
+
+### Main component
+
+| Export | Description |
+|--------|-------------|
+| [`<NotionRenderer />`](./notion-renderer/renderer-api) | Top-level renderer — renders a full Notion page from an `ExtendedRecordMap` |
+
+### Context & hooks
+
+| Export | Description |
+|--------|-------------|
+| [`NotionRendererProvider`](./notion-renderer/hooks#notionrendererprovider) | React context provider for renderer state |
+| [`useNotionRenderer()`](./notion-renderer/hooks#usenotionrenderer) | Access the renderer context (record map, URL mappers, theme, components) |
+| [`useNotionBlock(blockId)`](./notion-renderer/hooks#usenotionblock) | Resolve and unwrap a block by ID from the record map |
+
+### Block components
+
+30+ individually exported block components. See [Block Components](./notion-renderer/blocks) for the full reference.
+
+| Export | Notion block type |
+|--------|-------------------|
+| `TextBlock` | `text` |
+| `HeadingBlock` | `header`, `sub_header`, `sub_sub_header` |
+| `BulletedListBlock` | `bulleted_list` |
+| `NumberedListBlock` | `numbered_list` |
+| `ToDoBlock` | `to_do` |
+| `QuoteBlock` | `quote` |
+| `CalloutBlock` | `callout` |
+| `DividerBlock` | `divider` |
+| `ToggleBlock` | `toggle` |
+| `PageBlock` | `page` |
+| `EquationBlock` | `equation` |
+| `CodeBlock` | `code` |
+| `ImageBlock` | `image` |
+| `VideoBlock` | `video` |
+| `AudioBlock` | `audio` |
+| `EmbedBlock` | `embed`, `gist`, `figma`, `tweet`, `maps`, and more |
+| `BookmarkBlock` | `bookmark` |
+| `FileBlock` | `file` |
+| `PdfBlock` | `pdf` |
+| `TableBlock` | `table` |
+| `ColumnListBlock` | `column_list` |
+| `ColumnBlock` | `column` |
+| `TableOfContentsBlock` | `table_of_contents` |
+
+### Inline components
+
+| Export | Description |
+|--------|-------------|
+| [`<Text />`](./notion-renderer/components#text) | Rich-text renderer — all inline decorations (bold, italic, links, colors, inline equations) |
+| [`<InlineEquation />`](./notion-renderer/components#inlineequation) | Inline KaTeX math expression |
+
+### Shiki
+
+| Export | Description |
+|--------|-------------|
+| [`createShikiHighlighter(options?)`](./notion-renderer/shiki#createshikihighlighter) | Create a `HighlightCodeFn` with dual-theme Shiki |
+| [`normalizeLanguage(lang)`](./notion-renderer/shiki#normalizelanguage) | Map Notion language names to Shiki language IDs |
+
+### Utilities
+
+| Export | Description |
+|--------|-------------|
+| [`formatNotionDate(dateValue)`](./notion-renderer/utils#formatnotiondate) | Format a Notion date object to a readable string |
+| [`unwrapBlockValue(record)`](./notion-renderer/utils#unwrapblockvalue) | Unwrap `{ role, value }` record map wrapper |
+| [`getBlockTitle(block)`](./notion-renderer/utils#getblocktitle) | Extract plain-text title from a block |
+| [`cs(...classes)`](./notion-renderer/utils#cs) | Conditional className joiner |
+
+---
+
 ## @noxion/renderer
 
 React UI components and theme system for rendering Notion content and blog UI.
@@ -101,7 +194,7 @@ bun add @noxion/renderer react react-dom
 
 | Export | Description |
 |--------|-------------|
-| [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page via `@noxion/notion-renderer` |
+| [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page — wraps `<NotionRenderer />` with Shiki, dark mode, image URL mapping |
 | [`<PostList />`](./renderer/post-list) | Responsive grid of `<PostCard>` components |
 | [`<PostCard />`](./renderer/post-card) | Single post card with cover, title, date, tags |
 | [`<NoxionThemeProvider />`](./renderer/theme-provider) | Theme context provider (required wrapper) |
