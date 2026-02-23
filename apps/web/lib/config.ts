@@ -14,6 +14,7 @@ function createConfig(): NoxionConfig {
       description: noxionConfigInput.description ?? "A blog powered by Noxion",
       language: noxionConfigInput.language ?? "en",
       defaultTheme: noxionConfigInput.defaultTheme ?? "system",
+      defaultPageType: noxionConfigInput.defaultPageType ?? "blog",
       revalidate: noxionConfigInput.revalidate ?? 3600,
       plugins: noxionConfigInput.plugins,
     };

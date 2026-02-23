@@ -20,12 +20,12 @@ export async function GET(request: Request) {
     id: post.id,
     title: post.title,
     slug: post.slug,
-    date: post.date,
-    tags: post.tags,
+    date: post.metadata.date,
+    tags: post.metadata.tags,
     coverImage: post.coverImage,
-    category: post.category,
+    category: post.metadata.category,
     description: post.description,
-    author: post.author,
+    author: post.metadata.author,
   }));
 
   return NextResponse.json({

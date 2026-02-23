@@ -1,5 +1,5 @@
 import { createNotionClient, fetchBlogPosts, fetchPage, fetchPostBySlug, downloadImages, mapImages } from "@noxion/core";
-import type { BlogPost, ExtendedRecordMap, PaginatedResponse } from "@noxion/core";
+import type { BlogPage, ExtendedRecordMap, PaginatedResponse } from "@noxion/core";
 import { join } from "node:path";
 import { siteConfig } from "./config";
 
@@ -9,7 +9,7 @@ const notion = createNotionClient({
 
 export const DEFAULT_PAGE_SIZE = 12;
 
-export async function getAllPosts(): Promise<BlogPost[]> {
+export async function getAllPosts(): Promise<BlogPage[]> {
   if (!siteConfig.rootNotionPageId) return [];
   try {
     return await fetchBlogPosts(notion, siteConfig.rootNotionPageId);
@@ -28,7 +28,7 @@ export interface GetPaginatedPostsOptions {
 
 export async function getPaginatedPosts(
   options: GetPaginatedPostsOptions = {}
-): Promise<PaginatedResponse<BlogPost>> {
+): Promise<PaginatedResponse<BlogPage>> {
   const {
     page = 1,
     pageSize = DEFAULT_PAGE_SIZE,
@@ -39,15 +39,15 @@ export async function getPaginatedPosts(
   let posts = await getAllPosts();
 
   if (tag) {
-    posts = posts.filter((p) => p.tags.includes(tag));
+    posts = posts.filter((p) => p.metadata.tags.includes(tag));
   }
 
   if (search) {
     const lower = search.toLowerCase();
     posts = posts.filter((p) => {
       if (p.title.toLowerCase().includes(lower)) return true;
-      if (p.tags.some((t) => t.toLowerCase().includes(lower))) return true;
-      if (p.category?.toLowerCase().includes(lower)) return true;
+      if (p.metadata.tags.some((t: string) => t.toLowerCase().includes(lower))) return true;
+      if (p.metadata.category?.toLowerCase().includes(lower)) return true;
       if (p.description?.toLowerCase().includes(lower)) return true;
       return false;
     });
@@ -67,10 +67,10 @@ export async function getPaginatedPosts(
   };
 }
 
-export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+export async function getPostBySlug(slug: string): Promise<BlogPage | undefined> {
   if (!siteConfig.rootNotionPageId) return undefined;
   try {
-    return await fetchPostBySlug(notion, siteConfig.rootNotionPageId, slug);
+    return await fetchPostBySlug(notion, siteConfig.rootNotionPageId, slug) as BlogPage | undefined;
   } catch (error) {
     console.error(`Failed to fetch post "${slug}":`, error);
     return undefined;
@@ -99,10 +99,10 @@ export async function getPageRecordMap(pageId: string): Promise<ExtendedRecordMa
   return recordMap;
 }
 
-export function getAllTags(posts: BlogPost[]): string[] {
+export function getAllTags(posts: BlogPage[]): string[] {
   const tagSet = new Set<string>();
   for (const post of posts) {
-    for (const tag of post.tags) {
+    for (const tag of post.metadata.tags) {
       tagSet.add(tag);
     }
   }
