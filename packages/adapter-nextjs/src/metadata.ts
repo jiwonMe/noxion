@@ -1,48 +1,65 @@
 import type { Metadata } from "next";
-import type { BlogPost, NoxionConfig } from "@noxion/core";
+import type { NoxionPage, NoxionConfig } from "@noxion/core";
 
 function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength - 1).trimEnd() + "…";
 }
 
-function buildDescription(post: BlogPost, config: NoxionConfig): string {
-  if (post.description) return truncate(post.description, 160);
-  return truncate(`${post.title} - ${config.name}`, 160);
+function buildDescription(page: NoxionPage, config: NoxionConfig): string {
+  if (page.description) return truncate(page.description, 160);
+  return truncate(`${page.title} - ${config.name}`, 160);
+}
+
+function getMetaString(page: NoxionPage, key: string): string | undefined {
+  const val = page.metadata[key];
+  return typeof val === "string" ? val : undefined;
+}
+
+function getMetaStringArray(page: NoxionPage, key: string): string[] {
+  const val = page.metadata[key];
+  return Array.isArray(val) ? val.filter((v): v is string => typeof v === "string") : [];
 }
 
 export function generateNoxionMetadata(
-  post: BlogPost,
+  page: NoxionPage,
   config: NoxionConfig
 ): Metadata {
-  const title = `${post.title} | ${config.name}`;
-  const description = buildDescription(post, config);
-  const url = `https://${config.domain}/${post.slug}`;
+  const title = `${page.title} | ${config.name}`;
+  const description = buildDescription(page, config);
+  const url = `https://${config.domain}/${page.slug}`;
+
+  const date = getMetaString(page, "date");
+  const author = getMetaString(page, "author") ?? config.author;
+  const category = getMetaString(page, "category");
+  const tags = getMetaStringArray(page, "tags");
+
+  const isBlog = page.pageType === "blog";
 
   const metadata: Metadata = {
     title,
     description,
-    authors: [{ name: post.author ?? config.author }],
+    authors: [{ name: author }],
     openGraph: {
-      title: post.title,
+      title: page.title,
       description,
-      type: "article",
+      type: isBlog ? "article" : "website",
       url,
       siteName: config.name,
       locale: config.language === "ko" ? "ko_KR" : config.language === "ja" ? "ja_JP" : "en_US",
-      publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
-      modifiedTime: post.lastEditedTime,
-      authors: [post.author ?? config.author],
-      section: post.category ?? undefined,
-      tags: post.tags.length > 0 ? post.tags : undefined,
-      ...(post.coverImage
+      ...(isBlog && date ? { publishedTime: new Date(date).toISOString() } : {}),
+      ...(isBlog ? { modifiedTime: page.lastEditedTime } : {}),
+      ...(isBlog ? { authors: [author] } : {}),
+      ...(category ? { section: category } : {}),
+      ...(tags.length > 0 ? { tags } : {}),
+      ...(page.coverImage
         ? {
             images: [
               {
-                url: post.coverImage,
+                url: page.coverImage,
                 width: 1200,
                 height: 630,
-                alt: post.title,
+                alt: page.title,
               },
             ],
           }
@@ -50,14 +67,14 @@ export function generateNoxionMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: page.title,
       description,
-      ...(post.coverImage
+      ...(page.coverImage
         ? {
             images: [
               {
-                url: post.coverImage,
-                alt: post.title,
+                url: page.coverImage,
+                alt: page.title,
               },
             ],
           }
@@ -67,12 +84,12 @@ export function generateNoxionMetadata(
       canonical: url,
     },
     other: {
-      "article:published_time": post.date ? new Date(post.date).toISOString() : "",
-      "article:modified_time": post.lastEditedTime,
-      "article:author": post.author ?? config.author,
-      ...(post.category ? { "article:section": post.category } : {}),
-      ...(post.tags.length > 0
-        ? Object.fromEntries(post.tags.map((tag, i) => [`article:tag:${i}`, tag]))
+      ...(isBlog && date ? { "article:published_time": new Date(date).toISOString() } : {}),
+      ...(isBlog ? { "article:modified_time": page.lastEditedTime } : {}),
+      ...(isBlog ? { "article:author": author } : {}),
+      ...(category ? { "article:section": category } : {}),
+      ...(tags.length > 0
+        ? Object.fromEntries(tags.map((tag: string, i: number) => [`article:tag:${i}`, tag]))
         : {}),
     },
   };
