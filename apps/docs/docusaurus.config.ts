@@ -184,6 +184,11 @@ Key packages:
           activeBasePath: 'docs/changelog',
         },
         {
+          to: '/showcase',
+          label: 'Showcase',
+          position: 'left',
+        },
+        {
           type: 'localeDropdown',
           position: 'right',
         },
@@ -204,6 +209,7 @@ Key packages:
             { label: 'Introduction', to: '/docs/learn/introduction' },
             { label: 'Quick Start', to: '/docs/learn/quick-start' },
             { label: 'API Reference', to: '/docs/reference/overview' },
+            { label: 'Showcase', to: '/showcase' },
           ],
         },
         {
