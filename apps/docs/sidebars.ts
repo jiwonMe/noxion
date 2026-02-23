@@ -18,6 +18,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         'learn/configuration',
+        'learn/auto-publish',
         'learn/image-optimization',
         'learn/seo',
         'learn/themes',
