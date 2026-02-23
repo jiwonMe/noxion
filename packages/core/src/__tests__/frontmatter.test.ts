@@ -7,11 +7,14 @@ const basePost: BlogPost = {
   id: "page-1",
   title: "Original Title",
   slug: "original-slug",
-  date: "2025-01-01",
-  tags: ["original"],
-  category: "General",
+  pageType: "blog",
   published: true,
   lastEditedTime: "2025-01-01T00:00:00.000Z",
+  metadata: {
+    date: "2025-01-01",
+    tags: ["original"],
+    category: "General",
+  },
 };
 
 describe("parseKeyValuePairs", () => {
@@ -180,19 +183,19 @@ describe("applyFrontmatter", () => {
     expect(result.description).toBe("A description");
   });
 
-  test("overrides date", () => {
+  test("overrides date in metadata", () => {
     const result = applyFrontmatter(basePost, { date: "2026-01-01" });
-    expect(result.date).toBe("2026-01-01");
+    expect(result.metadata.date).toBe("2026-01-01");
   });
 
-  test("overrides category", () => {
+  test("overrides category in metadata", () => {
     const result = applyFrontmatter(basePost, { category: "Tech" });
-    expect(result.category).toBe("Tech");
+    expect(result.metadata.category).toBe("Tech");
   });
 
-  test("overrides tags from comma-separated string", () => {
+  test("overrides tags from comma-separated string in metadata", () => {
     const result = applyFrontmatter(basePost, { tags: "ai, workflow, agent" });
-    expect(result.tags).toEqual(["ai", "workflow", "agent"]);
+    expect(result.metadata.tags).toEqual(["ai", "workflow", "agent"]);
   });
 
   test("overrides coverImage", () => {

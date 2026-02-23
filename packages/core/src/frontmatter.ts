@@ -1,6 +1,6 @@
 import type { ExtendedRecordMap, Block } from "notion-types";
 import { getTextContent } from "notion-utils";
-import type { BlogPost } from "./types";
+import type { NoxionPage } from "./types";
 
 type BlockBox = { role: string; value: Block };
 
@@ -58,11 +58,14 @@ export function parseKeyValuePairs(text: string): Record<string, string> {
   return result;
 }
 
-export function applyFrontmatter(
-  post: BlogPost,
+const BASE_FRONTMATTER_KEYS = new Set(["title", "description", "cleanUrl", "slug", "coverImage", "cover"]);
+
+export function applyFrontmatter<T extends NoxionPage>(
+  page: T,
   frontmatter: Record<string, string>
-): BlogPost {
-  const updated = { ...post, frontmatter };
+): T {
+  const updated = { ...page, frontmatter };
+  const updatedMetadata = { ...page.metadata };
 
   if (frontmatter.title) {
     updated.title = frontmatter.title;
@@ -80,21 +83,20 @@ export function applyFrontmatter(
     updated.slug = frontmatter.slug.replace(/^\//, "");
   }
 
-  if (frontmatter.date) {
-    updated.date = frontmatter.date;
-  }
-
-  if (frontmatter.category) {
-    updated.category = frontmatter.category;
-  }
-
-  if (frontmatter.tags) {
-    updated.tags = frontmatter.tags.split(",").map((t) => t.trim()).filter(Boolean);
-  }
-
   if (frontmatter.coverImage || frontmatter.cover) {
     updated.coverImage = frontmatter.coverImage ?? frontmatter.cover;
   }
 
+  for (const [key, value] of Object.entries(frontmatter)) {
+    if (BASE_FRONTMATTER_KEYS.has(key)) continue;
+
+    if (key === "tags") {
+      updatedMetadata.tags = value.split(",").map((t) => t.trim()).filter(Boolean);
+    } else {
+      updatedMetadata[key] = value;
+    }
+  }
+
+  updated.metadata = updatedMetadata;
   return updated;
 }

@@ -1,5 +1,5 @@
 import type { NoxionPlugin, HeadTag } from "../plugin";
-import type { BlogPost, NoxionConfig } from "../types";
+import type { BlogPage, NoxionConfig } from "../types";
 
 export interface RSSPluginOptions {
   feedPath?: string;
@@ -31,7 +31,7 @@ function generateRSSHeadTags(feedPath: string): HeadTag[] {
 }
 
 export function generateRSSXml(
-  posts: BlogPost[],
+  posts: BlogPage[],
   config: NoxionConfig,
   options?: Pick<RSSPluginOptions, "limit">
 ): string {
@@ -45,9 +45,9 @@ export function generateRSSXml(
       <title>${escapeXml(post.title)}</title>
       <link>${baseUrl}/${post.slug}</link>
       <guid isPermaLink="true">${baseUrl}/${post.slug}</guid>
-      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <pubDate>${new Date(post.metadata.date).toUTCString()}</pubDate>
       <dc:creator>${escapeXml(config.author)}</dc:creator>
-${post.tags.map((t) => `      <category>${escapeXml(t)}</category>`).join("\n")}
+${post.metadata.tags.map((t) => `      <category>${escapeXml(t)}</category>`).join("\n")}
     </item>`
     )
     .join("\n");

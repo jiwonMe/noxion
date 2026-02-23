@@ -1,8 +1,9 @@
 import type { NotionAPI } from "notion-client";
 import type { ExtendedRecordMap, CollectionPropertySchemaMap, Block, Collection } from "notion-types";
 import { getTextContent, defaultMapImageUrl } from "notion-utils";
-import type { BlogPost } from "./types";
+import type { NoxionPage, BlogPage, NoxionCollection, NoxionConfig } from "./types";
 import { applyFrontmatter, parseKeyValuePairs } from "./frontmatter";
+import { buildPropertyMapping, type PropertyMapping } from "./schema-mapper";
 
 function unwrapValue<T>(boxed: { value: T | { role: string; value: T }; role?: string } | undefined): T | undefined {
   if (!boxed) return undefined;
@@ -22,9 +23,30 @@ export async function fetchPage(client: NotionAPI, pageId: string): Promise<Exte
 export async function fetchBlogPosts(
   client: NotionAPI,
   databasePageId: string
-): Promise<BlogPost[]> {
+): Promise<BlogPage[]> {
   const recordMap = await client.getPage(databasePageId);
-  return extractPostsFromRecordMap(recordMap, databasePageId);
+  return extractPagesFromRecordMap(recordMap, "blog") as BlogPage[];
+}
+
+export async function fetchCollection(
+  client: NotionAPI,
+  collection: NoxionCollection,
+): Promise<NoxionPage[]> {
+  const recordMap = await client.getPage(collection.databaseId);
+  return extractPagesFromRecordMap(recordMap, collection.pageType, collection.schema);
+}
+
+export async function fetchAllCollections(
+  client: NotionAPI,
+  config: NoxionConfig,
+): Promise<NoxionPage[]> {
+  const collections = config.collections ?? [];
+  const allPages: NoxionPage[] = [];
+  for (const collection of collections) {
+    const pages = await fetchCollection(client, collection);
+    allPages.push(...pages);
+  }
+  return allPages;
 }
 
 export async function fetchAllSlugs(
@@ -39,15 +61,16 @@ export async function fetchPostBySlug(
   client: NotionAPI,
   databasePageId: string,
   slug: string
-): Promise<BlogPost | undefined> {
+): Promise<BlogPage | undefined> {
   const posts = await fetchBlogPosts(client, databasePageId);
   return posts.find((p) => p.slug === slug);
 }
 
-function extractPostsFromRecordMap(
+function extractPagesFromRecordMap(
   recordMap: ExtendedRecordMap,
-  _databasePageId: string
-): BlogPost[] {
+  pageType: string,
+  schemaOverrides?: Record<string, string>,
+): NoxionPage[] {
   const collectionBox = Object.values(recordMap.collection)[0];
   const collection = unwrapValue<Collection>(collectionBox as never);
   if (!collection) return [];
@@ -62,9 +85,9 @@ function extractPostsFromRecordMap(
   const queryResults = collectionQuery?.[collectionId];
   const blockIds: string[] = collectAllBlockIds(queryResults);
 
-  const schemaMap = buildSchemaMap(schema);
+  const propertyMap = buildPropertyMapping(schema, pageType, schemaOverrides);
 
-  const posts: BlogPost[] = [];
+  const pages: NoxionPage[] = [];
   for (const blockId of blockIds) {
     const block = unwrapValue<Block>(recordMap.block[blockId] as never);
     if (!block || block.type !== "page") continue;
@@ -72,25 +95,28 @@ function extractPostsFromRecordMap(
     const properties = block.properties as Record<string, unknown[][]> | undefined;
     if (!properties) continue;
 
-    let post = extractPost(blockId, properties, schemaMap, block);
+    const detectedPageType = detectPageType(properties, propertyMap, pageType);
+    let page = extractPage(blockId, properties, propertyMap, block, detectedPageType);
 
     const frontmatter = extractInlineFrontmatter(recordMap, block);
     if (frontmatter) {
-      post = applyFrontmatter(post, frontmatter);
+      page = applyFrontmatter(page, frontmatter);
     }
 
-    if (post.published) {
-      posts.push(post);
+    if (page.published) {
+      pages.push(page);
     }
   }
 
-  posts.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
-    return dateB - dateA;
-  });
+  if (pageType === "blog") {
+    pages.sort((a, b) => {
+      const dateA = new Date(String(a.metadata.date ?? "")).getTime();
+      const dateB = new Date(String(b.metadata.date ?? "")).getTime();
+      return dateB - dateA;
+    });
+  }
 
-  return posts;
+  return pages;
 }
 
 type ViewResult = {
@@ -108,73 +134,41 @@ function collectAllBlockIds(queryResults: Record<string, unknown> | undefined): 
   return [...seen];
 }
 
-interface SchemaMap {
-  titleKey: string | null;
-  slugKey: string | null;
-  dateKey: string | null;
-  tagsKey: string | null;
-  categoryKey: string | null;
-  publishedKey: string | null;
-  coverKey: string | null;
-  descriptionKey: string | null;
-  authorKey: string | null;
+function detectPageType(
+  properties: Record<string, unknown[][]>,
+  propertyMap: PropertyMapping,
+  fallbackType: string,
+): string {
+  if (!propertyMap.typeKey) return fallbackType;
+  const typeValue = getTextContent(properties[propertyMap.typeKey] as never)?.toLowerCase();
+  if (!typeValue) return fallbackType;
+  if (["blog", "docs", "portfolio"].includes(typeValue)) return typeValue;
+  return typeValue || fallbackType;
 }
 
-function buildSchemaMap(schema: CollectionPropertySchemaMap): SchemaMap {
-  const map: SchemaMap = {
-    titleKey: null,
-    slugKey: null,
-    dateKey: null,
-    tagsKey: null,
-    categoryKey: null,
-    publishedKey: null,
-    coverKey: null,
-    descriptionKey: null,
-    authorKey: null,
-  };
-
-  for (const [key, value] of Object.entries(schema)) {
-    const name = value.name?.toLowerCase();
-    if (value.type === "title") map.titleKey = key;
-    else if (name === "slug") map.slugKey = key;
-    else if (name === "tags") map.tagsKey = key;
-    else if (name === "category") map.categoryKey = key;
-    else if (name === "cover") map.coverKey = key;
-    else if (name === "description") map.descriptionKey = key;
-    else if (name === "author") map.authorKey = key;
-    else if ((name === "public" || name === "published") && value.type === "checkbox") map.publishedKey = key;
-    else if ((name === "date" || name === "published") && (value.type === "date" || value.type === "last_edited_time")) map.dateKey = key;
-  }
-
-  return map;
-}
-
-function extractPost(
+function extractPage(
   id: string,
   properties: Record<string, unknown[][]>,
-  schema: SchemaMap,
-  block: { id?: string; space_id?: string; last_edited_time?: number; format?: { page_cover?: string } }
-): BlogPost {
-  const title = schema.titleKey ? getTextContent(properties[schema.titleKey] as never) : "";
-  const rawSlug = schema.slugKey ? getTextContent(properties[schema.slugKey] as never) : "";
+  mapping: PropertyMapping,
+  block: { id?: string; space_id?: string; last_edited_time?: number; format?: { page_cover?: string } },
+  pageType: string,
+): NoxionPage {
+  const title = mapping.titleKey ? getTextContent(properties[mapping.titleKey] as never) : "";
+  const rawSlug = mapping.slugKey ? getTextContent(properties[mapping.slugKey] as never) : "";
   const slug = rawSlug || id;
-  const dateRaw = schema.dateKey ? getTextContent(properties[schema.dateKey] as never) : "";
-  const date = parseDateValue(dateRaw, properties[schema.dateKey ?? ""] as unknown[][]);
-  const tagsRaw = schema.tagsKey ? getTextContent(properties[schema.tagsKey] as never) : "";
-  const tags = tagsRaw ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
-  const category = schema.categoryKey
-    ? getTextContent(properties[schema.categoryKey] as never)
+  const description = mapping.descriptionKey
+    ? getTextContent(properties[mapping.descriptionKey] as never) || undefined
     : undefined;
-  const description = schema.descriptionKey
-    ? getTextContent(properties[schema.descriptionKey] as never)
+  const author = mapping.authorKey
+    ? getTextContent(properties[mapping.authorKey] as never) || undefined
     : undefined;
-  const author = schema.authorKey
-    ? getTextContent(properties[schema.authorKey] as never)
-    : undefined;
-  const publishedRaw = schema.publishedKey
-    ? getTextContent(properties[schema.publishedKey] as never)
+  const publishedRaw = mapping.publishedKey
+    ? getTextContent(properties[mapping.publishedKey] as never)
     : "";
   const published = publishedRaw === "Yes" || publishedRaw === "yes" || publishedRaw === "true";
+
+  const dateRaw = mapping.dateKey ? getTextContent(properties[mapping.dateKey] as never) : "";
+  const date = parseDateValue(dateRaw, properties[mapping.dateKey ?? ""] as unknown[][]);
 
   const rawCover = block.format?.page_cover;
   const coverImage = rawCover
@@ -184,19 +178,82 @@ function extractPost(
     ? new Date(block.last_edited_time).toISOString()
     : new Date().toISOString();
 
+  const metadata = buildMetadata(properties, mapping, pageType, date, author);
+
   return {
     id,
     title,
     slug,
-    date,
-    tags,
-    category: category || undefined,
-    description: description || undefined,
-    author: author || undefined,
-    coverImage,
+    pageType,
     published,
     lastEditedTime,
+    coverImage,
+    description,
+    metadata,
   };
+}
+
+function buildMetadata(
+  properties: Record<string, unknown[][]>,
+  mapping: PropertyMapping,
+  pageType: string,
+  date: string,
+  author: string | undefined,
+): Record<string, unknown> {
+  const metadata: Record<string, unknown> = {};
+
+  if (pageType === "blog") {
+    metadata.date = date;
+    const tagsRaw = mapping.metadataKeys.tags
+      ? getTextContent(properties[mapping.metadataKeys.tags] as never)
+      : "";
+    metadata.tags = tagsRaw ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
+    const category = mapping.metadataKeys.category
+      ? getTextContent(properties[mapping.metadataKeys.category] as never) || undefined
+      : undefined;
+    if (category) metadata.category = category;
+    if (author) metadata.author = author;
+  } else if (pageType === "docs") {
+    if (date) metadata.date = date;
+    const section = mapping.metadataKeys.section
+      ? getTextContent(properties[mapping.metadataKeys.section] as never) || undefined
+      : undefined;
+    if (section) metadata.section = section;
+    const orderRaw = mapping.metadataKeys.order
+      ? getTextContent(properties[mapping.metadataKeys.order] as never)
+      : "";
+    if (orderRaw) metadata.order = parseInt(orderRaw, 10) || 0;
+    const version = mapping.metadataKeys.version
+      ? getTextContent(properties[mapping.metadataKeys.version] as never) || undefined
+      : undefined;
+    if (version) metadata.version = version;
+  } else if (pageType === "portfolio") {
+    if (date) metadata.date = date;
+    const techRaw = mapping.metadataKeys.technologies
+      ? getTextContent(properties[mapping.metadataKeys.technologies] as never)
+      : "";
+    metadata.technologies = techRaw ? techRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
+    const projectUrl = mapping.metadataKeys.projectUrl
+      ? getTextContent(properties[mapping.metadataKeys.projectUrl] as never) || undefined
+      : undefined;
+    if (projectUrl) metadata.projectUrl = projectUrl;
+    const year = mapping.metadataKeys.year
+      ? getTextContent(properties[mapping.metadataKeys.year] as never) || undefined
+      : undefined;
+    if (year) metadata.year = year;
+    const featuredRaw = mapping.metadataKeys.featured
+      ? getTextContent(properties[mapping.metadataKeys.featured] as never)
+      : "";
+    metadata.featured = featuredRaw === "Yes" || featuredRaw === "yes" || featuredRaw === "true";
+  } else {
+    if (date) metadata.date = date;
+    for (const [field, key] of Object.entries(mapping.metadataKeys)) {
+      const val = getTextContent(properties[key] as never);
+      if (val) metadata[field] = val;
+    }
+  }
+
+  return metadata;
 }
 
 function extractInlineFrontmatter(

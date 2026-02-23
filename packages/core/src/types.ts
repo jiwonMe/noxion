@@ -16,6 +16,7 @@ export interface NoxionConfig {
   description: string;
   language: string;
   defaultTheme: ThemeMode;
+  defaultPageType: string;
   revalidate: number;
   revalidateSecret?: string;
   plugins?: PluginConfig[];
@@ -34,6 +35,7 @@ export interface NoxionConfigInput {
   description: string;
   language?: string;
   defaultTheme?: ThemeMode;
+  defaultPageType?: string;
   revalidate?: number;
   revalidateSecret?: string;
   plugins?: PluginConfig[];
@@ -185,17 +187,21 @@ export interface PageTypeDefinition {
  * Collection configuration for multi-database support
  */
 export interface NoxionCollection {
+  /** Human-readable name for this collection */
+  name?: string;
   /** Notion database ID */
   databaseId: string;
   /** Page type for all pages in this collection */
   pageType: string;
-  /** Optional schema overrides (property name mappings) */
+  /** URL path prefix (e.g., '/docs', '/projects') */
+  pathPrefix?: string;
+  /** Optional schema overrides (field name → Notion property name) */
   schema?: Record<string, string>;
 }
 
 export interface NoxionPageData {
   recordMap: ExtendedRecordMap;
-  post: BlogPost;
+  post: NoxionPage;
 }
 
 export type PluginConfig = PluginConfigEntry;

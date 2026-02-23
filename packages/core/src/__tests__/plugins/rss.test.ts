@@ -10,6 +10,7 @@ const stubConfig: NoxionConfig = {
   description: "A test blog",
   language: "en",
   defaultTheme: "system",
+  defaultPageType: "blog",
   revalidate: 3600,
 };
 
@@ -18,19 +19,25 @@ const stubPosts: BlogPost[] = [
     id: "1",
     title: "First Post",
     slug: "first-post",
-    date: "2024-01-15",
-    tags: ["react"],
+    pageType: "blog",
     published: true,
     lastEditedTime: "2024-01-15T00:00:00.000Z",
+    metadata: {
+      date: "2024-01-15",
+      tags: ["react"],
+    },
   },
   {
     id: "2",
     title: "Second Post",
     slug: "second-post",
-    date: "2024-01-10",
-    tags: ["typescript"],
+    pageType: "blog",
     published: true,
     lastEditedTime: "2024-01-10T00:00:00.000Z",
+    metadata: {
+      date: "2024-01-10",
+      tags: ["typescript"],
+    },
   },
 ];
 
