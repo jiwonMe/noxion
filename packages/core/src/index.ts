@@ -1,13 +1,16 @@
 export { defineConfig, loadConfig } from "./config";
 export { createNotionClient } from "./client";
-export { fetchBlogPosts, fetchPage, fetchAllSlugs, fetchPostBySlug } from "./fetcher";
+export { fetchBlogPosts, fetchPage, fetchAllSlugs, fetchPostBySlug, fetchCollection, fetchAllCollections } from "./fetcher";
 export { generateSlug, parseNotionPageId, buildPageUrl, resolveSlug } from "./slug";
 export { parseFrontmatter, parseKeyValuePairs, applyFrontmatter } from "./frontmatter";
 export { extractImageUrls, generateImageFilename, downloadImages } from "./image-downloader";
 export type { DownloadImagesOptions } from "./image-downloader";
 export { mapImages } from "./image-mapper";
 export { definePlugin, loadPlugins } from "./plugin-loader";
-export { executeHook, executeTransformHook } from "./plugin-executor";
+export { executeHook, executeTransformHook, executeRegisterPageTypes, executeRouteResolve, executeExtendSlots } from "./plugin-executor";
+export { buildPropertyMapping, getMetadataConventions } from "./schema-mapper";
+export type { PropertyMapping } from "./schema-mapper";
+export { PageTypeRegistry, createPageTypeRegistry } from "./page-type-registry";
 export type {
   NoxionPlugin,
   PluginFactory,
