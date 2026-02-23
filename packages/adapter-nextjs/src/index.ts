@@ -1,8 +1,10 @@
 export { generateNoxionMetadata, generateNoxionListMetadata } from "./metadata";
 export { generateNoxionSitemap } from "./sitemap";
 export { generateNoxionRobots } from "./robots";
-export { generateBlogPostingLD, generateBreadcrumbLD, generateWebSiteLD, generateCollectionPageLD } from "./structured-data";
+export { generateBlogPostingLD, generateTechArticleLD, generateCreativeWorkLD, generatePageLD, generateBreadcrumbLD, generateWebSiteLD, generateCollectionPageLD } from "./structured-data";
 export type { JsonLd } from "./structured-data";
 export { generateNoxionStaticParams } from "./static-params";
+export { generateNoxionRoutes, resolvePageType, buildPageUrl, generateStaticParamsForRoute } from "./routes";
+export type { NoxionRouteConfig } from "./routes";
 export { createRevalidateHandler } from "./revalidate";
 export type { RevalidateHandlerOptions } from "./revalidate";
