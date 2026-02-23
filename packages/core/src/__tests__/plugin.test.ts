@@ -1,8 +1,8 @@
 import { describe, it, expect, mock } from "bun:test";
 import { definePlugin, loadPlugins } from "../plugin-loader";
 import { executeHook, executeTransformHook } from "../plugin-executor";
-import type { NoxionPlugin, NoxionMetadata, RouteInfo } from "../plugin";
-import type { NoxionConfig, BlogPost } from "../types";
+import type { NoxionPlugin, NoxionMetadata, RouteInfo, CLICommand } from "../plugin";
+import type { NoxionConfig, BlogPost, PageTypeDefinition } from "../types";
 
 const stubConfig: NoxionConfig = {
   rootNotionPageId: "test-id",
@@ -289,5 +289,119 @@ describe("executeTransformHook", () => {
     });
     expect(result.openGraph).toEqual({ type: "article" });
     expect(result.twitter).toEqual({ card: "summary_large_image" });
+  });
+});
+
+describe("New plugin hooks (v0.2)", () => {
+  it("registerPageTypes hook returns PageTypeDefinition array", () => {
+    const plugin: NoxionPlugin = {
+      name: "gallery-plugin",
+      registerPageTypes: () => [
+        {
+          name: "gallery",
+          defaultTemplate: "gallery/grid",
+          defaultLayout: "single-column",
+        },
+      ],
+    };
+
+    const pageTypes = plugin.registerPageTypes!();
+    expect(pageTypes).toHaveLength(1);
+    expect(pageTypes[0].name).toBe("gallery");
+    expect(pageTypes[0].defaultTemplate).toBe("gallery/grid");
+  });
+
+  it("configSchema hook validates plugin options", () => {
+    const plugin: NoxionPlugin = {
+      name: "validated-plugin",
+      configSchema: {
+        validate: (options: unknown) => {
+          const opts = options as { apiKey?: string };
+          if (!opts.apiKey) {
+            return { valid: false, errors: ["apiKey is required"] };
+          }
+          return { valid: true };
+        },
+      },
+    };
+
+    const validResult = plugin.configSchema!.validate({ apiKey: "abc123" });
+    expect(validResult.valid).toBe(true);
+
+    const invalidResult = plugin.configSchema!.validate({});
+    expect(invalidResult.valid).toBe(false);
+    expect(invalidResult.errors).toContain("apiKey is required");
+  });
+
+  it("onRouteResolve hook can modify or filter routes", () => {
+    const plugin: NoxionPlugin = {
+      name: "route-middleware",
+      onRouteResolve: (route: RouteInfo) => {
+        if (route.path.startsWith("/admin")) {
+          return null;
+        }
+        return { ...route, metadata: { ...route.metadata, processed: true } };
+      },
+    };
+
+    const publicRoute: RouteInfo = { path: "/blog/post" };
+    const adminRoute: RouteInfo = { path: "/admin/dashboard" };
+
+    const publicResult = plugin.onRouteResolve!(publicRoute);
+    expect(publicResult).not.toBeNull();
+    expect(publicResult!.metadata?.processed).toBe(true);
+
+    const adminResult = plugin.onRouteResolve!(adminRoute);
+    expect(adminResult).toBeNull();
+  });
+
+  it("extendSlots hook can add UI components to slots", () => {
+    const plugin: NoxionPlugin = {
+      name: "slot-extender",
+      extendSlots: (slots: Record<string, unknown>) => ({
+        ...slots,
+        customSlot: { component: "CustomComponent" },
+      }),
+    };
+
+    const initialSlots = { header: { component: "Header" } };
+    const extended = plugin.extendSlots!(initialSlots);
+    
+    expect(extended.header).toEqual({ component: "Header" });
+    expect(extended.customSlot).toEqual({ component: "CustomComponent" });
+  });
+
+  it("extendCLI hook returns CLI command definitions", () => {
+    const plugin: NoxionPlugin = {
+      name: "cli-plugin",
+      extendCLI: () => [
+        {
+          name: "custom-command",
+          description: "A custom CLI command",
+          action: async () => {
+            console.log("Command executed");
+          },
+        },
+      ],
+    };
+
+    const commands = plugin.extendCLI!();
+    expect(commands).toHaveLength(1);
+    expect(commands[0].name).toBe("custom-command");
+    expect(commands[0].description).toBe("A custom CLI command");
+    expect(typeof commands[0].action).toBe("function");
+  });
+
+  it("all new hooks are optional (backward compatibility)", () => {
+    const oldPlugin: NoxionPlugin = {
+      name: "old-plugin",
+      injectHead: () => [],
+    };
+
+    expect(oldPlugin.registerPageTypes).toBeUndefined();
+    expect(oldPlugin.configSchema).toBeUndefined();
+    expect(oldPlugin.onRouteResolve).toBeUndefined();
+    expect(oldPlugin.extendSlots).toBeUndefined();
+    expect(oldPlugin.extendCLI).toBeUndefined();
   });
 });

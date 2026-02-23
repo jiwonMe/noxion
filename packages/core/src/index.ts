@@ -19,6 +19,7 @@ export type {
   SitemapEntry,
   RouteInfo,
   NoxionMetadata,
+  CLICommand,
 } from "./plugin";
 export type {
   NoxionConfig,

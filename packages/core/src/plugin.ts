@@ -1,5 +1,5 @@
 import type { ExtendedRecordMap } from "notion-types";
-import type { BlogPost, NoxionConfig } from "./types";
+import type { BlogPost, NoxionConfig, PageTypeDefinition } from "./types";
 
 export interface HeadTag {
   tagName: string;
@@ -34,9 +34,16 @@ export interface PluginActions {
   addRoute: (route: RouteInfo) => void;
   setGlobalData: (key: string, data: unknown) => void;
   getGlobalData: (pluginName: string, key: string) => unknown;
+  registerPageType: (pageType: PageTypeDefinition) => void;
 }
 
 export type AllContent = Record<string, unknown>;
+
+export interface CLICommand {
+  name: string;
+  description: string;
+  action: (...args: unknown[]) => Promise<void> | void;
+}
 
 export interface NoxionPlugin<Content = unknown> {
   name: string;
@@ -56,6 +63,18 @@ export interface NoxionPlugin<Content = unknown> {
   extendSitemap?: (args: { entries: SitemapEntry[]; config: NoxionConfig }) => SitemapEntry[];
 
   extendRoutes?: (args: { routes: RouteInfo[]; config: NoxionConfig }) => RouteInfo[];
+
+  registerPageTypes?: () => PageTypeDefinition[];
+  
+  configSchema?: {
+    validate: (options: unknown) => { valid: boolean; errors?: string[] };
+  };
+  
+  onRouteResolve?: (route: RouteInfo) => RouteInfo | null;
+  
+  extendSlots?: (slots: Record<string, unknown>) => Record<string, unknown>;
+  
+  extendCLI?: () => CLICommand[];
 }
 
 export type PluginFactory<Options = unknown, Content = unknown> = (
