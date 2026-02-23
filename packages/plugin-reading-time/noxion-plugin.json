@@ -1,0 +1,10 @@
+{
+  "name": "noxion-plugin-reading-time",
+  "description": "Adds estimated reading time to Noxion pages",
+  "version": "0.1.0",
+  "noxion": ">=0.2.0",
+  "hooks": ["transformPosts", "extendSlots"],
+  "pageTypes": ["blog", "docs"],
+  "hasConfig": true,
+  "keywords": ["reading-time", "blog", "docs"]
+}

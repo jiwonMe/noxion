@@ -1,0 +1,48 @@
+{
+  "name": "noxion-plugin-reading-time",
+  "version": "0.1.0",
+  "description": "Adds estimated reading time to Noxion pages — reference plugin for community authors",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "noxion-plugin.json"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "noxion",
+    "noxion-plugin",
+    "reading-time"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/plugin-reading-time"
+  },
+  "peerDependencies": {
+    "@noxion/core": ">=0.2.0"
+  },
+  "dependencies": {
+    "@noxion/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@noxion/plugin-utils": "workspace:*",
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -122,6 +122,21 @@
         "react": ">=18.0.0",
       },
     },
+    "packages/plugin-reading-time": {
+      "name": "noxion-plugin-reading-time",
+      "version": "0.1.0",
+      "dependencies": {
+        "@noxion/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@noxion/plugin-utils": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/core": ">=0.2.0",
+      },
+    },
     "packages/plugin-utils": {
       "name": "@noxion/plugin-utils",
       "version": "0.1.0",
@@ -1895,6 +1910,8 @@
     "notion-types": ["notion-types@7.8.2", "", {}, "sha512-AB0+Dl75NuDB/ZLFpFvdtTAb0Gc4reY5py0mXu/st2w15ezna37gyaAB1fEeCiimWpM02JIH3PILK5N7XlfuAg=="],
 
     "notion-utils": ["notion-utils@7.8.2", "", { "dependencies": { "is-url-superb": "^6.1.0", "memoize": "^10.1.0", "normalize-url": "^8.0.1", "notion-types": "7.8.2", "p-queue": "^8.1.0" } }, "sha512-7xxiqF1803Zn9eW6J+XbjR4YMNdZt2en5HuwQcNnbLF0IN/qFnF3zssBVxBWuMNh15q8W1/EQzFmQwZtp1iPPQ=="],
+
+    "noxion-plugin-reading-time": ["noxion-plugin-reading-time@workspace:packages/plugin-reading-time"],
 
     "npm-run-path": ["npm-run-path@4.0.1", "", { "dependencies": { "path-key": "^3.0.0" } }, "sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw=="],
 
