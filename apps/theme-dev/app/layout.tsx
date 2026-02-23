@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@noxion/renderer/styles";
+import "@noxion/notion-renderer/styles";
 import "./globals.css";
 
 export const metadata: Metadata = {

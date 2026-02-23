@@ -6,6 +6,18 @@
   box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+}
+
+/* ── SHELL ── */
+
+.dev-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* ── DEV TOOLBAR ── */
 
 .dev-toolbar {
@@ -14,13 +26,14 @@
   z-index: 9999;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 10px 20px;
-  background: #1a1a2e;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #111127;
   color: #e0e0e0;
   font-family: "SF Mono", "Fira Code", "JetBrains Mono", monospace;
-  font-size: 13px;
+  font-size: 12px;
   border-bottom: 1px solid #2a2a4a;
+  flex-wrap: wrap;
 }
 
 .dev-toolbar__brand {
@@ -28,40 +41,48 @@
   color: #7c3aed;
   letter-spacing: -0.02em;
   white-space: nowrap;
+  font-size: 13px;
 }
 
 .dev-toolbar__divider {
   width: 1px;
   height: 20px;
   background: #2a2a4a;
+  flex-shrink: 0;
 }
 
 .dev-toolbar__group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .dev-toolbar__label {
-  color: #888;
-  font-size: 11px;
+  color: #666;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+}
+
+.dev-toolbar__vs {
+  color: #666;
+  font-size: 11px;
 }
 
 .dev-toolbar__select {
   appearance: none;
-  background: #16162a;
+  background: #0d0d1a;
   color: #e0e0e0;
   border: 1px solid #2a2a4a;
-  border-radius: 6px;
-  padding: 5px 28px 5px 10px;
-  font-size: 13px;
+  border-radius: 5px;
+  padding: 4px 24px 4px 8px;
+  font-size: 12px;
   font-family: inherit;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 6px center;
+  transition: border-color 0.15s;
 }
 
 .dev-toolbar__select:hover {
@@ -77,19 +98,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: #16162a;
-  color: #e0e0e0;
+  width: 28px;
+  height: 28px;
+  background: #0d0d1a;
+  color: #999;
   border: 1px solid #2a2a4a;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  transition: border-color 0.15s;
+  font-size: 14px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
 }
 
 .dev-toolbar__btn:hover {
   border-color: #7c3aed;
+  color: #e0e0e0;
 }
 
 .dev-toolbar__btn--active {
@@ -98,9 +121,13 @@
   border-color: #7c3aed;
 }
 
-/* ── VALIDATOR BADGE ── */
+.dev-toolbar__btn--wide {
+  width: auto;
+  padding: 0 10px;
+  font-size: 13px;
+}
 
-.dev-toolbar__validator {
+.dev-toolbar__right {
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -108,9 +135,9 @@
 }
 
 .dev-toolbar__badge {
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -130,22 +157,22 @@
   color: #fbbf24;
 }
 
-/* ── PAGE NAVIGATION TABS ── */
+/* ── PAGE TABS ── */
 
 .dev-tabs {
   display: flex;
   gap: 0;
-  padding: 0 20px;
-  background: #111127;
+  padding: 0 16px;
+  background: #0d0d1a;
   border-bottom: 1px solid #2a2a4a;
   overflow-x: auto;
 }
 
 .dev-tab {
-  padding: 10px 16px;
-  color: #888;
+  padding: 8px 14px;
+  color: #666;
   font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 12px;
+  font-size: 11px;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -155,7 +182,7 @@
 }
 
 .dev-tab:hover {
-  color: #e0e0e0;
+  color: #ccc;
 }
 
 .dev-tab--active {
@@ -163,98 +190,370 @@
   border-bottom-color: #7c3aed;
 }
 
-/* ── PREVIEW FRAME ── */
+/* ── DEV PANELS (validator, tokens) ── */
 
-.dev-preview {
-  min-height: calc(100vh - 100px);
-}
-
-/* ── VALIDATOR PANEL ── */
-
-.dev-validator-panel {
-  padding: 16px 20px;
-  background: #111127;
+.dev-panel {
+  background: #0d0d1a;
   border-bottom: 1px solid #2a2a4a;
   font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 12px;
-  line-height: 1.6;
-  max-height: 300px;
+  font-size: 11px;
+  max-height: 320px;
   overflow-y: auto;
 }
 
-.dev-validator-panel__title {
+.dev-panel__header {
+  padding: 8px 16px;
   font-weight: 700;
-  color: #e0e0e0;
-  margin-bottom: 8px;
+  color: #ccc;
+  background: #111127;
+  border-bottom: 1px solid #1a1a3a;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.dev-validator-panel__issue {
+.dev-panel__header-sub {
+  color: #666;
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.dev-panel__body {
+  padding: 10px 16px;
+}
+
+.dev-panel__body--compare {
+  display: flex;
+  gap: 16px;
+}
+
+.dev-panel__separator {
+  height: 1px;
+  background: #1a1a3a;
+  margin: 8px 0;
+}
+
+.dev-panel__separator--vertical {
+  width: 1px;
+  height: auto;
+  margin: 0;
+}
+
+.dev-panel__success {
+  color: #34d399;
+  padding: 4px 0;
+}
+
+.dev-panel__issues {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dev-panel__issue {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   padding: 2px 0;
+  line-height: 1.5;
 }
 
-.dev-validator-panel__issue--error {
+.dev-panel__issue--error {
   color: #fca5a5;
 }
 
-.dev-validator-panel__issue--warning {
+.dev-panel__issue--warning {
   color: #fbbf24;
 }
 
-.dev-validator-panel__success {
-  color: #34d399;
+.dev-panel__issue-icon {
+  flex-shrink: 0;
+  width: 12px;
+}
+
+.dev-panel__issue-path {
+  color: #888;
+  flex-shrink: 0;
+}
+
+.dev-panel__issue-msg {
+  color: inherit;
 }
 
 /* ── TOKEN INSPECTOR ── */
 
-.dev-token-panel {
-  padding: 16px 20px;
-  background: #111127;
-  border-bottom: 1px solid #2a2a4a;
-  font-family: "SF Mono", "Fira Code", monospace;
-  font-size: 12px;
-  max-height: 400px;
-  overflow-y: auto;
+.dev-tokens {
+  flex: 1;
+  min-width: 0;
 }
 
-.dev-token-panel__title {
+.dev-tokens__theme-name {
   font-weight: 700;
-  color: #e0e0e0;
-  margin-bottom: 12px;
+  color: #c4b5fd;
+  margin-bottom: 8px;
+  font-size: 12px;
 }
 
-.dev-token-panel__section {
-  margin-bottom: 12px;
+.dev-tokens__section {
+  margin-bottom: 10px;
 }
 
-.dev-token-panel__section-label {
-  color: #888;
-  font-size: 10px;
+.dev-tokens__section-label {
+  color: #666;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #1a1a3a;
 }
 
-.dev-token-row {
+.dev-token {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 3px 0;
+  padding: 2px 0;
   color: #e0e0e0;
 }
 
-.dev-token-row__swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
+.dev-token__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
   border: 1px solid #2a2a4a;
   flex-shrink: 0;
 }
 
-.dev-token-row__key {
-  color: #888;
-  min-width: 160px;
+.dev-token__shadow-preview {
+  width: 18px;
+  height: 12px;
+  background: #333;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
-.dev-token-row__value {
+.dev-token__radius-preview {
+  width: 18px;
+  height: 12px;
+  background: #7c3aed;
+  flex-shrink: 0;
+}
+
+.dev-token__key {
+  color: #888;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.dev-token__value {
   color: #c4b5fd;
+}
+
+.dev-token__value--truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+/* ── PREVIEW AREA ── */
+
+.dev-preview-area {
+  flex: 1;
+  background: #f5f5f5;
+  padding: 0;
+}
+
+[data-theme="dark"] .dev-preview-area {
+  background: #0a0a0a;
+}
+
+.dev-preview-frame {
+  margin: 0 auto;
+  background: var(--noxion-background, #fff);
+  min-height: calc(100vh - 90px);
+  transition: max-width 0.3s ease;
+}
+
+/* ── COMPARE MODE ── */
+
+.dev-compare {
+  display: flex;
+  min-height: calc(100vh - 90px);
+}
+
+.dev-compare__pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-compare__label {
+  padding: 6px 16px;
+  background: #111127;
+  color: #c4b5fd;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.dev-compare__divider {
+  width: 2px;
+  background: #7c3aed;
+  flex-shrink: 0;
+}
+
+.dev-compare__pane .dev-preview-frame {
+  flex: 1;
+}
+
+/* ── NOTION PAGE FORM ── */
+
+.dev-notion-view {
+  padding: 24px;
+}
+
+.dev-notion-form {
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+.dev-notion-form__label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--noxion-foreground, #171717);
+  margin-bottom: 8px;
+}
+
+.dev-notion-form__row {
+  display: flex;
+  gap: 8px;
+}
+
+.dev-notion-form__input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: "SF Mono", "Fira Code", monospace;
+  border: 1px solid var(--noxion-border, #e5e5e5);
+  border-radius: 6px;
+  background: var(--noxion-background, #fff);
+  color: var(--noxion-foreground, #171717);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.dev-notion-form__input:focus {
+  border-color: var(--noxion-primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.dev-notion-form__input::placeholder {
+  color: var(--noxion-mutedForeground, #999);
+  font-size: 12px;
+}
+
+.dev-notion-form__btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: 6px;
+  background: var(--noxion-primary, #2563eb);
+  color: var(--noxion-primaryForeground, #fff);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.dev-notion-form__btn:hover {
+  opacity: 0.9;
+}
+
+.dev-notion-form__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dev-notion-form__hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--noxion-mutedForeground, #999);
+}
+
+.dev-notion-form__error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+[data-theme="dark"] .dev-notion-form__error {
+  color: #fca5a5;
+  background: #1c0a0a;
+  border-color: #7f1d1d;
+}
+
+.dev-notion-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.dev-notion-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--noxion-mutedForeground, #999);
+  font-size: 14px;
+}
+
+/* ── DOCS CONTENT MOCK ── */
+
+.dev-docs-content {
+  max-width: 720px;
+  line-height: 1.7;
+}
+
+.dev-docs-content h1 {
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.dev-docs-content h2 {
+  font-size: 1.25rem;
+  margin: 2rem 0 0.5rem;
+}
+
+.dev-docs-content p {
+  margin: 0 0 1rem;
+}
+
+.dev-docs-content code {
+  font-family: var(--noxion-font-mono, monospace);
+  font-size: 0.875em;
+  background: var(--noxion-muted, #f5f5f5);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.dev-docs-content pre {
+  background: var(--noxion-muted, #f5f5f5);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1rem;
+}
+
+.dev-docs-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.6;
 }

@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@noxion/renderer",
     "@noxion/notion-renderer",
+    "notion-client",
     "notion-types",
     "notion-utils",
   ],

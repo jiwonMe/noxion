@@ -13,7 +13,10 @@
   },
   "dependencies": {
     "@noxion/renderer": "workspace:*",
+    "@noxion/notion-renderer": "workspace:*",
     "next": "^16.1.6",
+    "notion-client": "^7.8.2",
+    "notion-types": "^7.8.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

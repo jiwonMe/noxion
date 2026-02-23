@@ -37,8 +37,11 @@
       "name": "@noxion/theme-dev",
       "version": "0.2.0",
       "dependencies": {
+        "@noxion/notion-renderer": "workspace:*",
         "@noxion/renderer": "workspace:*",
         "next": "^16.1.6",
+        "notion-client": "^7.8.2",
+        "notion-types": "^7.8.2",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
       },
