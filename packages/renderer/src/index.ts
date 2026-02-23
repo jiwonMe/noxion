@@ -75,6 +75,9 @@ export { useThemePreference } from "./hooks/useTheme";
 export type { ThemePreference } from "./hooks/useTheme";
 export { useSearch } from "./hooks/useSearch";
 
+export { validateTheme, formatValidationResult } from "./theme/validate-theme";
+export type { ValidationResult, ValidationIssue, ValidationSeverity } from "./theme/validate-theme";
+
 export {
   defaultThemePackage,
   inkThemePackage,
