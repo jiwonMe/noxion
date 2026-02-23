@@ -8,4 +8,8 @@ export {
   TagFilter,
   ThemeToggle,
   EmptyState,
+  DocsSidebar,
+  DocsBreadcrumb,
+  PortfolioProjectCard,
+  PortfolioFilter,
 } from "@noxion/renderer";

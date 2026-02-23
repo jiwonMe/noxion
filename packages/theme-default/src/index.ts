@@ -1,7 +1,7 @@
 import type { NoxionThemePackage } from "@noxion/renderer";
 import { defaultTokens } from "./tokens";
 import { BlogLayout, DocsLayout, MagazineLayout } from "./layouts";
-import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+import { HomePage, PostPage, ArchivePage, TagPage, DocsPage, PortfolioGrid, PortfolioProject } from "./templates";
 import {
   Header,
   Footer,
@@ -25,6 +25,9 @@ export const themeDefault: NoxionThemePackage = {
     post: PostPage,
     archive: ArchivePage,
     tag: TagPage,
+    "docs/page": DocsPage,
+    "portfolio/grid": PortfolioGrid,
+    "portfolio/project": PortfolioProject,
   },
   components: {
     Header,
@@ -36,11 +39,12 @@ export const themeDefault: NoxionThemePackage = {
     TagFilter,
   },
   stylesheet: "@noxion/theme-default/styles",
+  supports: ["blog", "docs", "portfolio"],
 };
 
 export { defaultTokens } from "./tokens";
 export { BlogLayout, DocsLayout, MagazineLayout } from "./layouts";
-export { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+export { HomePage, PostPage, ArchivePage, TagPage, DocsPage, PortfolioGrid, PortfolioProject } from "./templates";
 export {
   Header,
   Footer,
@@ -49,4 +53,8 @@ export {
   TOC,
   Search,
   TagFilter,
+  DocsSidebar,
+  DocsBreadcrumb,
+  PortfolioProjectCard,
+  PortfolioFilter,
 } from "./components";
