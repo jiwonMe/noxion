@@ -48,8 +48,30 @@ export function loadPlugins(entries: PluginConfigEntry[]): NoxionPlugin[] {
       console.warn(`[noxion] Duplicate plugin name: "${plugin.name}"`);
     }
     seenNames.add(plugin.name);
+
+    validatePluginConfig(plugin, entry);
+
     plugins.push(plugin);
   }
 
   return plugins;
+}
+
+function validatePluginConfig(plugin: NoxionPlugin, entry: PluginConfigEntry): void {
+  if (!plugin.configSchema) return;
+
+  const options = Array.isArray(entry) ? entry[1] : undefined;
+
+  try {
+    const result = plugin.configSchema.validate(options);
+    if (!result.valid) {
+      const errors = result.errors?.join(", ") ?? "unknown validation error";
+      console.warn(`[noxion] Plugin "${plugin.name}" config validation failed: ${errors}`);
+    }
+  } catch (err) {
+    console.warn(
+      `[noxion] Plugin "${plugin.name}" configSchema.validate threw:`,
+      err instanceof Error ? err.message : err
+    );
+  }
 }

@@ -1,4 +1,6 @@
-import type { NoxionPlugin } from "./plugin";
+import type { NoxionPlugin, RouteInfo } from "./plugin";
+import type { PageTypeDefinition } from "./types";
+import type { PageTypeRegistry } from "./page-type-registry";
 
 export async function executeHook(
   plugins: NoxionPlugin[],
@@ -52,6 +54,75 @@ export function executeTransformHook<T>(
     } catch (err) {
       console.warn(
         `[noxion] Plugin "${plugin.name}" threw in ${String(hookName)}:`,
+        err instanceof Error ? err.message : err
+      );
+    }
+  }
+
+  return current;
+}
+
+export function executeRegisterPageTypes(
+  plugins: NoxionPlugin[],
+  registry: PageTypeRegistry,
+): void {
+  for (const plugin of plugins) {
+    if (typeof plugin.registerPageTypes !== "function") continue;
+
+    try {
+      const definitions: PageTypeDefinition[] = plugin.registerPageTypes();
+      for (const definition of definitions) {
+        registry.register(definition);
+      }
+    } catch (err) {
+      console.warn(
+        `[noxion] Plugin "${plugin.name}" threw in registerPageTypes:`,
+        err instanceof Error ? err.message : err
+      );
+    }
+  }
+}
+
+export function executeRouteResolve(
+  plugins: NoxionPlugin[],
+  route: RouteInfo,
+): RouteInfo | null {
+  let current: RouteInfo | null = route;
+
+  for (const plugin of plugins) {
+    if (typeof plugin.onRouteResolve !== "function") continue;
+    if (current === null) break;
+
+    try {
+      current = plugin.onRouteResolve(current);
+    } catch (err) {
+      console.warn(
+        `[noxion] Plugin "${plugin.name}" threw in onRouteResolve:`,
+        err instanceof Error ? err.message : err
+      );
+    }
+  }
+
+  return current;
+}
+
+export function executeExtendSlots(
+  plugins: NoxionPlugin[],
+  initialSlots: Record<string, unknown>,
+): Record<string, unknown> {
+  let current = initialSlots;
+
+  for (const plugin of plugins) {
+    if (typeof plugin.extendSlots !== "function") continue;
+
+    try {
+      const result = plugin.extendSlots(current);
+      if (result !== undefined) {
+        current = result;
+      }
+    } catch (err) {
+      console.warn(
+        `[noxion] Plugin "${plugin.name}" threw in extendSlots:`,
         err instanceof Error ? err.message : err
       );
     }

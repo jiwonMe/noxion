@@ -1,8 +1,9 @@
 import { describe, it, expect, mock } from "bun:test";
 import { definePlugin, loadPlugins } from "../plugin-loader";
-import { executeHook, executeTransformHook } from "../plugin-executor";
+import { executeHook, executeTransformHook, executeRegisterPageTypes, executeRouteResolve, executeExtendSlots } from "../plugin-executor";
 import type { NoxionPlugin, NoxionMetadata, RouteInfo, CLICommand } from "../plugin";
 import type { NoxionConfig, BlogPost, PageTypeDefinition } from "../types";
+import { PageTypeRegistry } from "../page-type-registry";
 
 const stubConfig: NoxionConfig = {
   rootNotionPageId: "test-id",
@@ -12,8 +13,27 @@ const stubConfig: NoxionConfig = {
   description: "Test site",
   language: "en",
   defaultTheme: "system",
+  defaultPageType: "blog",
   revalidate: 3600,
 };
+
+function makeBlogPost(overrides: Partial<BlogPost> & { metadataOverrides?: Partial<BlogPost["metadata"]> } = {}): BlogPost {
+  const { metadataOverrides, ...rest } = overrides;
+  return {
+    id: "1",
+    title: "Test",
+    slug: "test",
+    pageType: "blog",
+    published: true,
+    lastEditedTime: "2024-01-01T00:00:00.000Z",
+    metadata: {
+      date: "2024-01-01",
+      tags: [],
+      ...metadataOverrides,
+    },
+    ...rest,
+  };
+}
 
 describe("definePlugin", () => {
   it("creates plugin from factory with options", () => {
@@ -89,6 +109,46 @@ describe("loadPlugins", () => {
     const loaded = loadPlugins([a, b]);
     expect(loaded).toHaveLength(2);
   });
+
+  it("validates configSchema during loading and warns on invalid", () => {
+    const warns: string[] = [];
+    const originalWarn = console.warn;
+    console.warn = (...args: unknown[]) => warns.push(args.join(" "));
+
+    const factory = definePlugin<{ apiKey: string }>((opts) => ({
+      name: "validated",
+      configSchema: {
+        validate: (options: unknown) => {
+          const o = options as { apiKey?: string } | undefined;
+          if (!o?.apiKey) return { valid: false, errors: ["apiKey is required"] };
+          return { valid: true };
+        },
+      },
+    }));
+
+    loadPlugins([[factory, {}]]);
+    console.warn = originalWarn;
+
+    expect(warns.some(w => w.includes("config validation failed"))).toBe(true);
+  });
+
+  it("does not warn for valid configSchema", () => {
+    const warns: string[] = [];
+    const originalWarn = console.warn;
+    console.warn = (...args: unknown[]) => warns.push(args.join(" "));
+
+    const factory = definePlugin<{ apiKey: string }>((opts) => ({
+      name: "valid-plugin",
+      configSchema: {
+        validate: () => ({ valid: true }),
+      },
+    }));
+
+    loadPlugins([[factory, { apiKey: "abc" }]]);
+    console.warn = originalWarn;
+
+    expect(warns.some(w => w.includes("config validation failed"))).toBe(false);
+  });
 });
 
 describe("executeHook", () => {
@@ -156,29 +216,27 @@ describe("executeTransformHook", () => {
       {
         name: "add-tag",
         transformPosts: ({ posts }) =>
-          posts.map((p) => ({ ...p, tags: [...p.tags, "added-by-a"] })),
+          posts.map((p) => ({
+            ...p,
+            metadata: { ...p.metadata, tags: [...p.metadata.tags, "added-by-a"] },
+          })),
       },
       {
         name: "add-another-tag",
         transformPosts: ({ posts }) =>
-          posts.map((p) => ({ ...p, tags: [...p.tags, "added-by-b"] })),
+          posts.map((p) => ({
+            ...p,
+            metadata: { ...p.metadata, tags: [...p.metadata.tags, "added-by-b"] },
+          })),
       },
     ];
 
     const initial: BlogPost[] = [
-      {
-        id: "1",
-        title: "Test",
-        slug: "test",
-        date: "2024-01-01",
-        tags: ["original"],
-        published: true,
-        lastEditedTime: "2024-01-01T00:00:00.000Z",
-      },
+      makeBlogPost({ metadataOverrides: { tags: ["original"] } }),
     ];
 
     const result = executeTransformHook(plugins, "transformPosts", initial, {});
-    expect(result[0].tags).toEqual(["original", "added-by-a", "added-by-b"]);
+    expect(result[0].metadata.tags).toEqual(["original", "added-by-a", "added-by-b"]);
   });
 
   it("preserves previous value when a plugin throws", () => {
@@ -186,7 +244,10 @@ describe("executeTransformHook", () => {
       {
         name: "good",
         transformPosts: ({ posts }) =>
-          posts.map((p) => ({ ...p, tags: [...p.tags, "good"] })),
+          posts.map((p) => ({
+            ...p,
+            metadata: { ...p.metadata, tags: [...p.metadata.tags, "good"] },
+          })),
       },
       {
         name: "bad",
@@ -197,24 +258,17 @@ describe("executeTransformHook", () => {
       {
         name: "also-good",
         transformPosts: ({ posts }) =>
-          posts.map((p) => ({ ...p, tags: [...p.tags, "also-good"] })),
+          posts.map((p) => ({
+            ...p,
+            metadata: { ...p.metadata, tags: [...p.metadata.tags, "also-good"] },
+          })),
       },
     ];
 
-    const initial: BlogPost[] = [
-      {
-        id: "1",
-        title: "Test",
-        slug: "test",
-        date: "2024-01-01",
-        tags: [],
-        published: true,
-        lastEditedTime: "2024-01-01T00:00:00.000Z",
-      },
-    ];
+    const initial: BlogPost[] = [makeBlogPost()];
 
     const result = executeTransformHook(plugins, "transformPosts", initial, {});
-    expect(result[0].tags).toEqual(["good", "also-good"]);
+    expect(result[0].metadata.tags).toEqual(["good", "also-good"]);
   });
 
   it("skips plugins without the transform hook", () => {
@@ -223,42 +277,27 @@ describe("executeTransformHook", () => {
       {
         name: "has-hook",
         transformPosts: ({ posts }) =>
-          posts.map((p) => ({ ...p, tags: ["transformed"] })),
+          posts.map((p) => ({
+            ...p,
+            metadata: { ...p.metadata, tags: ["transformed"] },
+          })),
       },
     ];
 
-    const initial: BlogPost[] = [
-      {
-        id: "1",
-        title: "Test",
-        slug: "test",
-        date: "2024-01-01",
-        tags: [],
-        published: true,
-        lastEditedTime: "2024-01-01T00:00:00.000Z",
-      },
-    ];
+    const initial: BlogPost[] = [makeBlogPost()];
 
     const result = executeTransformHook(plugins, "transformPosts", initial, {});
-    expect(result[0].tags).toEqual(["transformed"]);
+    expect(result[0].metadata.tags).toEqual(["transformed"]);
   });
 
   it("returns initial value when no plugins have the hook", () => {
     const plugins: NoxionPlugin[] = [{ name: "nothing" }];
     const initial: BlogPost[] = [
-      {
-        id: "1",
-        title: "Test",
-        slug: "test",
-        date: "2024-01-01",
-        tags: ["unchanged"],
-        published: true,
-        lastEditedTime: "2024-01-01T00:00:00.000Z",
-      },
+      makeBlogPost({ metadataOverrides: { tags: ["unchanged"] } }),
     ];
 
     const result = executeTransformHook(plugins, "transformPosts", initial, {});
-    expect(result[0].tags).toEqual(["unchanged"]);
+    expect(result[0].metadata.tags).toEqual(["unchanged"]);
   });
 
   it("chains extendMetadata correctly", () => {
@@ -403,5 +442,178 @@ describe("New plugin hooks (v0.2)", () => {
     expect(oldPlugin.onRouteResolve).toBeUndefined();
     expect(oldPlugin.extendSlots).toBeUndefined();
     expect(oldPlugin.extendCLI).toBeUndefined();
+  });
+});
+
+describe("executeRegisterPageTypes", () => {
+  it("collects page type definitions from plugins into registry", () => {
+    const registry = new PageTypeRegistry();
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "gallery",
+        registerPageTypes: () => [
+          { name: "gallery", defaultTemplate: "gallery/grid" },
+        ],
+      },
+      {
+        name: "wiki",
+        registerPageTypes: () => [
+          { name: "wiki", defaultTemplate: "wiki/page" },
+        ],
+      },
+    ];
+
+    executeRegisterPageTypes(plugins, registry);
+
+    expect(registry.has("gallery")).toBe(true);
+    expect(registry.has("wiki")).toBe(true);
+    expect(registry.getAll()).toHaveLength(2);
+  });
+
+  it("skips plugins without registerPageTypes hook", () => {
+    const registry = new PageTypeRegistry();
+    const plugins: NoxionPlugin[] = [
+      { name: "no-hook" },
+      { name: "has-hook", registerPageTypes: () => [{ name: "custom" }] },
+    ];
+
+    executeRegisterPageTypes(plugins, registry);
+
+    expect(registry.getAll()).toHaveLength(1);
+    expect(registry.has("custom")).toBe(true);
+  });
+
+  it("handles errors gracefully (warn, don't crash)", () => {
+    const registry = new PageTypeRegistry();
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "crasher",
+        registerPageTypes: () => { throw new Error("boom"); },
+      },
+      {
+        name: "survivor",
+        registerPageTypes: () => [{ name: "survived" }],
+      },
+    ];
+
+    executeRegisterPageTypes(plugins, registry);
+
+    expect(registry.has("survived")).toBe(true);
+    expect(registry.getAll()).toHaveLength(1);
+  });
+});
+
+describe("executeRouteResolve", () => {
+  it("passes route through plugin middleware chain", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "add-meta",
+        onRouteResolve: (route) => ({ ...route, metadata: { ...route.metadata, step1: true } }),
+      },
+      {
+        name: "add-more-meta",
+        onRouteResolve: (route) => ({ ...route, metadata: { ...route.metadata, step2: true } }),
+      },
+    ];
+
+    const result = executeRouteResolve(plugins, { path: "/test" });
+
+    expect(result).not.toBeNull();
+    expect(result!.metadata?.step1).toBe(true);
+    expect(result!.metadata?.step2).toBe(true);
+  });
+
+  it("stops chain when a plugin returns null", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "blocker",
+        onRouteResolve: () => null,
+      },
+      {
+        name: "never-reached",
+        onRouteResolve: (route) => ({ ...route, metadata: { reached: true } }),
+      },
+    ];
+
+    const result = executeRouteResolve(plugins, { path: "/blocked" });
+    expect(result).toBeNull();
+  });
+
+  it("returns original route when no plugins have the hook", () => {
+    const route: RouteInfo = { path: "/unchanged" };
+    const result = executeRouteResolve([{ name: "no-hook" }], route);
+
+    expect(result).toEqual(route);
+  });
+
+  it("handles plugin errors gracefully", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "crasher",
+        onRouteResolve: () => { throw new Error("boom"); },
+      },
+      {
+        name: "survivor",
+        onRouteResolve: (route) => ({ ...route, metadata: { survived: true } }),
+      },
+    ];
+
+    const result = executeRouteResolve(plugins, { path: "/test" });
+    expect(result).not.toBeNull();
+    expect(result!.metadata?.survived).toBe(true);
+  });
+});
+
+describe("executeExtendSlots", () => {
+  it("composes slots from multiple plugins", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "plugin-a",
+        extendSlots: (slots) => ({ ...slots, slotA: "componentA" }),
+      },
+      {
+        name: "plugin-b",
+        extendSlots: (slots) => ({ ...slots, slotB: "componentB" }),
+      },
+    ];
+
+    const result = executeExtendSlots(plugins, { existing: "header" });
+
+    expect(result.existing).toBe("header");
+    expect(result.slotA).toBe("componentA");
+    expect(result.slotB).toBe("componentB");
+  });
+
+  it("later plugins can override earlier slots", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "original",
+        extendSlots: (slots) => ({ ...slots, footer: "original-footer" }),
+      },
+      {
+        name: "override",
+        extendSlots: (slots) => ({ ...slots, footer: "custom-footer" }),
+      },
+    ];
+
+    const result = executeExtendSlots(plugins, {});
+    expect(result.footer).toBe("custom-footer");
+  });
+
+  it("handles plugin errors gracefully", () => {
+    const plugins: NoxionPlugin[] = [
+      {
+        name: "crasher",
+        extendSlots: () => { throw new Error("boom"); },
+      },
+      {
+        name: "survivor",
+        extendSlots: (slots) => ({ ...slots, survived: true }),
+      },
+    ];
+
+    const result = executeExtendSlots(plugins, { initial: true });
+    expect(result.initial).toBe(true);
+    expect(result.survived).toBe(true);
   });
 });
