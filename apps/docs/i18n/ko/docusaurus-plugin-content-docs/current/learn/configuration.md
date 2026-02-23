@@ -269,6 +269,7 @@ revalidateSecret: process.env.REVALIDATE_SECRET,
 | `SITE_AUTHOR` | — | `author` | `author` 설정 옵션 오버라이드 |
 | `SITE_DESCRIPTION` | — | `description` | `description` 설정 옵션 오버라이드 |
 | `REVALIDATE_SECRET` | — | `revalidateSecret` | 온디맨드 ISR 재검증 시크릿 |
+| `NOTION_WEBHOOK_SECRET` | — | *(config 대응 없음)* | 자동 배포를 위한 Notion 웹훅 검증 토큰 ([설정 가이드](./auto-publish)) |
 | `NEXT_PUBLIC_GA_ID` | — | *(플러그인 옵션)* | Google Analytics 추적 ID |
 | `NOXION_DOWNLOAD_IMAGES` | — | *(config 대응 없음)* | `"true"`로 설정하면 빌드 시 이미지 다운로드 |
 

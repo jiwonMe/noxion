@@ -8,3 +8,5 @@ export { generateNoxionRoutes, resolvePageType, buildPageUrl, generateStaticPara
 export type { NoxionRouteConfig } from "./routes";
 export { createRevalidateHandler } from "./revalidate";
 export type { RevalidateHandlerOptions } from "./revalidate";
+export { createNotionWebhookHandler } from "./notion-webhook";
+export type { NotionWebhookHandlerOptions } from "./notion-webhook";

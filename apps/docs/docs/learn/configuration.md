@@ -269,6 +269,7 @@ Environment variables are loaded at build time and override corresponding config
 | `SITE_AUTHOR` | — | `author` | Overrides the `author` config option |
 | `SITE_DESCRIPTION` | — | `description` | Overrides the `description` config option |
 | `REVALIDATE_SECRET` | — | `revalidateSecret` | Secret for on-demand ISR revalidation |
+| `NOTION_WEBHOOK_SECRET` | — | *(no config equivalent)* | Notion webhook verification token for auto-publish ([setup guide](./auto-publish)) |
 | `NEXT_PUBLIC_GA_ID` | — | *(plugin option)* | Google Analytics tracking ID |
 | `NOXION_DOWNLOAD_IMAGES` | — | *(no config equivalent)* | Set `"true"` to download images at build time |
 
