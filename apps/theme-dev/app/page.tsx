@@ -17,6 +17,19 @@ import {
 } from "@noxion/renderer";
 import type { NoxionThemePackage, ValidationResult, ValidationIssue } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "notion-types";
+import {
+  Sun,
+  Moon,
+  Monitor,
+  Tablet,
+  Smartphone,
+  Columns2,
+  Braces,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Check,
+} from "lucide-react";
 import { themeRegistry, type ThemeEntry } from "@/lib/themes";
 import { mockPosts, mockProjects, mockNavigation, mockSidebarItems } from "@/lib/mock-data";
 
@@ -209,7 +222,7 @@ function Toolbar({
           onClick={onColorModeToggle}
           title={`Switch to ${colorMode === "light" ? "dark" : "light"} mode`}
         >
-          {colorMode === "light" ? "☀" : "☾"}
+          {colorMode === "light" ? <Sun size={14} /> : <Moon size={14} />}
         </button>
       </div>
 
@@ -221,7 +234,7 @@ function Toolbar({
             onClick={() => onViewportChange(v)}
             title={`${v} (${VIEWPORT_WIDTHS[v]})`}
           >
-            {v === "desktop" ? "🖥" : v === "tablet" ? "⊞" : "📱"}
+            {v === "desktop" ? <Monitor size={14} /> : v === "tablet" ? <Tablet size={14} /> : <Smartphone size={14} />}
           </button>
         ))}
       </div>
@@ -233,7 +246,7 @@ function Toolbar({
         onClick={onViewModeToggle}
         title="Compare two themes side-by-side"
       >
-        ⇔
+        <Columns2 size={14} />
       </button>
 
       <div className="dev-toolbar__right">
@@ -242,7 +255,7 @@ function Toolbar({
           onClick={() => onDevPanelToggle("tokens")}
           title="Token inspector"
         >
-          { }
+          <Braces size={14} />
         </button>
 
         <button
@@ -250,7 +263,7 @@ function Toolbar({
           onClick={() => onDevPanelToggle("validator")}
           title="Validator"
         >
-          ✓
+          <Check size={14} />
         </button>
 
         {errorCount > 0 ? (
@@ -316,7 +329,7 @@ function ValidatorPanel({
 
 function ValidationList({ validation }: { validation: ValidationResult }) {
   if (validation.issues.length === 0) {
-    return <div className="dev-panel__success">✓ No issues found.</div>;
+    return <div className="dev-panel__success"><CheckCircle size={12} /> No issues found.</div>;
   }
 
   return (
@@ -327,7 +340,7 @@ function ValidationList({ validation }: { validation: ValidationResult }) {
           className={`dev-panel__issue dev-panel__issue--${issue.severity}`}
         >
           <span className="dev-panel__issue-icon">
-            {issue.severity === "error" ? "✗" : "⚠"}
+            {issue.severity === "error" ? <XCircle size={12} /> : <AlertTriangle size={12} />}
           </span>
           <span className="dev-panel__issue-path">{issue.path}</span>
           <span className="dev-panel__issue-msg">{issue.message}</span>

@@ -12,8 +12,9 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@noxion/renderer": "workspace:*",
     "@noxion/notion-renderer": "workspace:*",
+    "@noxion/renderer": "workspace:*",
+    "lucide-react": "^0.575.0",
     "next": "^16.1.6",
     "notion-client": "^7.8.2",
     "notion-types": "^7.8.2",

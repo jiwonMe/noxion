@@ -388,6 +388,9 @@ body {
 }
 
 .dev-panel__success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: rgb(52, 199, 89);
   padding: 4px 0;
 }
