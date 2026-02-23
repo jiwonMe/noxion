@@ -1,12 +1,14 @@
 ---
 sidebar_position: 7
 title: Themes
-description: Customize the look and feel of your Noxion blog with CSS variables and dark mode.
+description: Customize the look and feel of your Noxion site with CSS variables, theme inheritance, and dark mode.
 ---
 
 # Themes
 
-Noxion uses a **CSS custom properties (CSS variables)** system for theming. This means you can customize every color, font, and spacing value by overriding variables in your global CSS — no build step, no configuration changes, and no JavaScript required.
+Noxion uses a **CSS custom properties (CSS variables)** system for theming. You can customize every color, font, and spacing value by overriding variables — no build step, no configuration changes, and no JavaScript required.
+
+For advanced use cases, `extendTheme()` lets you create derived themes from the default theme with partial overrides.
 
 ---
 
@@ -67,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-The `suppressHydrationWarning` on `<html>` is necessary because `data-theme` is set by the script before React hydrates, creating a mismatch between server-rendered HTML and client-side React. This is intentional and expected. See [Next.js docs on suppressHydrationWarning](https://nextjs.org/docs/messages/react-hydration-error#solution-1-using-suppresshydrationwarning).
+The `suppressHydrationWarning` on `<html>` is necessary because `data-theme` is set by the script before React hydrates.
 
 ---
 
@@ -79,24 +81,15 @@ All visual properties are exposed as CSS custom properties on `:root` (light mod
 
 ```css
 :root {
-  /* Brand */
   --noxion-primary: #2563eb;          /* Primary accent color (links, buttons) */
   --noxion-primary-hover: #1d4ed8;    /* Hover state for primary */
-
-  /* Backgrounds */
   --noxion-background: #ffffff;       /* Page background */
   --noxion-card: #ffffff;             /* Card/widget background */
   --noxion-muted: #f5f5f5;            /* Subtle background (code blocks, etc.) */
-
-  /* Foregrounds */
   --noxion-foreground: #0a0a0a;       /* Main text color */
   --noxion-card-foreground: #0a0a0a;  /* Text on cards */
   --noxion-muted-foreground: #737373; /* Secondary/disabled text */
-
-  /* Borders */
   --noxion-border: #e5e5e5;           /* Default border color */
-
-  /* Misc */
   --noxion-border-radius: 0.5rem;     /* Default border radius */
 }
 
@@ -119,10 +112,10 @@ All visual properties are exposed as CSS custom properties on `:root` (light mod
     Roboto, Oxygen, Ubuntu, sans-serif;
   --noxion-font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco,
     "Cascadia Code", "Courier New", monospace;
-  --noxion-font-size-base: 1rem;        /* 16px */
+  --noxion-font-size-base: 1rem;
   --noxion-line-height-base: 1.75;
-  --noxion-font-size-sm: 0.875rem;      /* 14px */
-  --noxion-font-size-lg: 1.125rem;      /* 18px */
+  --noxion-font-size-sm: 0.875rem;
+  --noxion-font-size-lg: 1.125rem;
 }
 ```
 
@@ -135,7 +128,6 @@ Override variables in your `globals.css` (or equivalent global stylesheet):
 ```css
 /* app/globals.css */
 
-/* Custom primary color */
 :root {
   --noxion-primary: #7c3aed;       /* Violet instead of blue */
   --noxion-primary-hover: #6d28d9;
@@ -149,15 +141,13 @@ Override variables in your `globals.css` (or equivalent global stylesheet):
 
 /* Custom dark mode colors */
 [data-theme="dark"] {
-  --noxion-background: #0f0f23;   /* Deep navy instead of near-black */
+  --noxion-background: #0f0f23;
   --noxion-card: #16213e;
   --noxion-border: #1a1a2e;
 }
 ```
 
 ### Using Google Fonts / next/font
-
-Noxion is compatible with Next.js's [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) for zero-CLS font loading:
 
 ```tsx
 // app/layout.tsx
@@ -176,6 +166,71 @@ export default function RootLayout({ children }) {
 
 ---
 
+## Theme inheritance with `extendTheme()`
+
+For creating reusable theme packages, `@noxion/renderer` provides `extendTheme()`. This performs a deep merge of theme overrides onto the default theme:
+
+```ts
+import { extendTheme, themeDefault } from "@noxion/renderer";
+
+const myTheme = extendTheme(themeDefault, {
+  tokens: {
+    colors: {
+      primary: "#7c3aed",
+      primaryHover: "#6d28d9",
+    },
+    fonts: {
+      sans: '"Inter", system-ui, sans-serif',
+    },
+  },
+  metadata: {
+    name: "My Custom Theme",
+    author: "Jane Doe",
+    version: "1.0.0",
+    description: "A violet-accented theme",
+  },
+  supports: ["blog", "docs", "portfolio"],
+});
+```
+
+### Creating a theme package
+
+Use the CLI to scaffold a theme starter:
+
+```bash
+bun create noxion my-theme --theme
+```
+
+This creates a package with:
+- `src/index.ts` — exports a `NoxionThemePackage` object
+- `styles/theme.css` — CSS variable overrides
+- `package.json` — configured for npm publishing
+
+See [Creating a Custom Theme](./creating-theme) for a full walkthrough.
+
+### Theme metadata
+
+Themes can declare metadata and which page types they support:
+
+```ts
+interface NoxionThemeMetadata {
+  name: string;
+  author?: string;
+  version?: string;
+  description?: string;
+  previewUrl?: string;
+  repository?: string;
+}
+```
+
+The `supports` field declares which page types the theme has templates for:
+
+```ts
+supports: ["blog", "docs"]  // This theme only has blog and docs templates
+```
+
+---
+
 ## Theme toggle component
 
 The scaffolded app includes a `<ThemeToggle>` component in the header that lets users switch between light, dark, and system modes. The toggle:
@@ -185,11 +240,9 @@ The scaffolded app includes a `<ThemeToggle>` component in the header that lets 
 3. Persists the choice to `localStorage`
 4. Updates `data-theme` on `<html>` without a full page reload
 
-The toggle is rendered in `app/layout.tsx` via `<Header>` from `@noxion/renderer`.
-
 ### Hiding the toggle
 
-If you want to remove the toggle (e.g., for a light-only blog):
+If you want to remove the toggle (e.g., for a light-only site):
 
 ```ts
 // noxion.config.ts
@@ -199,7 +252,7 @@ export default defineConfig({
 });
 ```
 
-Then remove the `<ThemeToggle>` from your `<Header>` component, or override the `Header` component entirely.
+Then remove the `<ThemeToggle>` from your `<Header>` component.
 
 ---
 
@@ -231,8 +284,6 @@ import { useThemePreference } from "@noxion/renderer";
 
 function ThemeSelector() {
   const { mode, setMode } = useThemePreference();
-  // mode: "light" | "dark" | "system"
-  // setMode: (mode: ThemeMode) => void
 
   return (
     <select value={mode} onChange={(e) => setMode(e.target.value as ThemeMode)}>

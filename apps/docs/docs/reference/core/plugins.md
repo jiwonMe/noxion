@@ -12,13 +12,15 @@ import {
   createRSSPlugin,
   createCommentsPlugin,
 } from "@noxion/core";
+
+import type { NoxionPlugin, PluginFactory, PluginConfig } from "@noxion/core";
 ```
 
 ---
 
 ## `definePlugin()`
 
-Creates a type-safe `NoxionPlugin` object. The `definePlugin()` wrapper is optional — you can pass a plain object matching the `NoxionPlugin` interface — but it provides TypeScript type inference for all hook parameters.
+Creates a type-safe `NoxionPlugin` object. Optional — you can pass a plain object matching the `NoxionPlugin` interface — but it provides TypeScript type inference for all hook parameters.
 
 ### Signature
 
@@ -37,15 +39,14 @@ const myPlugin = definePlugin({
   name: "my-plugin",
 
   transformPosts({ posts }) {
-    // Filter out posts with a specific tag
-    return posts.filter(post => !post.tags.includes("private"));
+    return posts.filter(post => !post.metadata.tags?.includes("private"));
   },
 
   injectHead({ post, config }) {
     if (!post) return [];
     return [{
       tagName: "meta",
-      attributes: { name: "author", content: post.author ?? config.author },
+      attributes: { name: "author", content: post.metadata.author ?? config.author },
     }];
   },
 });
@@ -59,6 +60,11 @@ const myPlugin = definePlugin({
 interface NoxionPlugin<Content = unknown> {
   name: string;
 
+  // Configuration validation
+  configSchema?: {
+    validate(opts: unknown): { valid: boolean; errors?: string[] };
+  };
+
   // Data hooks
   loadContent?: () => Promise<Content> | Content;
   contentLoaded?: (args: { content: Content; actions: PluginActions }) => Promise<void> | void;
@@ -69,16 +75,21 @@ interface NoxionPlugin<Content = unknown> {
   postBuild?: (args: { config: NoxionConfig; routes: RouteInfo[] }) => Promise<void> | void;
 
   // Content transformation
-  transformContent?: (args: { recordMap: ExtendedRecordMap; post: BlogPost }) => ExtendedRecordMap;
+  transformContent?: (args: { recordMap: ExtendedRecordMap; post: NoxionPage }) => ExtendedRecordMap;
   transformPosts?: (args: { posts: BlogPost[] }) => BlogPost[];
 
   // SEO / metadata
-  extendMetadata?: (args: { metadata: NoxionMetadata; post?: BlogPost; config: NoxionConfig }) => NoxionMetadata;
-  injectHead?: (args: { post?: BlogPost; config: NoxionConfig }) => HeadTag[];
+  extendMetadata?: (args: { metadata: NoxionMetadata; post?: NoxionPage; config: NoxionConfig }) => NoxionMetadata;
+  injectHead?: (args: { post?: NoxionPage; config: NoxionConfig }) => HeadTag[];
   extendSitemap?: (args: { entries: SitemapEntry[]; config: NoxionConfig }) => SitemapEntry[];
 
   // Routing
   extendRoutes?: (args: { routes: RouteInfo[]; config: NoxionConfig }) => RouteInfo[];
+
+  // v0.2 hooks
+  registerPageTypes?: (args: { registry: PageTypeRegistry }) => void;
+  onRouteResolve?: (args: { page: NoxionPage; defaultUrl: string }) => string;
+  extendSlots?: (slots: Record<string, string>) => Record<string, string>;
 }
 ```
 
@@ -92,117 +103,116 @@ interface NoxionPlugin<Content = unknown> {
 
 ```ts
 transformPosts({ posts }) {
-  return posts
-    .filter(post => post.tags.length > 0)  // Only posts with tags
-    .map(post => ({
-      ...post,
-      frontmatter: {
-        ...post.frontmatter,
-        readingTime: estimateReadingTime(post),
-      },
-    }));
+  return posts.map(post => ({
+    ...post,
+    frontmatter: {
+      ...post.frontmatter,
+      readingTime: estimateReadingTime(post),
+    },
+  }));
 }
+```
+
+#### `registerPageTypes`
+
+**Called**: During plugin initialization.
+
+**Use for**: Registering custom page types beyond the built-in blog, docs, and portfolio.
+
+```ts
+registerPageTypes({ registry }) {
+  registry.register({
+    name: "recipe",
+    label: "Recipe",
+    defaultTemplate: "recipe/page",
+    schemaConventions: {
+      ingredients: "Ingredients",
+      prepTime: "Prep Time",
+    },
+  });
+}
+```
+
+#### `onRouteResolve`
+
+**Called**: When generating a URL for a page.
+
+**Use for**: Customizing URL patterns per page type.
+
+```ts
+onRouteResolve({ page, defaultUrl }) {
+  if (page.pageType === "recipe") {
+    return `/recipes/${page.slug}`;
+  }
+  return defaultUrl;
+}
+```
+
+#### `extendSlots`
+
+**Called**: When rendering page templates.
+
+**Use for**: Injecting content into named template slots.
+
+```ts
+extendSlots(slots) {
+  return {
+    ...slots,
+    readingTimeDisplay: "📖 {{readingTime}}",
+  };
+}
+```
+
+#### `configSchema`
+
+**Checked**: During `loadPlugins()` when validating plugin options.
+
+```ts
+configSchema: {
+  validate(opts: unknown) {
+    const errors: string[] = [];
+    if (typeof opts !== "object" || opts === null) {
+      return { valid: false, errors: ["Options must be an object"] };
+    }
+    return { valid: errors.length === 0, errors };
+  },
+},
 ```
 
 #### `transformContent`
 
-**Called**: Before a post page's `recordMap` is passed to `<NotionPage>`.
-
-**Use for**: Modifying block content, injecting custom blocks, removing blocks.
-
-```ts
-transformContent({ recordMap, post }) {
-  // Example: redact blocks marked as private
-  // (Note: this is a simplified example — real block manipulation is more involved)
-  return recordMap;
-}
-```
+**Called**: Before a page's `recordMap` is passed to `<NotionPage>`.
 
 #### `injectHead`
 
-**Called**: When generating `<head>` tags for a page.
-
-**Use for**: Injecting analytics scripts, custom meta tags, link preloads, font preconnects.
-
-**`post`** is `undefined` on the homepage and tag pages, defined on post pages.
-
-```ts
-injectHead({ post, config }) {
-  const tags: HeadTag[] = [
-    // Always inject
-    {
-      tagName: "meta",
-      attributes: { name: "generator", content: "Noxion" },
-    },
-  ];
-
-  // Inject only on post pages
-  if (post) {
-    tags.push({
-      tagName: "meta",
-      attributes: { property: "article:author", content: post.author ?? config.author },
-    });
-  }
-
-  return tags;
-}
-```
+**Called**: When generating `<head>` tags for a page. `post` is `undefined` on the homepage and tag pages.
 
 #### `extendMetadata`
 
 **Called**: When generating Next.js `Metadata` for a page.
 
-**Use for**: Adding custom OG tags, overriding metadata, adding `<link>` alternates.
-
-```ts
-extendMetadata({ metadata, post, config }) {
-  return {
-    ...metadata,
-    other: {
-      ...metadata.other,
-      "custom-tag": "custom-value",
-    },
-  };
-}
-```
-
 #### `extendSitemap`
 
 **Called**: When generating sitemap entries.
 
-**Use for**: Adding custom pages (e.g., `/about`, `/contact`) to the sitemap.
+---
+
+## `PluginFactory` type
 
 ```ts
-extendSitemap({ entries, config }) {
-  return [
-    ...entries,
-    {
-      url: `https://${config.domain}/about`,
-      lastmod: new Date().toISOString(),
-      changefreq: "monthly",
-      priority: 0.7,
-    },
-  ];
-}
+type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
 ```
 
-#### `loadContent` / `contentLoaded`
-
-For plugins that need to load external data at build time:
+Recommended pattern for configurable plugins:
 
 ```ts
-definePlugin({
-  name: "github-stats",
-
-  async loadContent() {
-    const res = await fetch("https://api.github.com/repos/owner/repo");
-    return res.json() as Promise<{ stargazers_count: number }>;
-  },
-
-  contentLoaded({ content, actions }) {
-    actions.setGlobalData("github-stars", content.stargazers_count);
-  },
-});
+export const createMyPlugin: PluginFactory<MyOptions> = (options = {}) => {
+  return {
+    name: "my-plugin",
+    configSchema: { validate(opts) { /* ... */ } },
+    transformPosts({ posts }) { /* ... */ },
+  };
+};
 ```
 
 ---
@@ -211,26 +221,10 @@ definePlugin({
 
 ```ts
 interface HeadTag {
-  tagName: string;              // e.g. "meta", "link", "script"
-  attributes?: Record<string, string>;  // HTML attributes
-  innerHTML?: string;           // For <script> with inline content
+  tagName: string;
+  attributes?: Record<string, string>;
+  innerHTML?: string;
 }
-```
-
-### Examples
-
-```ts
-// <meta name="robots" content="noindex">
-{ tagName: "meta", attributes: { name: "robots", content: "noindex" } }
-
-// <link rel="preconnect" href="https://fonts.googleapis.com">
-{ tagName: "link", attributes: { rel: "preconnect", href: "https://fonts.googleapis.com" } }
-
-// <script>window.myVar = true;</script>
-{ tagName: "script", innerHTML: "window.myVar = true;" }
-
-// <script src="..." defer>
-{ tagName: "script", attributes: { src: "https://example.com/script.js", defer: "true" } }
 ```
 
 ---
@@ -240,9 +234,9 @@ interface HeadTag {
 ```ts
 interface SitemapEntry {
   url: string;
-  lastmod?: string;       // ISO 8601 date string
+  lastmod?: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority?: number;      // 0.0 to 1.0
+  priority?: number;
 }
 ```
 
@@ -255,12 +249,12 @@ interface SitemapEntry {
 ```ts
 createAnalyticsPlugin({
   provider: "google" | "plausible" | "umami" | "custom",
-  trackingId: string,         // Measurement ID, domain, or website ID
-  customScript?: string,      // HTML string for "custom" provider
+  trackingId: string,
+  customScript?: string,
 })
 ```
 
-See [Analytics Plugin](../../learn/plugins/analytics) for full documentation.
+See [Analytics Plugin](../../learn/plugins/analytics).
 
 ### `createRSSPlugin()`
 
@@ -271,43 +265,15 @@ createRSSPlugin({
 })
 ```
 
-See [RSS Plugin](../../learn/plugins/rss) for full documentation.
+See [RSS Plugin](../../learn/plugins/rss).
 
 ### `createCommentsPlugin()`
 
 ```ts
-// Giscus
 createCommentsPlugin({
-  provider: "giscus",
-  config: {
-    repo: string,          // "owner/repo"
-    repoId: string,        // "R_xxx"
-    category: string,      // Discussion category name
-    categoryId: string,    // "DIC_xxx"
-    mapping?: string,      // default: "pathname"
-    reactionsEnabled?: boolean,  // default: true
-    theme?: string,        // default: "preferred_color_scheme"
-  },
-})
-
-// Utterances
-createCommentsPlugin({
-  provider: "utterances",
-  config: {
-    repo: string,
-    issueTerm?: string,   // default: "pathname"
-    theme?: string,       // default: "github-light"
-    label?: string,
-  },
-})
-
-// Disqus
-createCommentsPlugin({
-  provider: "disqus",
-  config: {
-    shortname: string,
-  },
+  provider: "giscus" | "utterances" | "disqus",
+  config: { /* provider-specific options */ },
 })
 ```
 
-See [Comments Plugin](../../learn/plugins/comments) for full documentation.
+See [Comments Plugin](../../learn/plugins/comments).

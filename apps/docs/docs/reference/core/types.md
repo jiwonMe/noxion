@@ -9,13 +9,21 @@ All types exported from `@noxion/core`:
 
 ```ts
 import type {
-  BlogPost,
+  NoxionPage,
+  BlogPage,
+  DocsPage,
+  PortfolioPage,
+  BlogPost,        // backward-compat alias for BlogPage
+  NoxionCollection,
   NoxionConfig,
   NoxionConfigInput,
   ThemeMode,
   NoxionLayout,
   NoxionPlugin,
+  PluginFactory,
   PluginConfig,
+  PageTypeDefinition,
+  SchemaConventions,
   HeadTag,
   SitemapEntry,
   NoxionPageData,
@@ -25,133 +33,214 @@ import type {
 
 ---
 
-## `BlogPost`
+## `NoxionPage`
 
-The normalized representation of a single blog post, produced by `fetchBlogPosts()` and `fetchPostBySlug()`.
+The base type for all page types. A discriminated union based on `pageType`.
 
 ```ts
-interface BlogPost {
-  /** Notion page ID (UUID without hyphens) */
+interface NoxionPage {
   id: string;
-
-  /** Post title, from the Notion Title property */
   title: string;
-
-  /** URL slug used in the browser path (e.g. "my-first-post") */
   slug: string;
-
-  /**
-   * Publication date as an ISO date string (e.g. "2025-02-01").
-   * Sourced from the Notion "Published" date property.
-   * Empty string if no date is set.
-   */
-  date: string;
-
-  /** Array of tag strings from the Notion Tags multi-select property */
-  tags: string[];
-
-  /** Category from the Notion Category select property, or undefined */
-  category?: string;
-
-  /**
-   * Cover image URL (notion.so/image/... proxy URL), or undefined.
-   * This is the Notion page cover (banner image), not an inline image.
-   */
+  pageType: string;
   coverImage?: string;
-
-  /**
-   * Post description for SEO meta tags.
-   * From the Notion Description text property, or frontmatter override.
-   * Truncated at 160 characters by the metadata generator.
-   */
   description?: string;
-
-  /** Author name. From Notion Author property or frontmatter. */
-  author?: string;
-
-  /**
-   * Whether the post is published.
-   * True when the Notion "Public" checkbox is checked.
-   * fetchBlogPosts() filters out unpublished posts, so this is
-   * always true in returned arrays. Included for completeness.
-   */
   published: boolean;
-
-  /**
-   * ISO datetime string of the last edit time, from Notion's
-   * last_edited_time block property.
-   * Used for og:article:modified_time and sitemap lastmod.
-   */
   lastEditedTime: string;
-
-  /**
-   * Raw frontmatter key-value pairs from the first code block.
-   * Includes ALL keys, including unknown/custom ones.
-   * Known keys are also applied to their respective fields above.
-   */
   frontmatter?: Record<string, string>;
+  metadata: Record<string, unknown>;
 }
 ```
 
-### Accessing custom frontmatter fields
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Notion page ID (UUID without hyphens) |
+| `title` | `string` | Page title from the Notion Title property |
+| `slug` | `string` | URL slug (e.g. `"my-first-post"`) |
+| `pageType` | `string` | Discriminant: `"blog"`, `"docs"`, `"portfolio"`, or custom |
+| `coverImage` | `string?` | Cover image URL (notion.so/image/... proxy URL) |
+| `description` | `string?` | Page description for SEO meta tags |
+| `published` | `boolean` | Whether the page is published (Public checkbox) |
+| `lastEditedTime` | `string` | ISO datetime of last edit |
+| `frontmatter` | `Record<string, string>?` | Raw frontmatter key-value pairs from the first code block |
+| `metadata` | `Record<string, unknown>` | Type-specific metadata (date, tags, section, etc.) |
+
+---
+
+## `BlogPage`
+
+Blog post with date, tags, category, and author metadata.
 
 ```ts
-const post = await getPostBySlug("my-post");
-
-// Custom frontmatter key
-const layout = post.frontmatter?.layout;         // e.g. "wide"
-const showComments = post.frontmatter?.comments !== "false";
-const readingTime = post.frontmatter?.readingTime; // set by a plugin
+interface BlogPage extends NoxionPage {
+  pageType: "blog";
+  metadata: {
+    date: string;
+    tags: string[];
+    category?: string;
+    author?: string;
+  };
+}
 ```
+
+Access metadata:
+
+```ts
+const page: BlogPage = /* ... */;
+page.metadata.date;     // "2025-02-01"
+page.metadata.tags;     // ["react", "typescript"]
+page.metadata.category; // "Web Dev"
+page.metadata.author;   // "Jane Doe"
+```
+
+---
+
+## `DocsPage`
+
+Documentation page with section, order, and version metadata.
+
+```ts
+interface DocsPage extends NoxionPage {
+  pageType: "docs";
+  metadata: {
+    section?: string;
+    order?: number;
+    version?: string;
+  };
+}
+```
+
+Access metadata:
+
+```ts
+const page: DocsPage = /* ... */;
+page.metadata.section;  // "Getting Started"
+page.metadata.order;    // 1
+page.metadata.version;  // "latest"
+```
+
+---
+
+## `PortfolioPage`
+
+Portfolio project with technologies, URL, year, and featured flag.
+
+```ts
+interface PortfolioPage extends NoxionPage {
+  pageType: "portfolio";
+  metadata: {
+    technologies?: string[];
+    projectUrl?: string;
+    year?: string;
+    featured?: boolean;
+  };
+}
+```
+
+Access metadata:
+
+```ts
+const page: PortfolioPage = /* ... */;
+page.metadata.technologies; // ["React", "TypeScript"]
+page.metadata.projectUrl;   // "https://example.com"
+page.metadata.year;         // "2025"
+page.metadata.featured;     // true
+```
+
+---
+
+## `BlogPost`
+
+Backward-compatible alias for `BlogPage`. Kept for one version cycle.
+
+```ts
+type BlogPost = BlogPage;
+```
+
+:::caution Migration
+If you're upgrading from v0.1, replace `post.date` with `post.metadata.date`, `post.tags` with `post.metadata.tags`, etc. See the [Migration Guide](../../learn/migration-v02) for details.
+:::
+
+---
+
+## `NoxionCollection`
+
+A collection maps a Notion database to a page type.
+
+```ts
+interface NoxionCollection {
+  name?: string;
+  databaseId: string;
+  pageType: string;
+  pathPrefix?: string;
+  schema?: Record<string, string>;
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | — | Display name |
+| `databaseId` | `string` | ✅ | Notion database page ID |
+| `pageType` | `string` | ✅ | Page type identifier |
+| `pathPrefix` | `string` | — | URL prefix (e.g. `"docs"` → `/docs/[slug]`) |
+| `schema` | `Record<string, string>` | — | Manual property name mapping overrides |
+
+---
+
+## `PageTypeDefinition`
+
+Defines a custom page type, registered via the `registerPageTypes` plugin hook.
+
+```ts
+interface PageTypeDefinition {
+  name: string;
+  label: string;
+  defaultTemplate: string;
+  schemaConventions: SchemaConventions;
+}
+```
+
+---
+
+## `SchemaConventions`
+
+Maps metadata field names to their default Notion property names for a page type.
+
+```ts
+type SchemaConventions = Record<string, string>;
+```
+
+Built-in conventions:
+
+| Page Type | Field → Notion Property |
+|-----------|------------------------|
+| Blog | `date` → `"Published"`, `tags` → `"Tags"`, `category` → `"Category"`, `author` → `"Author"` |
+| Docs | `section` → `"Section"`, `order` → `"Order"`, `version` → `"Version"` |
+| Portfolio | `technologies` → `"Technologies"`, `projectUrl` → `"Project URL"`, `year` → `"Year"`, `featured` → `"Featured"` |
 
 ---
 
 ## `NoxionConfig`
 
-The fully-resolved configuration object. All optional fields have defaults applied. Read by all Noxion packages.
+The fully-resolved configuration object. All optional fields have defaults applied.
 
 ```ts
 interface NoxionConfig {
-  /** Root Notion database page ID */
   rootNotionPageId: string;
-
-  /** Notion workspace ID (rarely needed) */
   rootNotionSpaceId?: string;
-
-  /** Site name — used in title, OG, RSS */
   name: string;
-
-  /** Production domain without protocol (e.g. "myblog.com") */
   domain: string;
-
-  /** Default author name */
   author: string;
-
-  /** Site description */
   description: string;
-
-  /** BCP 47 language tag (e.g. "en", "ko", "ja") */
   language: string;
-
-  /** Initial color mode */
   defaultTheme: ThemeMode;
-
-  /** ISR revalidation interval in seconds */
+  defaultPageType: string;
   revalidate: number;
-
-  /** Secret for on-demand revalidation endpoint */
   revalidateSecret?: string;
-
-  /** Enabled plugins */
   plugins?: PluginConfig[];
-
-  /** Advanced theme configuration (reserved) */
+  collections?: NoxionCollection[];
   theme?: NoxionThemeConfig;
-
-  /** Layout variant (reserved) */
   layout?: NoxionLayout;
-
-  /** Component overrides (reserved) */
   components?: ComponentOverrides;
 }
 ```
@@ -164,17 +253,19 @@ The input type accepted by `defineConfig()`. All optional fields can be omitted.
 
 ```ts
 interface NoxionConfigInput {
-  rootNotionPageId: string;
+  rootNotionPageId?: string;
   rootNotionSpaceId?: string;
   name: string;
   domain: string;
   author: string;
   description: string;
-  language?: string;          // default: "en"
-  defaultTheme?: ThemeMode;   // default: "system"
-  revalidate?: number;        // default: 3600
+  language?: string;
+  defaultTheme?: ThemeMode;
+  defaultPageType?: string;
+  revalidate?: number;
   revalidateSecret?: string;
-  plugins?: PluginConfig[];   // default: []
+  plugins?: PluginConfig[];
+  collections?: NoxionCollection[];
   theme?: NoxionThemeConfig;
   layout?: NoxionLayout;
   components?: ComponentOverrides;
@@ -189,12 +280,6 @@ interface NoxionConfigInput {
 type ThemeMode = "system" | "light" | "dark";
 ```
 
-| Value | Description |
-|-------|-------------|
-| `"system"` | Follows OS `prefers-color-scheme` |
-| `"light"` | Always light |
-| `"dark"` | Always dark |
-
 ---
 
 ## `NoxionLayout`
@@ -203,47 +288,38 @@ type ThemeMode = "system" | "light" | "dark";
 type NoxionLayout = "single-column" | "sidebar-left" | "sidebar-right";
 ```
 
-Layout variant for the generated app. Currently reserved for future use.
-
 ---
 
 ## `NoxionPageData`
 
-Combines a `BlogPost` with its `ExtendedRecordMap` for rendering.
+Combines a `NoxionPage` with its `ExtendedRecordMap` for rendering.
 
 ```ts
 interface NoxionPageData {
-  /** Full Notion block data for rendering with @noxion/notion-renderer */
   recordMap: ExtendedRecordMap;
-
-  /** Normalized post metadata */
-  post: BlogPost;
+  post: NoxionPage;
 }
 ```
 
-Passed to `onBeforeRender` and `onAfterRender` plugin hooks.
+---
+
+## `PluginFactory`
+
+Type for plugin factory functions that accept configuration options.
+
+```ts
+type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
+```
 
 ---
 
 ## `ExtendedRecordMap`
 
-Re-exported from [`notion-types`](https://www.npmjs.com/package/notion-types). Contains the complete Notion page data:
+Re-exported from [`notion-types`](https://www.npmjs.com/package/notion-types). Contains the complete Notion page data. Passed directly to `<NotionPage recordMap={...} />`.
 
 ```ts
 import type { ExtendedRecordMap } from "@noxion/core";
-// equivalent to:
-import type { ExtendedRecordMap } from "notion-types";
 ```
-
-The type includes:
-- `block` — map of block ID → block data
-- `collection` — map of collection ID → collection data
-- `collection_query` — view query results with block IDs
-- `collection_view` — map of view ID → view data
-- `notion_user` — user data
-- `signed_urls` — Notion image proxy URLs
-
-This type is opaque for most use cases — you pass it directly to `<NotionPage recordMap={...} />` and let `@noxion/notion-renderer` handle rendering.
 
 ---
 
@@ -251,9 +327,9 @@ This type is opaque for most use cases — you pass it directly to `<NotionPage 
 
 ```ts
 type PluginConfig =
-  | NoxionPlugin          // Plugin object directly
-  | [NoxionPlugin, unknown]  // [plugin, options] tuple
-  | false;                // Conditional disable: myPlugin && false
+  | NoxionPlugin
+  | [NoxionPlugin, unknown]
+  | false;
 ```
 
 The `false` variant allows conditionally disabling plugins:
@@ -263,4 +339,26 @@ plugins: [
   createRSSPlugin({ feedPath: "/feed.xml" }),
   process.env.NODE_ENV === "production" && createAnalyticsPlugin({ ... }),
 ].filter(Boolean),
+```
+
+---
+
+## Type guards
+
+```ts
+import { isBlogPage, isDocsPage, isPortfolioPage } from "@noxion/core";
+
+const page: NoxionPage = /* ... */;
+
+if (isBlogPage(page)) {
+  page.metadata.date;  // TypeScript knows this is BlogPage
+}
+
+if (isDocsPage(page)) {
+  page.metadata.section;  // TypeScript knows this is DocsPage
+}
+
+if (isPortfolioPage(page)) {
+  page.metadata.technologies;  // TypeScript knows this is PortfolioPage
+}
 ```

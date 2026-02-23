@@ -25,12 +25,28 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Page Types',
+      items: [
+        'learn/building-docs',
+        'learn/building-portfolio',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Plugins',
       items: [
         'learn/plugins/overview',
         'learn/plugins/analytics',
         'learn/plugins/rss',
         'learn/plugins/comments',
+        'learn/plugins/creating-a-plugin',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Customization',
+      items: [
+        'learn/creating-theme',
       ],
     },
     {
@@ -39,6 +55,13 @@ const sidebars: SidebarsConfig = {
       items: [
         'learn/deployment/vercel',
         'learn/deployment/docker',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Upgrading',
+      items: [
+        'learn/migration-v02',
       ],
     },
   ],

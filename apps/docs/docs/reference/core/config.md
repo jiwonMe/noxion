@@ -23,76 +23,65 @@ function defineConfig(input: NoxionConfigInput): NoxionConfig
 
 ### Parameters
 
-#### `NoxionConfigInput`
-
 | Property | Type | Required | Default | Description |
 |----------|------|----------|---------|-------------|
-| `rootNotionPageId` | `string` | ✅ | — | 32-character hex ID of your Notion database page |
-| `name` | `string` | ✅ | — | Site name (used in `<title>`, OG, RSS, JSON-LD) |
-| `domain` | `string` | ✅ | — | Production domain without protocol (e.g. `myblog.com`) |
-| `author` | `string` | ✅ | — | Default author name for posts |
-| `description` | `string` | ✅ | — | Site description (used in `<meta description>`, RSS) |
-| `rootNotionSpaceId` | `string` | — | `undefined` | Notion workspace (space) ID — rarely needed |
-| `language` | `string` | — | `"en"` | [BCP 47](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang) language tag |
-| `defaultTheme` | `ThemeMode` | — | `"system"` | Initial color mode: `"light"`, `"dark"`, or `"system"` |
+| `rootNotionPageId` | `string` | * | — | Root Notion database page ID. Required unless `collections` is set. |
+| `name` | `string` | ✅ | — | Site name |
+| `domain` | `string` | ✅ | — | Production domain without protocol |
+| `author` | `string` | ✅ | — | Default author name |
+| `description` | `string` | ✅ | — | Site description |
+| `collections` | `NoxionCollection[]` | — | `undefined` | Multi-database configuration |
+| `defaultPageType` | `string` | — | `"blog"` | Default page type for single-database mode |
+| `rootNotionSpaceId` | `string` | — | `undefined` | Notion workspace ID |
+| `language` | `string` | — | `"en"` | BCP 47 language tag |
+| `defaultTheme` | `ThemeMode` | — | `"system"` | Initial color mode |
 | `revalidate` | `number` | — | `3600` | ISR revalidation interval in seconds |
-| `revalidateSecret` | `string` | — | `undefined` | Secret for on-demand revalidation endpoint |
+| `revalidateSecret` | `string` | — | `undefined` | Secret for on-demand revalidation |
 | `plugins` | `PluginConfig[]` | — | `[]` | Plugins to enable |
-| `theme` | `NoxionThemeConfig` | — | `undefined` | Advanced theme configuration (reserved for future use) |
-| `layout` | `NoxionLayout` | — | `undefined` | Layout variant: `"single-column"`, `"sidebar-left"`, `"sidebar-right"` |
-| `components` | `ComponentOverrides` | — | `undefined` | Component override map (reserved for future use) |
-
-### Returns
-
-`NoxionConfig` — the normalized config with all defaults applied. This object is the single source of truth shared across all Noxion packages.
 
 ### What `defineConfig` does
 
-1. Merges your input with the following defaults:
+1. Merges your input with defaults:
    ```ts
    const defaults = {
      language: "en",
      defaultTheme: "system",
+     defaultPageType: "blog",
      revalidate: 3600,
      plugins: [],
    };
    ```
-2. Checks for environment variable overrides (see below)
-3. Returns the merged `NoxionConfig`
+2. If `rootNotionPageId` is set without `collections`, creates a default collection with the specified `defaultPageType`
+3. Validates that `collections` entries have `databaseId` and `pageType`
+4. Checks for environment variable overrides
+5. Returns the merged `NoxionConfig`
 
-### Example
+### Single-database mode
 
 ```ts
-// noxion.config.ts
-import { defineConfig, createRSSPlugin } from "@noxion/core";
-
 export default defineConfig({
   rootNotionPageId: process.env.NOTION_PAGE_ID!,
   name: "My Blog",
   domain: "myblog.com",
   author: "Jane Doe",
-  description: "A blog about web development and open source.",
-  language: "en",
-  defaultTheme: "system",
-  revalidate: 3600,
-  revalidateSecret: process.env.REVALIDATE_SECRET,
-  plugins: [
-    createRSSPlugin({ feedPath: "/feed.xml" }),
-  ],
+  description: "A blog about web development.",
+  plugins: [createRSSPlugin({ feedPath: "/feed.xml" })],
 });
 ```
 
-### TypeScript tip
-
-The `!` (non-null assertion) on `process.env.NOTION_PAGE_ID!` is necessary because TypeScript types all `process.env.*` as `string | undefined`. Since this value is truly required, the assertion is appropriate. Alternatively, validate at runtime:
+### Multi-database mode
 
 ```ts
-const pageId = process.env.NOTION_PAGE_ID;
-if (!pageId) throw new Error("NOTION_PAGE_ID environment variable is not set");
-
 export default defineConfig({
-  rootNotionPageId: pageId,
-  // ...
+  name: "My Site",
+  domain: "mysite.com",
+  author: "Jane Doe",
+  description: "Blog, docs, and portfolio.",
+  collections: [
+    { databaseId: process.env.NOTION_PAGE_ID!, pageType: "blog" },
+    { databaseId: process.env.DOCS_NOTION_ID!, pageType: "docs", pathPrefix: "docs" },
+    { databaseId: process.env.PORTFOLIO_NOTION_ID!, pageType: "portfolio", pathPrefix: "portfolio" },
+  ],
 });
 ```
 
@@ -108,15 +97,9 @@ Loads the config from `noxion.config.ts` at runtime, with environment variable o
 function loadConfig(): NoxionConfig
 ```
 
-### Returns
-
-`NoxionConfig` — the config from `noxion.config.ts` with environment variable overrides applied.
-
 ### Environment variable overrides
 
-`loadConfig()` reads the following environment variables and overrides the corresponding config properties if set:
-
-| Environment variable | Overrides | 
+| Environment variable | Overrides |
 |----------------------|-----------|
 | `SITE_NAME` | `name` |
 | `SITE_DOMAIN` | `domain` |
@@ -124,11 +107,9 @@ function loadConfig(): NoxionConfig
 | `SITE_DESCRIPTION` | `description` |
 | `REVALIDATE_SECRET` | `revalidateSecret` |
 
-This allows deploying the same codebase to multiple environments with different configurations by setting environment variables rather than changing `noxion.config.ts`.
-
 ### Usage
 
-`loadConfig()` is called internally by the generated `lib/config.ts`. You typically don't need to call it directly:
+`loadConfig()` is called internally by the generated `lib/config.ts`:
 
 ```ts
 // lib/config.ts (generated by create-noxion)
@@ -137,43 +118,26 @@ import { loadConfig } from "@noxion/core";
 export const siteConfig = loadConfig();
 ```
 
-Then import `siteConfig` wherever you need configuration:
-
-```ts
-import { siteConfig } from "@/lib/config";
-
-export default async function sitemap() {
-  const posts = await getAllPosts();
-  return generateNoxionSitemap(posts, siteConfig);
-}
-```
-
 ---
 
-## `NoxionConfig` type
-
-The full type definition:
+## `NoxionCollection`
 
 ```ts
-interface NoxionConfig {
-  rootNotionPageId: string;
-  rootNotionSpaceId?: string;
-  name: string;
-  domain: string;
-  author: string;
-  description: string;
-  language: string;
-  defaultTheme: ThemeMode;
-  revalidate: number;
-  revalidateSecret?: string;
-  plugins?: PluginConfig[];
-  theme?: NoxionThemeConfig;
-  layout?: NoxionLayout;
-  components?: ComponentOverrides;
+interface NoxionCollection {
+  name?: string;
+  databaseId: string;
+  pageType: string;
+  pathPrefix?: string;
+  schema?: Record<string, string>;
 }
-
-type ThemeMode = "system" | "light" | "dark";
-type NoxionLayout = "single-column" | "sidebar-left" | "sidebar-right";
 ```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | `string` | — | Display name for the collection |
+| `databaseId` | `string` | ✅ | Notion database page ID |
+| `pageType` | `string` | ✅ | Page type: `"blog"`, `"docs"`, `"portfolio"`, or custom |
+| `pathPrefix` | `string` | — | URL prefix (e.g. `"docs"` → `/docs/[slug]`) |
+| `schema` | `Record<string, string>` | — | Override default property name mapping |
 
 See [Types](./types) for the complete type reference.
