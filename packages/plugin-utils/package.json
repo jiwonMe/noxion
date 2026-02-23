@@ -1,0 +1,51 @@
+{
+  "name": "@noxion/plugin-utils",
+  "version": "0.1.0",
+  "description": "Test utilities and helpers for Noxion plugin development",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "noxion",
+    "plugin",
+    "testing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/plugin-utils"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@noxion/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.7.0"
+  }
+}

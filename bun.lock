@@ -56,7 +56,7 @@
     },
     "packages/adapter-nextjs": {
       "name": "@noxion/adapter-nextjs",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@noxion/core": "^0.0.2",
         "notion-client": "^7.8.2",
@@ -73,7 +73,7 @@
     },
     "packages/core": {
       "name": "@noxion/core",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "notion-client": "^7.8.2",
         "notion-types": "^7.8.2",
@@ -86,7 +86,7 @@
     },
     "packages/create-noxion": {
       "name": "create-noxion",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "bin": {
         "create-noxion": "./bin/index.js",
       },
@@ -100,7 +100,7 @@
     },
     "packages/notion-renderer": {
       "name": "@noxion/notion-renderer",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "katex": "^0.16.0",
         "shiki": "^3.0.0",
@@ -122,9 +122,20 @@
         "react": ">=18.0.0",
       },
     },
+    "packages/plugin-utils": {
+      "name": "@noxion/plugin-utils",
+      "version": "0.1.0",
+      "dependencies": {
+        "@noxion/core": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.0",
+      },
+    },
     "packages/renderer": {
       "name": "@noxion/renderer",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@noxion/notion-renderer": "workspace:*",
         "lucide-react": "^0.469.0",
@@ -748,6 +759,8 @@
     "@noxion/core": ["@noxion/core@workspace:packages/core"],
 
     "@noxion/notion-renderer": ["@noxion/notion-renderer@workspace:packages/notion-renderer"],
+
+    "@noxion/plugin-utils": ["@noxion/plugin-utils@workspace:packages/plugin-utils"],
 
     "@noxion/renderer": ["@noxion/renderer@workspace:packages/renderer"],
 

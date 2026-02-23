@@ -1,0 +1,41 @@
+{
+  "name": "noxion-plugin-{{PLUGIN_NAME}}",
+  "version": "0.1.0",
+  "description": "{{PLUGIN_DESCRIPTION}}",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "noxion-plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "notion",
+    "noxion",
+    "noxion-plugin"
+  ],
+  "peerDependencies": {
+    "@noxion/core": ">=0.2.0"
+  },
+  "devDependencies": {
+    "@noxion/core": "^0.2.0",
+    "@noxion/plugin-utils": "^0.1.0",
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.7.0"
+  }
+}
