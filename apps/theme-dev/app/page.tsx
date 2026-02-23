@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import {
   NoxionThemeProvider,
   Header,
@@ -14,8 +14,9 @@ import {
   TagPage,
   PortfolioGrid,
   NotionPage,
+  useThemePreference,
 } from "@noxion/renderer";
-import type { NoxionThemePackage, ValidationResult, ValidationIssue } from "@noxion/renderer";
+import type { NoxionThemePackage, NoxionThemeTokens, ValidationResult, ValidationIssue } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "notion-types";
 import {
   Sun,
@@ -34,7 +35,6 @@ import { themeRegistry, type ThemeEntry } from "@/lib/themes";
 import { mockPosts, mockProjects, mockNavigation, mockSidebarItems } from "@/lib/mock-data";
 
 type PageView = "home" | "archive" | "tag" | "portfolio" | "docs-sidebar" | "notion";
-type ColorMode = "light" | "dark";
 type DevPanel = "none" | "validator" | "tokens";
 type Viewport = "desktop" | "tablet" | "mobile";
 type ViewMode = "single" | "compare";
@@ -58,11 +58,13 @@ export default function ThemeDevPage() {
   const [themeId, setThemeId] = useState("default");
   const [compareThemeId, setCompareThemeId] = useState("ink");
   const [pageView, setPageView] = useState<PageView>("home");
-  const [colorMode, setColorMode] = useState<ColorMode>("light");
   const [devPanel, setDevPanel] = useState<DevPanel>("none");
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [viewMode, setViewMode] = useState<ViewMode>("single");
   const [notionRecordMap, setNotionRecordMap] = useState<ExtendedRecordMap | null>(null);
+
+  const { resolved: resolvedMode, setPreference: setThemePreference } = useThemePreference();
+  const isDark = resolvedMode === "dark";
 
   const currentTheme = themeRegistry.find((t) => t.id === themeId) ?? themeRegistry[0];
   const compareTheme = themeRegistry.find((t) => t.id === compareThemeId) ?? themeRegistry[1];
@@ -74,14 +76,9 @@ export default function ThemeDevPage() {
     [viewMode, compareTheme.pkg]
   );
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", colorMode);
-  }, [colorMode]);
-
-  const toggleColorMode = useCallback(
-    () => setColorMode((m) => (m === "light" ? "dark" : "light")),
-    []
-  );
+  const toggleColorMode = useCallback(() => {
+    setThemePreference(resolvedMode === "light" ? "dark" : "light");
+  }, [resolvedMode, setThemePreference]);
 
   const togglePanel = useCallback(
     (panel: DevPanel) => setDevPanel((p) => (p === panel ? "none" : panel)),
@@ -99,7 +96,7 @@ export default function ThemeDevPage() {
         onThemeChange={setThemeId}
         compareThemeId={compareThemeId}
         onCompareThemeChange={setCompareThemeId}
-        colorMode={colorMode}
+        colorMode={resolvedMode}
         onColorModeToggle={toggleColorMode}
         validation={validation}
         devPanel={devPanel}
@@ -125,21 +122,21 @@ export default function ThemeDevPage() {
       <div className="dev-preview-area">
         {viewMode === "single" ? (
           <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-            <ThemePreview pkg={pkg} pageView={pageView} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
+            <ThemePreview pkg={pkg} pageView={pageView} isDark={isDark} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
           </div>
         ) : (
           <div className="dev-compare">
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{currentTheme.label}</div>
               <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-                <ThemePreview pkg={pkg} pageView={pageView} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
+                <ThemePreview pkg={pkg} pageView={pageView} isDark={isDark} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
               </div>
             </div>
             <div className="dev-compare__divider" />
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{compareTheme.label}</div>
               <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-                <ThemePreview pkg={compareTheme.pkg} pageView={pageView} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
+                <ThemePreview pkg={compareTheme.pkg} pageView={pageView} isDark={isDark} notionRecordMap={notionRecordMap} onNotionLoad={setNotionRecordMap} />
               </div>
             </div>
           </div>
@@ -168,7 +165,7 @@ function Toolbar({
   onThemeChange: (id: string) => void;
   compareThemeId: string;
   onCompareThemeChange: (id: string) => void;
-  colorMode: ColorMode;
+  colorMode: "light" | "dark";
   onColorModeToggle: () => void;
   validation: ValidationResult;
   devPanel: DevPanel;
@@ -472,17 +469,69 @@ function TokenSection({ label, children }: { label: string; children: React.Reac
   );
 }
 
+function tokensToStyleVars(tokens: NoxionThemeTokens, isDark: boolean): Record<string, string> {
+  const source = isDark && tokens.dark
+    ? { ...tokens, ...tokens.dark } as NoxionThemeTokens
+    : tokens;
+
+  const vars: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(source.colors)) {
+    vars[`--noxion-${key}`] = value;
+  }
+
+  if (source.fonts) {
+    for (const [key, value] of Object.entries(source.fonts)) {
+      if (value) vars[`--noxion-font-${key}`] = value;
+    }
+  }
+
+  if (source.spacing) {
+    for (const [key, value] of Object.entries(source.spacing)) {
+      vars[`--noxion-spacing-${key}`] = value;
+    }
+  }
+
+  if (source.borderRadius) {
+    vars["--noxion-border-radius"] = source.borderRadius;
+  }
+
+  if (source.shadows) {
+    for (const [key, value] of Object.entries(source.shadows)) {
+      if (value) vars[`--noxion-shadow-${key}`] = value;
+    }
+  }
+
+  if (source.transitions) {
+    for (const [key, value] of Object.entries(source.transitions)) {
+      if (value) vars[`--noxion-transition-${key}`] = value;
+    }
+  }
+
+  if (source.breakpoints) {
+    for (const [key, value] of Object.entries(source.breakpoints)) {
+      if (value) vars[`--noxion-breakpoint-${key}`] = value;
+    }
+  }
+
+  return vars;
+}
+
 function ThemePreview({
   pkg,
   pageView,
+  isDark,
   notionRecordMap,
   onNotionLoad,
 }: {
   pkg: NoxionThemePackage;
   pageView: PageView;
+  isDark: boolean;
   notionRecordMap: ExtendedRecordMap | null;
   onNotionLoad: (recordMap: ExtendedRecordMap | null) => void;
 }) {
+  const scopedVars = useMemo(() => tokensToStyleVars(pkg.tokens, isDark), [pkg.tokens, isDark]);
+
   const SiteHeader = () => (
     <Header siteName="Noxion Preview" navigation={mockNavigation} />
   );
@@ -501,11 +550,13 @@ function ThemePreview({
     : { header: SiteHeader, footer: SiteFooter };
 
   return (
-    <NoxionThemeProvider themePackage={pkg} slots={slots}>
-      <Layout slots={slots}>
-        <PageContent pageView={pageView} notionRecordMap={notionRecordMap} onNotionLoad={onNotionLoad} />
-      </Layout>
-    </NoxionThemeProvider>
+    <div style={scopedVars as React.CSSProperties}>
+      <NoxionThemeProvider themePackage={pkg} slots={slots}>
+        <Layout slots={slots}>
+          <PageContent pageView={pageView} notionRecordMap={notionRecordMap} onNotionLoad={onNotionLoad} />
+        </Layout>
+      </NoxionThemeProvider>
+    </div>
   );
 }
 
