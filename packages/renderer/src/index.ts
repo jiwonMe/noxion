@@ -1,4 +1,6 @@
 export { defineTheme, defaultTheme } from "./theme/define-theme";
+export { extendTheme } from "./theme/extend-theme";
+export type { ExtendThemeOverrides } from "./theme/extend-theme";
 export { generateCSSVariables, generateThemeStylesheet } from "./theme/css-generator";
 export { resolveComponents } from "./theme/component-resolver";
 export {
@@ -16,7 +18,7 @@ export { resolveSlots } from "./theme/slot-resolver";
 export { resolveTemplate } from "./theme/template-resolver";
 
 export { BaseLayout, BlogLayout, DocsLayout, MagazineLayout } from "./layouts";
-export { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+export { HomePage, PostPage, ArchivePage, TagPage, DocsPage, PortfolioGrid, PortfolioProject } from "./templates";
 export type {
   NoxionTheme,
   NoxionThemeColors,
@@ -33,6 +35,7 @@ export type {
   NoxionTemplateProps,
   NoxionLayoutProps,
   NoxionThemePackage,
+  NoxionThemeMetadata,
   HeaderProps,
   FooterProps,
   PostCardProps,
@@ -40,6 +43,14 @@ export type {
   TOCProps,
   SearchProps,
   TagFilterProps,
+  DocsSidebarItem,
+  DocsSidebarProps,
+  DocsBreadcrumbItem,
+  DocsBreadcrumbProps,
+  DocsNavigationLink,
+  DocsPageProps,
+  PortfolioCardProps,
+  PortfolioFilterProps,
 } from "./theme/types";
 
 export { NotionPage } from "./components/NotionPage";
@@ -55,6 +66,10 @@ export type { EmptyStateProps } from "./components/EmptyState";
 export { ThemeToggle } from "./components/ThemeToggle";
 export { TOC } from "./components/TOC";
 export { Search } from "./components/Search";
+export { DocsSidebar } from "./components/DocsSidebar";
+export { DocsBreadcrumb } from "./components/DocsBreadcrumb";
+export { PortfolioProjectCard } from "./components/PortfolioProjectCard";
+export { PortfolioFilter } from "./components/PortfolioFilter";
 
 export { useThemePreference } from "./hooks/useTheme";
 export type { ThemePreference } from "./hooks/useTheme";

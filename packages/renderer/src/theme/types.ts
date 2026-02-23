@@ -112,6 +112,58 @@ export interface TagFilterProps {
   maxVisible?: number;
 }
 
+export interface DocsSidebarItem {
+  id: string;
+  title: string;
+  slug: string;
+  level: number;
+  children?: DocsSidebarItem[];
+}
+
+export interface DocsSidebarProps {
+  items: DocsSidebarItem[];
+  currentSlug?: string;
+}
+
+export interface DocsBreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+export interface DocsBreadcrumbProps {
+  items: DocsBreadcrumbItem[];
+}
+
+export interface DocsNavigationLink {
+  title: string;
+  slug: string;
+}
+
+export interface DocsPageProps {
+  data: Record<string, unknown>;
+  prev?: DocsNavigationLink;
+  next?: DocsNavigationLink;
+  className?: string;
+}
+
+export interface PortfolioCardProps {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  coverImage?: string;
+  technologies?: string[];
+  projectUrl?: string;
+  year?: number;
+  featured?: boolean;
+}
+
+export interface PortfolioFilterProps {
+  technologies: string[];
+  selectedTechnologies: string[];
+  onToggle: (tech: string) => void;
+}
+
 export interface ComponentOverrides {
   Header?: ComponentType<HeaderProps>;
   Footer?: ComponentType<FooterProps>;
@@ -157,6 +209,13 @@ export interface NoxionLayoutProps {
   className?: string;
 }
 
+export interface NoxionThemeMetadata {
+  description?: string;
+  author?: string;
+  version?: string;
+  preview?: string;
+}
+
 export interface NoxionThemePackage {
   name: string;
   tokens: NoxionThemeTokens;
@@ -164,4 +223,7 @@ export interface NoxionThemePackage {
   templates: Partial<NoxionTemplateMap>;
   components: Partial<ComponentOverrides>;
   stylesheet?: string;
+  /** Page types this theme supports (e.g. ['blog', 'docs', 'portfolio']) */
+  supports?: string[];
+  metadata?: NoxionThemeMetadata;
 }
