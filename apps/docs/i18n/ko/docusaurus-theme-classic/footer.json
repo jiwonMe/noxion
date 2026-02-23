@@ -11,6 +11,10 @@
     "message": "API 레퍼런스",
     "description": "The label of footer link with label=API Reference linking to /docs/reference/overview"
   },
+  "link.item.label.Showcase": {
+    "message": "쇼케이스",
+    "description": "The label of footer link with label=Showcase linking to /showcase"
+  },
   "link.item.label.GitHub Discussions": {
     "message": "GitHub 토론",
     "description": "The label of footer link with label=GitHub Discussions linking to https://github.com/jiwonme/noxion/discussions"

@@ -1,4 +1,8 @@
 {
+  "item.label.Showcase": {
+    "message": "쇼케이스",
+    "description": "Navbar item with label Showcase"
+  },
   "homepage.tagline": {
     "message": "Notion 데이터베이스를 연결하면 SEO까지 갖춘 블로그가 바로 완성됩니다. 오픈소스 블로그 빌더."
   },

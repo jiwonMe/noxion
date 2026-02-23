@@ -11,6 +11,14 @@
     "message": "레퍼런스",
     "description": "Navbar item with label Reference"
   },
+  "item.label.Changelog": {
+    "message": "변경 이력",
+    "description": "Navbar item with label Changelog"
+  },
+  "item.label.Showcase": {
+    "message": "쇼케이스",
+    "description": "Navbar item with label Showcase"
+  },
   "logo.alt": {
     "message": "Noxion Logo",
     "description": "The alt text of navbar logo"
