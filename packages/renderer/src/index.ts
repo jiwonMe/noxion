@@ -74,3 +74,10 @@ export { PortfolioFilter } from "./components/PortfolioFilter";
 export { useThemePreference } from "./hooks/useTheme";
 export type { ThemePreference } from "./hooks/useTheme";
 export { useSearch } from "./hooks/useSearch";
+
+export {
+  defaultThemePackage,
+  inkThemePackage,
+  editorialThemePackage,
+  folioThemePackage,
+} from "./themes";
