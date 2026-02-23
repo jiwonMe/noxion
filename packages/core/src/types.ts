@@ -77,6 +77,14 @@ export interface NoxionThemeConfig {
   slots?: Record<string, unknown>;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  hasMore: boolean;
+}
+
 export interface ComponentOverrides {
   Header?: unknown;
   Footer?: unknown;

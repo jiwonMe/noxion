@@ -31,6 +31,7 @@ export type {
   NoxionThemeConfig,
   ComponentOverrides,
   ExtendedRecordMap,
+  PaginatedResponse,
 } from "./types";
 export type { NotionClientOptions } from "./client";
 export {

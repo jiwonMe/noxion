@@ -1,16 +1,20 @@
 import { generateCollectionPageLD } from "@noxion/adapter-nextjs";
-import { getAllPosts, getAllTags } from "../lib/notion";
+import { getPaginatedPosts, getAllPosts, getAllTags, DEFAULT_PAGE_SIZE } from "../lib/notion";
 import { siteConfig } from "../lib/config";
 import { HomeContent } from "./home-content";
 
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const posts = await getAllPosts();
-  const allTags = getAllTags(posts);
-  const collectionLd = generateCollectionPageLD(posts, siteConfig);
+  const [paginated, allPosts] = await Promise.all([
+    getPaginatedPosts({ page: 1, pageSize: DEFAULT_PAGE_SIZE }),
+    getAllPosts(),
+  ]);
 
-  const postCards = posts.map((post) => ({
+  const allTags = getAllTags(allPosts);
+  const collectionLd = generateCollectionPageLD(allPosts, siteConfig);
+
+  const initialPosts = paginated.data.map((post) => ({
     id: post.id,
     title: post.title,
     slug: post.slug,
@@ -28,7 +32,13 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }}
       />
-      <HomeContent posts={postCards} allTags={allTags} />
+      <HomeContent
+        initialPosts={initialPosts}
+        allTags={allTags}
+        hasMore={paginated.hasMore}
+        total={paginated.total}
+        pageSize={DEFAULT_PAGE_SIZE}
+      />
     </>
   );
 }

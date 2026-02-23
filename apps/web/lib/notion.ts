@@ -1,11 +1,13 @@
 import { createNotionClient, fetchBlogPosts, fetchPage, fetchPostBySlug, downloadImages, mapImages } from "@noxion/core";
-import type { BlogPost, ExtendedRecordMap } from "@noxion/core";
+import type { BlogPost, ExtendedRecordMap, PaginatedResponse } from "@noxion/core";
 import { join } from "node:path";
 import { siteConfig } from "./config";
 
 const notion = createNotionClient({
   authToken: process.env.NOTION_TOKEN || undefined,
 });
+
+export const DEFAULT_PAGE_SIZE = 12;
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   if (!siteConfig.rootNotionPageId) return [];
@@ -15,6 +17,54 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     console.error("Failed to fetch blog posts:", error);
     return [];
   }
+}
+
+export interface GetPaginatedPostsOptions {
+  page?: number;
+  pageSize?: number;
+  tag?: string;
+  search?: string;
+}
+
+export async function getPaginatedPosts(
+  options: GetPaginatedPostsOptions = {}
+): Promise<PaginatedResponse<BlogPost>> {
+  const {
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE,
+    tag,
+    search,
+  } = options;
+
+  let posts = await getAllPosts();
+
+  if (tag) {
+    posts = posts.filter((p) => p.tags.includes(tag));
+  }
+
+  if (search) {
+    const lower = search.toLowerCase();
+    posts = posts.filter((p) => {
+      if (p.title.toLowerCase().includes(lower)) return true;
+      if (p.tags.some((t) => t.toLowerCase().includes(lower))) return true;
+      if (p.category?.toLowerCase().includes(lower)) return true;
+      if (p.description?.toLowerCase().includes(lower)) return true;
+      return false;
+    });
+  }
+
+  const total = posts.length;
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const data = posts.slice(start, end);
+
+  return {
+    data,
+    page,
+    pageSize,
+    total,
+    hasMore: end < total,
+  };
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {

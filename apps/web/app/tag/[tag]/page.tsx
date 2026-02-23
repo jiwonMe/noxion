@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllPosts, getAllTags } from "../../../lib/notion";
+import { getPaginatedPosts, getAllPosts, getAllTags, DEFAULT_PAGE_SIZE } from "../../../lib/notion";
 import { siteConfig } from "../../../lib/config";
 import { HomeContent } from "../../home-content";
 
@@ -31,22 +31,25 @@ export default async function TagPage({
 }) {
   const { tag } = await params;
   const decodedTag = decodeURIComponent(tag);
-  const posts = await getAllPosts();
-  const allTags = getAllTags(posts);
 
-  const filteredPosts = posts
-    .filter((p) => p.tags.includes(decodedTag))
-    .map((post) => ({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      date: post.date,
-      tags: post.tags,
-      coverImage: post.coverImage,
-      category: post.category,
-      description: post.description,
-      author: post.author,
-    }));
+  const [paginated, allPosts] = await Promise.all([
+    getPaginatedPosts({ page: 1, pageSize: DEFAULT_PAGE_SIZE, tag: decodedTag }),
+    getAllPosts(),
+  ]);
+
+  const allTags = getAllTags(allPosts);
+
+  const initialPosts = paginated.data.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    date: post.date,
+    tags: post.tags,
+    coverImage: post.coverImage,
+    category: post.category,
+    description: post.description,
+    author: post.author,
+  }));
 
   return (
     <div>
@@ -60,7 +63,14 @@ export default async function TagPage({
       >
         Tag: {decodedTag}
       </h2>
-      <HomeContent posts={filteredPosts} allTags={allTags} />
+      <HomeContent
+        initialPosts={initialPosts}
+        allTags={allTags}
+        hasMore={paginated.hasMore}
+        total={paginated.total}
+        pageSize={DEFAULT_PAGE_SIZE}
+        initialTag={decodedTag}
+      />
     </div>
   );
 }
