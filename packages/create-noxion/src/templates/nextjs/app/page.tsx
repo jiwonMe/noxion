@@ -10,10 +10,10 @@ export default async function HomePage() {
   const postCards = posts.map((post) => ({
     title: post.title,
     slug: post.slug,
-    date: post.date,
-    tags: post.tags,
+    date: post.metadata.date,
+    tags: post.metadata.tags,
     coverImage: post.coverImage,
-    category: post.category,
+    category: post.metadata.category,
   }));
 
   return <HomeContent posts={postCards} allTags={allTags} />;

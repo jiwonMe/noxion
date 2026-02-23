@@ -7,7 +7,6 @@ function createConfig(): NoxionConfig {
     return loadConfig(noxionConfigInput);
   } catch {
     return {
-      rootNotionPageId: noxionConfigInput.rootNotionPageId ?? "",
       name: noxionConfigInput.name ?? "{{SITE_NAME}}",
       domain: noxionConfigInput.domain ?? "{{DOMAIN}}",
       author: noxionConfigInput.author ?? "{{AUTHOR}}",
@@ -17,6 +16,7 @@ function createConfig(): NoxionConfig {
       defaultPageType: "blog",
       revalidate: noxionConfigInput.revalidate ?? 3600,
       plugins: noxionConfigInput.plugins,
+      collections: noxionConfigInput.collections,
     };
   }
 }

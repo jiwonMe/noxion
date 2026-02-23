@@ -7,16 +7,16 @@ function createConfig(): NoxionConfig {
     return loadConfig(noxionConfigInput);
   } catch {
     return {
-      rootNotionPageId: noxionConfigInput.rootNotionPageId ?? "",
       name: noxionConfigInput.name ?? "{{SITE_NAME}}",
       domain: noxionConfigInput.domain ?? "{{DOMAIN}}",
       author: noxionConfigInput.author ?? "{{AUTHOR}}",
       description: noxionConfigInput.description ?? "{{SITE_DESCRIPTION}}",
       language: noxionConfigInput.language ?? "en",
       defaultTheme: noxionConfigInput.defaultTheme ?? "system",
-      defaultPageType: "blog",
+      defaultPageType: "docs",
       revalidate: noxionConfigInput.revalidate ?? 3600,
       plugins: noxionConfigInput.plugins,
+      collections: noxionConfigInput.collections,
     };
   }
 }

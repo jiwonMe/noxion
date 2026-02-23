@@ -1,5 +1,5 @@
 import { createNotionClient, fetchBlogPosts, fetchPage, fetchPostBySlug, downloadImages, mapImages } from "@noxion/core";
-import type { BlogPost, ExtendedRecordMap } from "@noxion/core";
+import type { BlogPage, ExtendedRecordMap } from "@noxion/core";
 import { join } from "node:path";
 import { siteConfig } from "./config";
 
@@ -7,7 +7,7 @@ const notion = createNotionClient({
   authToken: process.env.NOTION_TOKEN || undefined,
 });
 
-export async function getAllPosts(): Promise<BlogPost[]> {
+export async function getAllPosts(): Promise<BlogPage[]> {
   if (!siteConfig.rootNotionPageId) return [];
   try {
     return await fetchBlogPosts(notion, siteConfig.rootNotionPageId);
@@ -17,7 +17,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   }
 }
 
-export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
+export async function getPostBySlug(slug: string): Promise<BlogPage | undefined> {
   if (!siteConfig.rootNotionPageId) return undefined;
   try {
     return await fetchPostBySlug(notion, siteConfig.rootNotionPageId, slug);
@@ -47,10 +47,10 @@ export async function getPageRecordMap(pageId: string): Promise<ExtendedRecordMa
   return recordMap;
 }
 
-export function getAllTags(posts: BlogPost[]): string[] {
+export function getAllTags(posts: BlogPage[]): string[] {
   const tagSet = new Set<string>();
   for (const post of posts) {
-    for (const tag of post.tags) {
+    for (const tag of post.metadata.tags) {
       tagSet.add(tag);
     }
   }

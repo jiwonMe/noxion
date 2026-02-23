@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { getAllPosts, getAllTags } from "../../../lib/notion";
+import { getPagesByType, getAllTags } from "../../../lib/notion";
 import { siteConfig } from "../../../lib/config";
 import { HomeContent } from "../../home-content";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const posts = await getPagesByType("blog");
   const tags = getAllTags(posts);
   return tags.map((tag) => ({ tag }));
 }
@@ -31,18 +31,21 @@ export default async function TagPage({
 }) {
   const { tag } = await params;
   const decodedTag = decodeURIComponent(tag);
-  const posts = await getAllPosts();
+  const posts = await getPagesByType("blog");
   const allTags = getAllTags(posts);
 
   const filteredPosts = posts
-    .filter((p) => p.metadata.tags.includes(decodedTag))
+    .filter((p) => {
+      const tags = p.metadata.tags;
+      return Array.isArray(tags) && tags.includes(decodedTag);
+    })
     .map((post) => ({
       title: post.title,
       slug: post.slug,
-      date: post.metadata.date,
-      tags: post.metadata.tags,
+      date: (post.metadata.date as string) ?? "",
+      tags: (post.metadata.tags as string[]) ?? [],
       coverImage: post.coverImage,
-      category: post.metadata.category,
+      category: post.metadata.category as string | undefined,
     }));
 
   return (

@@ -1,0 +1,23 @@
+:root {
+  --noxion-primary: #2563eb;
+  --noxion-primaryForeground: #ffffff;
+  --noxion-background: #ffffff;
+  --noxion-foreground: #0a0a0a;
+  --noxion-muted: #f5f5f5;
+  --noxion-mutedForeground: #737373;
+  --noxion-border: #e5e7eb;
+  --noxion-accent: #f0f9ff;
+  --noxion-accentForeground: #1e40af;
+}
+
+[data-theme="dark"] {
+  --noxion-primary: #3b82f6;
+  --noxion-primaryForeground: #ffffff;
+  --noxion-background: #0a0a0a;
+  --noxion-foreground: #fafafa;
+  --noxion-muted: #262626;
+  --noxion-mutedForeground: #a3a3a3;
+  --noxion-border: #404040;
+  --noxion-accent: #1e3a5f;
+  --noxion-accentForeground: #93c5fd;
+}

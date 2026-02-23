@@ -1,0 +1,42 @@
+{
+  "name": "noxion-theme-{{THEME_NAME}}",
+  "version": "0.1.0",
+  "description": "A custom Noxion theme",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./styles/theme.css"
+  },
+  "files": [
+    "dist",
+    "styles"
+  ],
+  "sideEffects": [
+    "styles/**/*.css"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "notion",
+    "noxion",
+    "noxion-theme"
+  ],
+  "peerDependencies": {
+    "@noxion/renderer": ">=0.2.0",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@noxion/renderer": "^0.2.0",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "typescript": "^5.7.0"
+  }
+}

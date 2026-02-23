@@ -1,6 +1,8 @@
 import { mkdir, writeFile, readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 
+export type TemplateType = "blog" | "docs" | "portfolio" | "full";
+
 export interface ScaffoldOptions {
   projectName: string;
   notionPageId: string;
@@ -8,6 +10,12 @@ export interface ScaffoldOptions {
   siteDescription: string;
   author: string;
   domain: string;
+  templateType?: TemplateType;
+  docsNotionId?: string;
+  portfolioNotionId?: string;
+  pluginName?: string;
+  pluginDescription?: string;
+  themeName?: string;
 }
 
 export interface ScaffoldResult {
@@ -25,7 +33,12 @@ export function resolveTemplateVariables(
     .replace(/\{\{SITE_NAME\}\}/g, options.siteName)
     .replace(/\{\{SITE_DESCRIPTION\}\}/g, options.siteDescription)
     .replace(/\{\{AUTHOR\}\}/g, options.author)
-    .replace(/\{\{DOMAIN\}\}/g, options.domain);
+    .replace(/\{\{DOMAIN\}\}/g, options.domain)
+    .replace(/\{\{DOCS_NOTION_ID\}\}/g, options.docsNotionId ?? "")
+    .replace(/\{\{PORTFOLIO_NOTION_ID\}\}/g, options.portfolioNotionId ?? "")
+    .replace(/\{\{PLUGIN_NAME\}\}/g, options.pluginName ?? "")
+    .replace(/\{\{PLUGIN_DESCRIPTION\}\}/g, options.pluginDescription ?? "A Noxion plugin")
+    .replace(/\{\{THEME_NAME\}\}/g, options.themeName ?? "");
 }
 
 export async function scaffoldProject(
@@ -70,6 +83,19 @@ async function copyTemplateDir(
   return files;
 }
 
-export function getTemplateDir(framework: string): string {
-  return join(import.meta.dirname, "templates", framework);
+export function getTemplateDir(template: string): string {
+  return join(import.meta.dirname, "templates", template);
+}
+
+export function resolveTemplateForType(templateType: TemplateType): string {
+  switch (templateType) {
+    case "blog":
+      return "nextjs";
+    case "docs":
+      return "docs";
+    case "portfolio":
+      return "portfolio";
+    case "full":
+      return "full";
+  }
 }
