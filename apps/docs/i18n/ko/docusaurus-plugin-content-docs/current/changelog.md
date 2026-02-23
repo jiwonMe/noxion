@@ -10,6 +10,122 @@ Noxion 프로젝트의 주요 변경 사항을 기록합니다.
 
 ---
 
+## v0.2.0
+
+**릴리스: 2026-02-23**
+
+Noxion이 블로그 빌더에서 **완전한 웹사이트 빌더**로 진화합니다. 이 릴리스에서는 다중 페이지 타입(Blog, Docs, Portfolio), 멀티 데이터베이스 컬렉션, 향상된 플러그인 생태계, 테마 상속을 추가합니다.
+
+### 신규: 다중 페이지 타입
+
+- **`NoxionPage`** — `BlogPost`를 대체하는 새 제네릭 페이지 타입. `BlogPost`는 하위 호환성을 위한 타입 별칭으로 유지됨.
+- **`BlogPage`** — `date`, `tags`, `category`, `author` 메타데이터가 있는 블로그 포스트
+- **`DocsPage`** — `section`, `order`, `version` 메타데이터가 있는 문서 페이지
+- **`PortfolioPage`** — `technologies`, `projectUrl`, `year`, `featured` 메타데이터가 있는 포트폴리오 프로젝트
+- **타입 가드**: `isBlogPage()`, `isDocsPage()`, `isPortfolioPage()`
+- **`PageTypeRegistry`** — 페이지 타입 정의를 관리. 플러그인이 `registerPageTypes` 훅을 통해 커스텀 타입을 등록 가능.
+
+### 신규: 멀티 데이터베이스 컬렉션
+
+- **`collections`** 설정 옵션 — 여러 Notion 데이터베이스를 다른 페이지 타입에 매핑, 각각 자체 URL 접두사와 스키마 매핑
+- **`fetchCollection()`** — 페이지 타입 인식 스키마 매핑으로 단일 컬렉션에서 페이지 페치
+- **`fetchAllCollections()`** — 모든 컬렉션을 병렬로 페치
+- **스키마 매퍼** — 페이지 타입별 규칙 기반 Notion 속성 매핑, 수동 오버라이드 지원
+- **`defaultPageType`** 설정 옵션 — 기본 페이지 타입 설정 (기본값: `"blog"`)
+
+### 신규: 향상된 플러그인 시스템
+
+- **`registerPageTypes`** 훅 — 커스텀 페이지 타입 등록
+- **`onRouteResolve`** 훅 — 페이지 타입별 URL 생성 커스터마이징
+- **`extendSlots`** 훅 — 이름이 지정된 템플릿 슬롯에 콘텐츠 주입
+- **`configSchema`** — 플러그인이 검증을 위한 설정 스키마 선언 가능
+- **`PluginFactory<T>`** 타입 — 설정 가능한 플러그인을 위한 표준화된 팩토리 함수 타입
+
+### 신규: `@noxion/plugin-utils` 패키지
+
+- **목 데이터 생성기**: `createMockPage`, `createMockBlogPage`, `createMockDocsPage`, `createMockPortfolioPage`, `createMockPages`
+- **테스트 헬퍼**: `createTestConfig`, `createTestPlugin`
+- **매니페스트 검증**: `NoxionPluginManifest`, `validatePluginManifest`
+
+### 신규: `noxion-plugin-reading-time` 예제
+
+- `transformPosts`, `extendSlots`, `configSchema`를 시연하는 커뮤니티 플러그인 예제
+- `@noxion/plugin-utils`를 사용한 전체 테스트 스위트
+
+### 신규: 템플릿 시스템
+
+- **네임스페이스 템플릿 해석** — `docs/page`, `portfolio/grid` 등
+- **폴백 체인**: 정확한 매치 → 레거시↔네임스페이스 매핑 → 베이스이름 → 폴백 → 홈
+- **문서 템플릿**: `DocsSidebar`, `DocsBreadcrumb`, `DocsPage` (사이드바 내비게이션)
+- **포트폴리오 템플릿**: `PortfolioProjectCard`, `PortfolioFilter`, `PortfolioGrid`, `PortfolioProject`
+
+### 신규: 테마 상속
+
+- **`extendTheme()`** — 기본 테마 위에 테마 오버라이드를 딥 머지
+- **`NoxionThemeMetadata`** — 테마 메타데이터 (name, author, version, description, preview URL)
+- **`supports` 필드** — 테마가 지원하는 페이지 타입 선언
+- **`DeepPartialTokens`** 타입 — 부분 색상/폰트 오버라이드 허용
+
+### 신규: 멀티 페이지 타입 라우팅
+
+- **`generateNoxionRoutes()`** — 컬렉션에서 라우트 설정 생성
+- **`resolvePageType()`** — URL 경로에서 페이지 타입 결정
+- **`buildPageUrl()`** — 컬렉션의 경로 접두사를 사용하여 페이지 URL 빌드
+- **`generateStaticParamsForRoute()`** — 특정 페이지 타입 라우트의 static params
+
+### 신규: 페이지 타입 인식 SEO
+
+- **`generateTechArticleLD()`** — 문서 페이지용 `TechArticle` JSON-LD
+- **`generateCreativeWorkLD()`** — 포트폴리오 페이지용 `CreativeWork` JSON-LD
+- **`generatePageLD()`** — `pageType`에 따라 JSON-LD 타입 자동 선택
+- 페이지 타입 인식 사이트맵 우선순위 (blog: 0.8, docs: 0.7, portfolio: 0.6)
+- 모든 `NoxionPage` 하위 타입에서 메타데이터 생성 작동
+
+### 신규: `create-noxion` 템플릿
+
+- **`--template` 플래그** — blog, docs, portfolio, 또는 full (멀티 타입) 선택
+- **`--plugin` 플래그** — 플러그인 스타터 프로젝트 스캐폴딩
+- **`--theme` 플래그** — 테마 스타터 프로젝트 스캐폴딩
+- 템플릿별 데이터베이스 ID에 대한 대화형 프롬프트
+
+### 호환성 변경 사항
+
+- **`BlogPost` 필드가 `metadata`로 이동** — `post.date` → `post.metadata.date`, `post.tags` → `post.metadata.tags`, `post.category` → `post.metadata.category`, `post.author` → `post.metadata.author`. 기존 `BlogPost` 타입은 `BlogPage`의 별칭으로 한 버전 주기 동안 유지됩니다.
+- **`loadConfig()`가 새 옵션을 받음** — `collections`, `defaultPageType` 필드 추가
+- **메타데이터/SEO 함수가 `NoxionPage`를 받음** — `generateNoxionMetadata()`, `generateBlogPostingLD()`, `generateNoxionSitemap()`가 `BlogPost` 대신 `NoxionPage`를 받음
+
+단계별 업그레이드 안내는 [마이그레이션 가이드](./learn/migration-v02)를 참조하세요.
+
+### 개선 사항
+
+- 모든 패키지에서 **392개 테스트** 통과 (core: 168, renderer: 83, adapter-nextjs: 51, plugin-utils: 36, create-noxion: 29, plugin-reading-time: 25)
+- 모든 v0.2 기능에 대한 **포괄적인 문서** 업데이트
+
+---
+
+## v0.1.1
+
+**릴리스: 2026-02-22**
+
+`@noxion/notion-renderer` 렌더링 품질과 새로운 고정 TOC 기능에 집중한 패치 릴리스.
+
+### 수정
+
+- **3+ 컬럼 레이아웃 오버플로우** — `.noxion-column`에 `min-width: 0`과 `overflow: hidden`을 추가하여 3개 이상의 컬럼 사용 시 flex 아이템이 컨테이너 너비를 초과하지 않도록 방지.
+- **컬럼 내 이미지 크기** — 이미지 figure의 인라인 `width`를 `maxWidth`로 변경하여 좁은 컬럼 컨테이너에 맞게 축소하면서도 원래 Notion 지정 너비를 상한으로 유지.
+- **캡션 줄바꿈** — 이미지 캡션의 `word-break: break-word`를 `overflow-wrap: break-word`로 교체하여 적절한 단어 경계 줄바꿈 적용.
+- **프론트매터 코드 블록 표시** — 프론트매터 key:value 쌍에 사용되는 첫 번째 코드 블록이 렌더링된 출력에서 자동으로 숨겨지도록 변경.
+
+### 신규
+
+- **고정 TOC 사이드바** (`floatFirstTOC: right`) — 이 프론트매터 속성이 설정되면, 인라인 `table_of_contents` 블록이 숨겨지고 콘텐츠 영역 오른쪽에 위치한 고정 사이드바 TOC로 대체됩니다. 40% 뷰포트 임계값으로 스크롤 시 활성 제목을 추적합니다. 1280px 화면 너비 이하에서 자동으로 숨겨집니다.
+
+### 개선 사항
+
+- **기본 타이포그래피** — 기본 `line-height`를 1.5에서 1.6으로 변경, 더 조밀한 본문 텍스트를 위한 `letter-spacing: -0.01em` 추가.
+
+---
+
 ## v0.1.0
 
 **릴리스: 2026-02-22**
