@@ -8,7 +8,7 @@ export type ThemeMode = "system" | "light" | "dark";
 export type NoxionLayout = "single-column" | "sidebar-left" | "sidebar-right";
 
 export interface NoxionConfig {
-  rootNotionPageId: string;
+  rootNotionPageId?: string;
   rootNotionSpaceId?: string;
   name: string;
   domain: string;
@@ -22,10 +22,11 @@ export interface NoxionConfig {
   theme?: NoxionThemeConfig;
   layout?: NoxionLayout;
   components?: ComponentOverrides;
+  collections?: NoxionCollection[];
 }
 
 export interface NoxionConfigInput {
-  rootNotionPageId: string;
+  rootNotionPageId?: string;
   rootNotionSpaceId?: string;
   name: string;
   domain: string;
@@ -39,21 +40,157 @@ export interface NoxionConfigInput {
   theme?: NoxionThemeConfig;
   layout?: NoxionLayout;
   components?: ComponentOverrides;
+  collections?: NoxionCollection[];
 }
 
-export interface BlogPost {
+/**
+ * Generic page interface that supports multiple content types (blog, docs, portfolio, etc.)
+ * Replaces the blog-specific BlogPost interface with a more flexible structure.
+ */
+export interface NoxionPage {
+  /** Unique identifier from Notion */
   id: string;
+  /** Page title */
   title: string;
+  /** URL slug */
   slug: string;
-  date: string;
-  tags: string[];
-  category?: string;
-  coverImage?: string;
-  description?: string;
-  author?: string;
+  /** Page type discriminator (blog, docs, portfolio, or custom) */
+  pageType: string;
+  /** Publication status */
   published: boolean;
+  /** Last edited timestamp (ISO 8601) */
   lastEditedTime: string;
+  /** Cover image URL */
+  coverImage?: string;
+  /** Page description/excerpt */
+  description?: string;
+  
+  /** Type-specific metadata (e.g., blog: {date, tags, category}, docs: {section, order}) */
+  metadata: Record<string, unknown>;
+  /** Frontmatter overrides from Notion code blocks */
   frontmatter?: Record<string, string>;
+  
+  /** Parent page ID (for hierarchical structures like docs) */
+  parent?: string;
+  /** Child page IDs (for hierarchical structures) */
+  children?: string[];
+  /** Sort order within parent (for docs navigation) */
+  order?: number;
+}
+
+/**
+ * Blog page type with blog-specific metadata
+ */
+export interface BlogPage extends NoxionPage {
+  pageType: 'blog';
+  metadata: {
+    /** Publication date */
+    date: string;
+    /** Post tags */
+    tags: string[];
+    /** Post category */
+    category?: string;
+    /** Post author */
+    author?: string;
+  };
+}
+
+/**
+ * Documentation page type with docs-specific metadata
+ */
+export interface DocsPage extends NoxionPage {
+  pageType: 'docs';
+  metadata: {
+    /** Documentation section/group */
+    section?: string;
+    /** Documentation version */
+    version?: string;
+    /** Edit URL for "Edit this page" links */
+    editUrl?: string;
+  };
+}
+
+/**
+ * Portfolio project page type with portfolio-specific metadata
+ */
+export interface PortfolioPage extends NoxionPage {
+  pageType: 'portfolio';
+  metadata: {
+    /** Project URL/demo link */
+    projectUrl?: string;
+    /** Technologies/stack used */
+    technologies?: string[];
+    /** Project year */
+    year?: string;
+    /** Featured project flag */
+    featured?: boolean;
+  };
+}
+
+/**
+ * @deprecated Use BlogPage instead. BlogPost is kept for backward compatibility.
+ * Will be removed in v0.3.0.
+ */
+export type BlogPost = BlogPage;
+
+/**
+ * Type guard to check if a page is a blog page
+ */
+export function isBlogPage(page: NoxionPage): page is BlogPage {
+  return page.pageType === 'blog';
+}
+
+/**
+ * Type guard to check if a page is a docs page
+ */
+export function isDocsPage(page: NoxionPage): page is DocsPage {
+  return page.pageType === 'docs';
+}
+
+/**
+ * Type guard to check if a page is a portfolio page
+ */
+export function isPortfolioPage(page: NoxionPage): page is PortfolioPage {
+  return page.pageType === 'portfolio';
+}
+
+/**
+ * Schema conventions for automatic Notion property mapping
+ */
+export interface SchemaConventions {
+  /** Property names that map to this field (e.g., ['date', 'published'] for date field) */
+  [fieldName: string]: {
+    names: string[];
+    type?: string;
+  };
+}
+
+/**
+ * Page type definition for plugin-registered custom page types
+ */
+export interface PageTypeDefinition {
+  /** Page type identifier (e.g., 'gallery', 'wiki') */
+  name: string;
+  /** Schema conventions for automatic property mapping */
+  schemaConventions?: SchemaConventions;
+  /** Default template name for this page type */
+  defaultTemplate?: string;
+  /** Default layout name for this page type */
+  defaultLayout?: string;
+  /** URL pattern generator function */
+  routes?: (page: NoxionPage) => string;
+}
+
+/**
+ * Collection configuration for multi-database support
+ */
+export interface NoxionCollection {
+  /** Notion database ID */
+  databaseId: string;
+  /** Page type for all pages in this collection */
+  pageType: string;
+  /** Optional schema overrides (property name mappings) */
+  schema?: Record<string, string>;
 }
 
 export interface NoxionPageData {

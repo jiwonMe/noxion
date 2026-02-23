@@ -23,6 +23,10 @@ export type {
 export type {
   NoxionConfig,
   NoxionConfigInput,
+  NoxionPage,
+  BlogPage,
+  DocsPage,
+  PortfolioPage,
   BlogPost,
   NoxionPageData,
   NoxionLayout,
@@ -32,7 +36,11 @@ export type {
   ComponentOverrides,
   ExtendedRecordMap,
   PaginatedResponse,
+  SchemaConventions,
+  PageTypeDefinition,
+  NoxionCollection,
 } from "./types";
+export { isBlogPage, isDocsPage, isPortfolioPage } from "./types";
 export type { NotionClientOptions } from "./client";
 export {
   createAnalyticsPlugin,
