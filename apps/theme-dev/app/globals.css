@@ -1,0 +1,260 @@
+/* ── RESET ── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ── DEV TOOLBAR ── */
+
+.dev-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: "SF Mono", "Fira Code", "JetBrains Mono", monospace;
+  font-size: 13px;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.dev-toolbar__brand {
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.dev-toolbar__divider {
+  width: 1px;
+  height: 20px;
+  background: #2a2a4a;
+}
+
+.dev-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dev-toolbar__label {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dev-toolbar__select {
+  appearance: none;
+  background: #16162a;
+  color: #e0e0e0;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  padding: 5px 28px 5px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.dev-toolbar__select:hover {
+  border-color: #7c3aed;
+}
+
+.dev-toolbar__select:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 1px;
+}
+
+.dev-toolbar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #16162a;
+  color: #e0e0e0;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.15s;
+}
+
+.dev-toolbar__btn:hover {
+  border-color: #7c3aed;
+}
+
+.dev-toolbar__btn--active {
+  background: #7c3aed;
+  color: #fff;
+  border-color: #7c3aed;
+}
+
+/* ── VALIDATOR BADGE ── */
+
+.dev-toolbar__validator {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dev-toolbar__badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dev-toolbar__badge--valid {
+  background: #064e3b;
+  color: #34d399;
+}
+
+.dev-toolbar__badge--invalid {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.dev-toolbar__badge--warnings {
+  background: #78350f;
+  color: #fbbf24;
+}
+
+/* ── PAGE NAVIGATION TABS ── */
+
+.dev-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 20px;
+  background: #111127;
+  border-bottom: 1px solid #2a2a4a;
+  overflow-x: auto;
+}
+
+.dev-tab {
+  padding: 10px 16px;
+  color: #888;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.dev-tab:hover {
+  color: #e0e0e0;
+}
+
+.dev-tab--active {
+  color: #7c3aed;
+  border-bottom-color: #7c3aed;
+}
+
+/* ── PREVIEW FRAME ── */
+
+.dev-preview {
+  min-height: calc(100vh - 100px);
+}
+
+/* ── VALIDATOR PANEL ── */
+
+.dev-validator-panel {
+  padding: 16px 20px;
+  background: #111127;
+  border-bottom: 1px solid #2a2a4a;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dev-validator-panel__title {
+  font-weight: 700;
+  color: #e0e0e0;
+  margin-bottom: 8px;
+}
+
+.dev-validator-panel__issue {
+  padding: 2px 0;
+}
+
+.dev-validator-panel__issue--error {
+  color: #fca5a5;
+}
+
+.dev-validator-panel__issue--warning {
+  color: #fbbf24;
+}
+
+.dev-validator-panel__success {
+  color: #34d399;
+}
+
+/* ── TOKEN INSPECTOR ── */
+
+.dev-token-panel {
+  padding: 16px 20px;
+  background: #111127;
+  border-bottom: 1px solid #2a2a4a;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dev-token-panel__title {
+  font-weight: 700;
+  color: #e0e0e0;
+  margin-bottom: 12px;
+}
+
+.dev-token-panel__section {
+  margin-bottom: 12px;
+}
+
+.dev-token-panel__section-label {
+  color: #888;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.dev-token-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  color: #e0e0e0;
+}
+
+.dev-token-row__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+.dev-token-row__key {
+  color: #888;
+  min-width: 160px;
+}
+
+.dev-token-row__value {
+  color: #c4b5fd;
+}

@@ -1,0 +1,150 @@
+import type { PostCardProps, PortfolioCardProps, DocsSidebarItem } from "@noxion/renderer";
+
+export const mockPosts: PostCardProps[] = [
+  {
+    id: "1",
+    title: "Building a Design System from Scratch",
+    slug: "building-design-system",
+    date: "2025-02-20",
+    tags: ["Design", "CSS", "Architecture"],
+    category: "Engineering",
+    description: "A deep dive into creating a scalable design system with CSS custom properties and component tokens.",
+    author: "Jiwon Park",
+    coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop",
+  },
+  {
+    id: "2",
+    title: "The Art of Notion as a CMS",
+    slug: "notion-as-cms",
+    date: "2025-02-15",
+    tags: ["Notion", "CMS", "Productivity"],
+    category: "Tutorial",
+    description: "How to transform Notion into a powerful content management system for your blog or documentation site.",
+    author: "Jiwon Park",
+  },
+  {
+    id: "3",
+    title: "Type-Safe Theming in React",
+    slug: "type-safe-theming",
+    date: "2025-02-10",
+    tags: ["React", "TypeScript", "Theming"],
+    category: "Engineering",
+    description: "Implementing a fully type-safe theme system with CSS variables, React context, and compile-time validation.",
+    author: "Jiwon Park",
+    coverImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop",
+  },
+  {
+    id: "4",
+    title: "Why Static Sites Are Making a Comeback",
+    slug: "static-sites-comeback",
+    date: "2025-02-05",
+    tags: ["Web", "Performance", "JAMstack"],
+    description: "Static generation isn't just for simple pages anymore. Modern frameworks combine static speed with dynamic flexibility.",
+    author: "Jiwon Park",
+  },
+  {
+    id: "5",
+    title: "Monorepo Strategies for Growing Teams",
+    slug: "monorepo-strategies",
+    date: "2025-01-28",
+    tags: ["DevOps", "Architecture", "Tooling"],
+    category: "Engineering",
+    description: "Comparing workspace tools like Turborepo, Nx, and Bun workspaces for managing multi-package repositories.",
+    author: "Jiwon Park",
+    coverImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop",
+  },
+  {
+    id: "6",
+    title: "Dark Mode Done Right",
+    slug: "dark-mode-done-right",
+    date: "2025-01-20",
+    tags: ["CSS", "UX", "Accessibility"],
+    description: "Beyond toggling colors — handling images, shadows, contrast ratios, and user preferences in dark mode.",
+    author: "Jiwon Park",
+  },
+];
+
+export const mockProjects: PortfolioCardProps[] = [
+  {
+    id: "p1",
+    title: "Noxion",
+    slug: "projects/noxion",
+    description: "Notion-powered website builder. Point it at a Notion database and get a fully-rendered, SEO-optimized site.",
+    technologies: ["TypeScript", "React", "Next.js", "Notion API"],
+    projectUrl: "https://github.com/jiwonme/noxion",
+    year: 2025,
+    featured: true,
+    coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
+  },
+  {
+    id: "p2",
+    title: "Theme Studio",
+    slug: "projects/theme-studio",
+    description: "Visual theme editor for Noxion. Real-time preview with drag-and-drop token customization.",
+    technologies: ["React", "CSS Variables", "Canvas API"],
+    year: 2025,
+    featured: false,
+  },
+  {
+    id: "p3",
+    title: "Notion Renderer",
+    slug: "projects/notion-renderer",
+    description: "High-fidelity React renderer for Notion blocks. Supports all block types with SSR compatibility.",
+    technologies: ["React", "TypeScript", "Notion API"],
+    projectUrl: "https://github.com/jiwonme/notion-renderer",
+    year: 2024,
+    featured: true,
+    coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
+  },
+  {
+    id: "p4",
+    title: "CLI Dashboard",
+    slug: "projects/cli-dashboard",
+    description: "Terminal-based project management dashboard with real-time Git stats and CI status.",
+    technologies: ["Go", "Bubble Tea", "GitHub API"],
+    year: 2024,
+    featured: false,
+  },
+];
+
+export const mockSidebarItems: DocsSidebarItem[] = [
+  {
+    id: "getting-started",
+    title: "Getting Started",
+    slug: "docs/getting-started",
+    level: 0,
+    children: [
+      { id: "installation", title: "Installation", slug: "docs/installation", level: 1 },
+      { id: "quick-start", title: "Quick Start", slug: "docs/quick-start", level: 1 },
+      { id: "configuration", title: "Configuration", slug: "docs/configuration", level: 1 },
+    ],
+  },
+  {
+    id: "themes",
+    title: "Themes",
+    slug: "docs/themes",
+    level: 0,
+    children: [
+      { id: "theme-system", title: "Theme System", slug: "docs/theme-system", level: 1 },
+      { id: "creating-themes", title: "Creating Themes", slug: "docs/creating-themes", level: 1 },
+      { id: "tokens", title: "Design Tokens", slug: "docs/tokens", level: 1 },
+    ],
+  },
+  {
+    id: "deployment",
+    title: "Deployment",
+    slug: "docs/deployment",
+    level: 0,
+    children: [
+      { id: "vercel", title: "Vercel", slug: "docs/vercel", level: 1 },
+      { id: "docker", title: "Docker", slug: "docs/docker", level: 1 },
+    ],
+  },
+];
+
+export const mockNavigation = [
+  { label: "Home", href: "/" },
+  { label: "Blog", href: "/blog" },
+  { label: "Docs", href: "/docs" },
+  { label: "Portfolio", href: "/portfolio" },
+];

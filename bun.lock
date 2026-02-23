@@ -12,7 +12,7 @@
     },
     "apps/docs": {
       "name": "docs",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@docusaurus/core": "3.9.2",
         "@docusaurus/plugin-content-docs": "3.9.2",
@@ -33,9 +33,25 @@
         "typescript": "~5.6.2",
       },
     },
+    "apps/theme-dev": {
+      "name": "@noxion/theme-dev",
+      "version": "0.2.0",
+      "dependencies": {
+        "@noxion/renderer": "workspace:*",
+        "next": "^16.1.6",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+      },
+      "devDependencies": {
+        "@types/node": "^22.0.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "typescript": "^5.7.0",
+      },
+    },
     "apps/web": {
       "name": "@noxion/web",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@noxion/adapter-nextjs": "workspace:*",
         "@noxion/core": "workspace:*",
@@ -56,7 +72,7 @@
     },
     "packages/adapter-nextjs": {
       "name": "@noxion/adapter-nextjs",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "dependencies": {
         "@noxion/core": "^0.0.2",
         "notion-client": "^7.8.2",
@@ -73,7 +89,7 @@
     },
     "packages/core": {
       "name": "@noxion/core",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "dependencies": {
         "notion-client": "^7.8.2",
         "notion-types": "^7.8.2",
@@ -86,7 +102,7 @@
     },
     "packages/create-noxion": {
       "name": "create-noxion",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "bin": {
         "create-noxion": "./bin/index.js",
       },
@@ -100,7 +116,7 @@
     },
     "packages/notion-renderer": {
       "name": "@noxion/notion-renderer",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "dependencies": {
         "katex": "^0.16.0",
         "shiki": "^3.0.0",
@@ -124,7 +140,7 @@
     },
     "packages/plugin-reading-time": {
       "name": "noxion-plugin-reading-time",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@noxion/core": "workspace:*",
       },
@@ -139,7 +155,7 @@
     },
     "packages/plugin-utils": {
       "name": "@noxion/plugin-utils",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@noxion/core": "workspace:*",
       },
@@ -150,7 +166,7 @@
     },
     "packages/renderer": {
       "name": "@noxion/renderer",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "dependencies": {
         "@noxion/notion-renderer": "workspace:*",
         "lucide-react": "^0.469.0",
@@ -172,7 +188,7 @@
     },
     "packages/theme-default": {
       "name": "@noxion/theme-default",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@noxion/renderer": "workspace:*",
         "@types/bun": "^1.2.0",
@@ -181,7 +197,7 @@
         "typescript": "^5.7.0",
       },
       "peerDependencies": {
-        "@noxion/renderer": ">=0.1.0",
+        "@noxion/renderer": ">=0.2.0",
         "react": ">=18.0.0",
       },
     },
@@ -780,6 +796,8 @@
     "@noxion/renderer": ["@noxion/renderer@workspace:packages/renderer"],
 
     "@noxion/theme-default": ["@noxion/theme-default@workspace:packages/theme-default"],
+
+    "@noxion/theme-dev": ["@noxion/theme-dev@workspace:apps/theme-dev"],
 
     "@noxion/web": ["@noxion/web@workspace:apps/web"],
 

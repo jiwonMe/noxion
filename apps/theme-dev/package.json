@@ -1,0 +1,26 @@
+{
+  "name": "@noxion/theme-dev",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Theme preview and development tool for Noxion themes",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start --port 3100",
+    "test": "echo 'theme-dev test placeholder'",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "@noxion/renderer": "workspace:*",
+    "next": "^16.1.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.7.0"
+  }
+}
