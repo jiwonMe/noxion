@@ -96,8 +96,58 @@ Noxion evolves from a blog builder into a **full-featured website builder**. Thi
 
 See the [Migration Guide](./learn/migration-v02) for step-by-step upgrade instructions.
 
+### New: Independent theme packages
+
+Themes are now published as standalone npm packages, each extending `@noxion/theme-default`:
+
+| Package | Style | Description |
+|---------|-------|-------------|
+| `@noxion/theme-default` | Clean & modern | Balanced layout with system fonts, rounded cards, and a sticky header. The base theme all others extend. |
+| `@noxion/theme-ink` | Minimal & monospace | Terminal-inspired aesthetic with dashed borders, `~/` logo prefix, and monospace typography. |
+| `@noxion/theme-editorial` | Magazine & serif | Newspaper-style layout with centered masthead, bold borders, serif display font, and uppercase navigation. |
+| `@noxion/theme-folio` | Portfolio & gallery | Minimal chrome with transparent header, uppercase logo, and gallery-optimized card grid. |
+| `@noxion/theme-beacon` | Content-first | Wide content area (1320px), static header, and large typography for long-form reading. Custom home and post page components. |
+
+Install and apply any theme:
+
+```bash
+bun add @noxion/theme-ink
+```
+
+```ts
+import { inkThemePackage } from "@noxion/theme-ink";
+// use in noxion.config.ts
+```
+
+### New: Hero section & homepage redesign
+
+- **`HeroSection`** — full-width hero with featured post spotlight, per-theme styling
+- **`FeaturedPostCard`** — overlay card design with gradient background and responsive breakpoints
+- **Hero+Feed layout** — homepage now shows a hero section above the post feed
+- **Per-theme component overrides** — themes can inject custom CSS and override page components (e.g., `HomePage`, `PostPage`)
+- **Content container widened** from 720px to 1080px for modern wide-screen layouts
+
+### New: Theme development app (`apps/theme-dev`)
+
+- **Live preview** — iframe-based preview with desktop/tablet/mobile viewport toggle
+- **Theme switcher** — switch between all installed themes in real-time
+- **Compare mode** — side-by-side theme comparison
+- **Validator panel** — runs theme validation checks with pass/fail reporting
+- **Token inspector** — browse and search all CSS variable tokens
+- **Notion page fetch** — load real Notion content for testing
+- **Dark mode** — full dark mode support with toggle
+
+### New: Notion webhook auto-publish
+
+- **`/api/notion-webhook`** route in `@noxion/adapter-nextjs` — receives Notion webhook events and triggers on-demand revalidation for instant publishing
+
 ### Improved
 
+- **Per-theme header styling** — each theme applies distinctive header CSS (height, borders, logo style, nav layout)
+- **Responsive breakpoints** — hero section and featured cards adapt to mobile/tablet/desktop
+- **Card layout consistency** — unified card layout between image and no-image states
+- **Portfolio card covers** — always render cover container for consistent grid alignment
+- **Article page layout** — improved typography and spacing for article content
 - **392 tests** passing across all packages (core: 168, renderer: 83, adapter-nextjs: 51, plugin-utils: 36, create-noxion: 29, plugin-reading-time: 25)
 - **Comprehensive documentation** updated for all v0.2 features
 

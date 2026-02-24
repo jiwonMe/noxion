@@ -1,6 +1,6 @@
 # Noxion
 
-**Notion-powered blog builder.** Point it at a Notion database and get a fully-rendered, SEO-optimized blog website — self-hosted and open source.
+**Notion-powered website builder.** Point it at a Notion database and get a fully-rendered, SEO-optimized website — self-hosted and open source. Supports blog, docs, and portfolio page types.
 
 Think [super.so](https://super.so) or [oopy.io](https://oopy.io), but free and yours to own.
 
@@ -12,8 +12,9 @@ Think [super.so](https://super.so) or [oopy.io](https://oopy.io), but free and y
 - **Notion as CMS** — write and publish posts directly from Notion; your database schema becomes your blog
 - **Extreme SEO** — Open Graph, Twitter Cards, JSON-LD (BlogPosting, BreadcrumbList, WebSite SearchAction), RSS feed, sitemap with tag pages, robots.txt — all generated automatically
 - **Image optimization** — Next.js Image with AVIF/WebP, or opt-in build-time download for full URL independence
-- **Plugin system** — analytics (Google, Plausible, Umami), RSS, comments (Giscus, Utterances, Disqus)
-- **Theme system** — CSS variable-based colors and fonts, dark/light/system modes
+- **Multiple page types** — Blog, Docs, and Portfolio with multi-database collections
+- **Plugin system** — analytics (Google, Plausible, Umami), RSS, comments (Giscus, Utterances, Disqus), reading time
+- **5 built-in themes** — Default, Ink, Editorial, Folio, Beacon — all customizable via CSS variables
 - **ISR** — posts update automatically every hour; on-demand revalidation API included
 - **Deploy anywhere** — Vercel (one click), Docker, or static export
 
@@ -144,11 +145,21 @@ curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/my-post
 noxion/
 ├── packages/
 │   ├── core/               # @noxion/core — config, fetcher, plugins, frontmatter
-│   ├── renderer/           # @noxion/renderer — React components, themes
-│   ├── adapter-nextjs/     # @noxion/adapter-nextjs — metadata, sitemap, JSON-LD
-│   └── create-noxion/      # CLI scaffolding tool
+│   ├── renderer/           # @noxion/renderer — React components, themes, templates
+│   ├── notion-renderer/    # @noxion/notion-renderer — Notion block renderer
+│   ├── adapter-nextjs/     # @noxion/adapter-nextjs — metadata, sitemap, JSON-LD, webhook
+│   ├── create-noxion/      # CLI scaffolding tool
+│   ├── plugin-utils/       # @noxion/plugin-utils — mock data, test helpers
+│   ├── plugin-reading-time/# noxion-plugin-reading-time — example community plugin
+│   ├── theme-default/      # @noxion/theme-default — base theme
+│   ├── theme-ink/          # @noxion/theme-ink — minimal monospace theme
+│   ├── theme-editorial/    # @noxion/theme-editorial — magazine/serif theme
+│   ├── theme-folio/        # @noxion/theme-folio — portfolio/gallery theme
+│   └── theme-beacon/       # @noxion/theme-beacon — content-first wide theme
 └── apps/
-    └── web/                # Demo blog (Next.js 16 App Router)
+    ├── web/                # Demo blog (Next.js 16 App Router)
+    ├── docs/               # Documentation site (Docusaurus)
+    └── theme-dev/          # Theme development & preview app
 ```
 
 ## Local Development

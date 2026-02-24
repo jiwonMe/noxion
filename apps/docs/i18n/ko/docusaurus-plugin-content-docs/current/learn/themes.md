@@ -12,6 +12,41 @@ Noxion은 **CSS 커스텀 속성(CSS 변수)** 시스템을 테마에 사용합�
 
 ---
 
+## 내장 테마
+
+Noxion은 **5개의 공식 테마**를 독립적인 npm 패키지로 제공합니다:
+
+| 테마 | 패키지 | 스타일 |
+|------|--------|--------|
+| **Default** | `@noxion/theme-default` | 시스템 폰트, 둥근 카드, 고정 헤더의 깔끔하고 모던한 레이아웃. 다른 모든 테마의 베이스. |
+| **Ink** | `@noxion/theme-ink` | 터미널 감성의 미니멀 디자인 — 모노스페이스 타이포그래피, 점선 테두리, `~/` 로고 접두사, 소문자 내비게이션. |
+| **Editorial** | `@noxion/theme-editorial` | 매거진 스타일 레이아웃 — 중앙 마스트헤드, 굵은 테두리, 세리프 디스플레이 폰트, 대문자 내비게이션. |
+| **Folio** | `@noxion/theme-folio` | 포트폴리오에 최적화된 디자인 — 투명 헤더, 넓은 자간의 대문자 로고, 갤러리 친화적 카드 그리드. |
+| **Beacon** | `@noxion/theme-beacon` | 콘텐츠 중심 읽기 경험 — 넓은 콘텐츠 영역(1320px), 정적 헤더, 큰 타이포그래피. 커스텀 `HomePage`와 `PostPage` 컴포넌트 포함. |
+
+### 테마 사용하기
+
+테마 패키지를 설치하고 가져오세요:
+
+```bash
+bun add @noxion/theme-ink
+```
+
+```ts
+// noxion.config.ts
+import { defineConfig } from "@noxion/core";
+import { inkThemePackage } from "@noxion/theme-ink";
+
+export default defineConfig({
+  theme: inkThemePackage,
+  // ...
+});
+```
+
+모든 내장 테마는 `extendTheme()`를 통해 `@noxion/theme-default`를 확장하므로, 모든 기본 토큰을 상속받고 고유한 디자인 속성만 오버라이드합니다.
+
+---
+
 ## 색상 모드
 
 세 가지 색상 모드를 지원합니다:

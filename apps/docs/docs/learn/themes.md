@@ -12,6 +12,41 @@ For advanced use cases, `extendTheme()` lets you create derived themes from the 
 
 ---
 
+## Built-in themes
+
+Noxion ships with **5 official themes**, each published as an independent npm package:
+
+| Theme | Package | Style |
+|-------|---------|-------|
+| **Default** | `@noxion/theme-default` | Clean, modern layout with system fonts, rounded cards, and a sticky header. The base theme that all others extend. |
+| **Ink** | `@noxion/theme-ink` | Terminal-inspired minimal aesthetic — monospace typography, dashed borders, `~/` logo prefix, and lowercase navigation. |
+| **Editorial** | `@noxion/theme-editorial` | Magazine-style layout — centered masthead, bold borders, serif display font, and uppercase navigation links. |
+| **Folio** | `@noxion/theme-folio` | Portfolio-optimized design — transparent header, uppercase logo with wide letter-spacing, and gallery-friendly card grid. |
+| **Beacon** | `@noxion/theme-beacon` | Content-first reading experience — extra-wide content area (1320px), static header, large typography. Includes custom `HomePage` and `PostPage` components. |
+
+### Using a theme
+
+Install the theme package and import it:
+
+```bash
+bun add @noxion/theme-ink
+```
+
+```ts
+// noxion.config.ts
+import { defineConfig } from "@noxion/core";
+import { inkThemePackage } from "@noxion/theme-ink";
+
+export default defineConfig({
+  theme: inkThemePackage,
+  // ...
+});
+```
+
+All built-in themes extend `@noxion/theme-default` via `extendTheme()`, so they inherit all base tokens and only override their distinctive design properties.
+
+---
+
 ## Color modes
 
 Three color modes are supported:
