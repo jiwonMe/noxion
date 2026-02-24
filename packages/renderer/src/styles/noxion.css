@@ -548,6 +548,19 @@ img {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 0 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .noxion-home-hero {
+    padding: 0;
+  }
+
+  .noxion-featured-card {
+    border-radius: 0;
+  }
 }
 
 .noxion-home-hero__secondary {
