@@ -104,6 +104,9 @@ export function NoxionThemeProvider({
   return (
     <ThemeContext.Provider value={contextValue}>
       <style dangerouslySetInnerHTML={{ __html: cssVariables }} />
+      {themePackage?.stylesheet && (
+        <style dangerouslySetInnerHTML={{ __html: themePackage.stylesheet }} />
+      )}
       {children}
     </ThemeContext.Provider>
   );

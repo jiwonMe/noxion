@@ -95,6 +95,151 @@ const inkStylesheet = `
   font-family: var(--noxion-font-mono);
   font-size: 0.75rem;
 }
+
+.noxion-portfolio-grid {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.noxion-portfolio-card {
+  border: none;
+  border-bottom: 1px solid var(--noxion-border);
+  border-radius: 0;
+  background: transparent;
+  flex-direction: row;
+}
+
+.noxion-portfolio-card:hover {
+  border-color: var(--noxion-foreground);
+  box-shadow: none;
+  transform: none;
+}
+
+.noxion-portfolio-card--featured {
+  border-bottom-width: 2px;
+}
+
+.noxion-portfolio-card__cover {
+  border-radius: 0;
+  width: 180px;
+  min-width: 180px;
+  aspect-ratio: auto;
+  min-height: 120px;
+}
+
+@media (max-width: 640px) {
+  .noxion-portfolio-card {
+    flex-direction: column;
+  }
+  .noxion-portfolio-card__cover {
+    width: 100%;
+    min-width: unset;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.noxion-portfolio-card__title {
+  font-family: var(--noxion-font-mono);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.noxion-portfolio-card__year {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+
+.noxion-portfolio-card__description {
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+
+.noxion-portfolio-card__tech-tag {
+  border-radius: 2px;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.noxion-portfolio-card__link {
+  border-radius: 2px;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.noxion-portfolio-filter__tag {
+  border-radius: 2px;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+.noxion-portfolio-filter__tag--selected {
+  background-color: var(--noxion-foreground);
+  color: var(--noxion-background);
+}
+
+.noxion-portfolio-project__tech-tag {
+  border-radius: 2px;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.noxion-portfolio-project__link {
+  border-radius: 2px;
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.noxion-docs-sidebar {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+}
+
+.noxion-docs-sidebar__link {
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+}
+
+.noxion-docs-sidebar__link--active {
+  background-color: var(--noxion-foreground);
+  color: var(--noxion-background);
+}
+
+.noxion-docs-sidebar__link--active:hover {
+  background-color: var(--noxion-foreground);
+  color: var(--noxion-background);
+}
+
+.noxion-docs-nav__link {
+  border-radius: 2px;
+}
+
+.noxion-docs-nav__label {
+  font-family: var(--noxion-font-mono);
+  letter-spacing: 0.04em;
+}
+
+.noxion-docs-nav__title {
+  font-family: var(--noxion-font-mono);
+}
+
+.noxion-docs-breadcrumb {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.noxion-docs-breadcrumb__separator {
+  font-family: var(--noxion-font-mono);
+}
 `;
 
 export const inkThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {

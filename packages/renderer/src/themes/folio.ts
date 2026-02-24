@@ -181,6 +181,228 @@ const folioStylesheet = `
   border-left: none;
   font-weight: 500;
 }
+
+.noxion-portfolio-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .noxion-portfolio-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.noxion-portfolio-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.noxion-portfolio-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.noxion-portfolio-card--featured {
+  grid-column: 1 / -1;
+}
+
+.noxion-portfolio-card__cover {
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+  background-color: var(--noxion-muted);
+}
+
+.noxion-portfolio-card:hover .noxion-portfolio-card__cover-image {
+  transform: scale(1.02);
+}
+
+.noxion-portfolio-card__body {
+  padding: 1rem 0;
+}
+
+.noxion-portfolio-card__title {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.noxion-portfolio-card__description {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.noxion-portfolio-card__year {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.noxion-portfolio-card__tech {
+  gap: 0.25rem;
+}
+
+.noxion-portfolio-card__tech-tag {
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.6875rem;
+  opacity: 0.5;
+}
+
+.noxion-portfolio-card__actions {
+  padding-top: 0.5rem;
+}
+
+.noxion-portfolio-card__link {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  background: transparent;
+  color: var(--noxion-foreground);
+  border-bottom: 1px solid transparent;
+}
+
+.noxion-portfolio-card__link:hover {
+  background: transparent;
+  border-bottom-color: var(--noxion-foreground);
+}
+
+.noxion-portfolio-card__link--external {
+  background: transparent;
+  color: var(--noxion-foreground);
+  border: none;
+  border-bottom: 1px solid var(--noxion-foreground);
+}
+
+.noxion-portfolio-card__link--external:hover {
+  opacity: 0.6;
+  background: transparent;
+  color: var(--noxion-foreground);
+}
+
+.noxion-portfolio-filter__tag {
+  border: none;
+  border-radius: 0;
+  padding: 0.25rem 0;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  border-bottom: 1px solid transparent;
+}
+
+.noxion-portfolio-filter__tag:hover {
+  background: transparent;
+  border-bottom-color: var(--noxion-foreground);
+}
+
+.noxion-portfolio-filter__tag--selected {
+  background: transparent;
+  color: var(--noxion-foreground);
+  border-bottom-color: var(--noxion-foreground);
+}
+
+.noxion-portfolio-filter__tag--selected:hover {
+  background: transparent;
+  opacity: 1;
+}
+
+.noxion-portfolio-project__header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.noxion-portfolio-project__tech-tag {
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.6875rem;
+  opacity: 0.5;
+}
+
+.noxion-portfolio-project__link {
+  border-radius: 0;
+  font-weight: 400;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.noxion-docs-sidebar {
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+}
+
+.noxion-docs-sidebar__link {
+  border-radius: 0;
+  padding: 0.25rem 0.5rem;
+}
+
+.noxion-docs-sidebar__link:hover {
+  background: transparent;
+  color: var(--noxion-foreground);
+}
+
+.noxion-docs-sidebar__link--active {
+  background: transparent;
+  color: var(--noxion-foreground);
+  font-weight: 500;
+}
+
+.noxion-docs-sidebar__link--active:hover {
+  background: transparent;
+}
+
+.noxion-docs-nav {
+  border-top: none;
+  padding-top: 2rem;
+}
+
+.noxion-docs-nav__link {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--noxion-border);
+  padding: 0.75rem 0;
+}
+
+.noxion-docs-nav__link:hover {
+  background: transparent;
+  border-bottom-color: var(--noxion-foreground);
+}
+
+.noxion-docs-nav__label {
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.noxion-docs-nav__title {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.noxion-docs-nav__next .noxion-docs-nav__link {
+  align-items: flex-end;
+}
+
+.noxion-docs-breadcrumb {
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.noxion-docs-breadcrumb__link:hover {
+  opacity: 1;
+}
 `;
 
 export const folioThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {

@@ -139,6 +139,150 @@ const editorialStylesheet = `
   border-color: var(--noxion-foreground);
   box-shadow: none;
 }
+
+.noxion-portfolio-grid {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.noxion-portfolio-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.noxion-portfolio-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.noxion-portfolio-card:hover .noxion-portfolio-card__title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.noxion-portfolio-card__cover {
+  aspect-ratio: 3 / 2;
+  border-radius: 4px;
+}
+
+.noxion-portfolio-card__title {
+  font-family: var(--noxion-font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.noxion-portfolio-card__description {
+  font-family: var(--noxion-font-serif);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.noxion-portfolio-card__year {
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--noxion-primary);
+}
+
+.noxion-portfolio-card__tech-tag {
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.noxion-portfolio-card__link {
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-width: 2px;
+}
+
+.noxion-portfolio-card__link--external {
+  border-width: 2px;
+}
+
+.noxion-portfolio-filter__tag {
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-width: 2px;
+}
+
+.noxion-portfolio-filter__tag--selected {
+  border-color: var(--noxion-foreground);
+  background-color: var(--noxion-foreground);
+  color: var(--noxion-background);
+}
+
+.noxion-portfolio-project__header {
+  border-bottom: 2px solid var(--noxion-foreground);
+}
+
+.noxion-portfolio-project__tech-tag {
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.noxion-portfolio-project__link {
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.noxion-docs-sidebar__link {
+  border-radius: 2px;
+  font-size: 0.8125rem;
+}
+
+.noxion-docs-sidebar__link--active {
+  font-weight: 600;
+  color: var(--noxion-primary);
+  background-color: color-mix(in srgb, var(--noxion-primary) 8%, transparent);
+}
+
+.noxion-docs-sidebar__link--active:hover {
+  background-color: color-mix(in srgb, var(--noxion-primary) 12%, transparent);
+}
+
+.noxion-docs-nav {
+  border-top: 2px solid var(--noxion-foreground);
+}
+
+.noxion-docs-nav__link {
+  border-radius: 2px;
+  border-width: 2px;
+}
+
+.noxion-docs-nav__label {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--noxion-primary);
+}
+
+.noxion-docs-nav__title {
+  font-family: var(--noxion-font-display);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.noxion-docs-breadcrumb {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 `;
 
 export const editorialThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {
