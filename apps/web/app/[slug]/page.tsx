@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD, generateBreadcrumbLD } from "@noxion/adapter-nextjs";
 import { createNotionClient, parseFrontmatter, applyFrontmatter } from "@noxion/core";
+import { PostPage } from "@noxion/renderer";
 import { getPostBySlug, getPageRecordMap } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
-import { NotionPageClient } from "./notion-page-client";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -53,7 +52,7 @@ export async function generateMetadata({
   return generateNoxionMetadata(data.post, siteConfig);
 }
 
-export default async function PostPage({
+export default async function PostPageRoute({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -65,13 +64,9 @@ export default async function PostPage({
   const { post, recordMap } = data;
   const blogPostingLd = generateBlogPostingLD(post, siteConfig);
   const breadcrumbLd = generateBreadcrumbLD(post, siteConfig);
-  const authorName = post.metadata.author || siteConfig.author;
-  const postDate = post.metadata.date;
-  const postCategory = post.metadata.category;
-  const postTags = post.metadata.tags;
 
   return (
-    <article className="article-page">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingLd) }}
@@ -80,57 +75,20 @@ export default async function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-
-      {post.coverImage && (
-        <div className="article-page__cover">
-          <img
-            src={post.coverImage}
-            alt=""
-            className="article-page__cover-image"
-          />
-        </div>
-      )}
-
-      <header className="article-page__header">
-        {(postCategory || postTags.length > 0) && (
-          <div className="article-page__topics">
-            {postCategory && (
-              <span className="article-page__category">{postCategory}</span>
-            )}
-            {postTags.map((tag: string) => (
-              <Link
-                key={tag}
-                href={`/tag/${encodeURIComponent(tag)}`}
-                className="article-page__tag"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <h1 className="article-page__title">{post.title}</h1>
-
-        {post.description && (
-          <p className="article-page__description">{post.description}</p>
-        )}
-
-        <div className="article-page__meta">
-          <span className="article-page__author">{authorName}</span>
-          <span className="article-page__meta-dot" aria-hidden="true" />
-          <time className="article-page__date" dateTime={postDate}>
-            {formatDate(postDate)}
-          </time>
-        </div>
-      </header>
-
-      <div className="article-page__body">
-        <NotionPageClient
-          recordMap={recordMap}
-          rootPageId={post.id}
-          fullPage={false}
-        />
-      </div>
-    </article>
+      <PostPage
+        data={{
+          recordMap,
+          rootPageId: post.id,
+          title: post.title,
+          description: post.description,
+          coverImage: post.coverImage,
+          category: post.metadata.category,
+          tags: post.metadata.tags,
+          author: post.metadata.author || siteConfig.author,
+          date: post.metadata.date,
+          formattedDate: formatDate(post.metadata.date),
+        }}
+      />
+    </>
   );
 }

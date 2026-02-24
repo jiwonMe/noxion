@@ -52,17 +52,8 @@ export default async function TagPage({
   }));
 
   return (
-    <div>
-      <h2
-        style={{
-          fontSize: "1.25rem",
-          fontWeight: 600,
-          marginBottom: "1.5rem",
-          color: "var(--noxion-mutedForeground, #737373)",
-        }}
-      >
-        Tag: {decodedTag}
-      </h2>
+    <div className="noxion-template-tag">
+      <h1 className="noxion-template-tag__title">#{decodedTag}</h1>
       <HomeContent
         initialPosts={initialPosts}
         allTags={allTags}

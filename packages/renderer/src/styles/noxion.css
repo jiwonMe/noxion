@@ -113,12 +113,19 @@ img {
 }
 
 .noxion-header__logo {
+  display: flex;
+  align-items: center;
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--noxion-foreground);
   text-decoration: none;
   letter-spacing: -0.03em;
   transition: opacity var(--noxion-transition-fast);
+}
+
+.noxion-header__logo svg {
+  height: 1.125rem;
+  width: auto;
 }
 
 .noxion-header__logo:hover {
@@ -408,6 +415,236 @@ img {
   padding: 1.125rem 0;
 }
 
+/* ── POST PAGE (article detail) ── */
+
+.noxion-template-post {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.noxion-template-post__cover {
+  width: 100%;
+  max-height: 480px;
+  overflow: hidden;
+  background-color: var(--noxion-muted);
+}
+
+.noxion-template-post__cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.noxion-template-post__header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--noxion-spacing-content, 720px);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 0;
+}
+
+.noxion-template-post__topics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.noxion-template-post__category {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--noxion-primary);
+}
+
+.noxion-template-post__tag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 9999px;
+  background-color: var(--noxion-muted);
+  color: var(--noxion-mutedForeground);
+  text-decoration: none;
+  transition:
+    color var(--noxion-transition-fast, 100ms ease),
+    background-color var(--noxion-transition-fast, 100ms ease);
+}
+
+.noxion-template-post__tag:hover {
+  color: var(--noxion-foreground);
+  background-color: color-mix(in srgb, var(--noxion-muted) 70%, var(--noxion-foreground) 30%);
+}
+
+.noxion-template-post__title {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--noxion-foreground);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.noxion-template-post__description {
+  margin: 1rem 0 0;
+  font-size: 1.1875rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--noxion-mutedForeground);
+  letter-spacing: -0.01em;
+}
+
+.noxion-template-post__meta {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--noxion-border);
+  font-size: 0.875rem;
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-template-post__author {
+  font-weight: 600;
+  color: var(--noxion-foreground);
+}
+
+.noxion-template-post__meta-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--noxion-mutedForeground);
+  margin: 0 0.625rem;
+  flex-shrink: 0;
+}
+
+.noxion-template-post__date {
+  font-weight: 400;
+  color: var(--noxion-mutedForeground);
+  letter-spacing: -0.01em;
+}
+
+.noxion-template-post__body {
+  width: 100%;
+  max-width: var(--noxion-spacing-content, 720px);
+  margin: 0 auto;
+  padding: 2rem 1.25rem calc(max(10vh, 100px));
+}
+
+.noxion-template-post__body .noxion-page--inline {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .noxion-template-post__header {
+    padding: 2rem 1rem 0;
+  }
+
+  .noxion-template-post__title {
+    font-size: 1.875rem;
+    line-height: 1.2;
+  }
+
+  .noxion-template-post__description {
+    font-size: 1.0625rem;
+  }
+
+  .noxion-template-post__meta {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+  }
+
+  .noxion-template-post__body {
+    padding: 1.5rem 1rem calc(max(8vh, 80px));
+  }
+
+  .noxion-template-post__cover {
+    max-height: 320px;
+  }
+
+  .noxion-template-post__cover-image {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .noxion-template-post__header {
+    padding: 1.5rem 1rem 0;
+  }
+
+  .noxion-template-post__title {
+    font-size: 1.625rem;
+  }
+
+  .noxion-template-post__description {
+    font-size: 1rem;
+  }
+
+  .noxion-template-post__meta {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .noxion-template-post__cover {
+    max-height: 240px;
+  }
+
+  .noxion-template-post__cover-image {
+    max-height: 240px;
+  }
+}
+
+.noxion-template-post .noxion-page__title {
+  font-family: var(--noxion-font-sans);
+  letter-spacing: -0.02em;
+}
+
+.noxion-template-post .noxion-heading {
+  font-family: var(--noxion-font-sans);
+}
+
+.noxion-template-post .noxion-quote {
+  border-color: var(--noxion-border);
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-template-post .noxion-divider {
+  border-color: var(--noxion-border);
+}
+
+.noxion-template-post .noxion-callout {
+  border-color: var(--noxion-border);
+  background-color: var(--noxion-muted);
+}
+
+.noxion-template-post .noxion-code {
+  border: 1px solid var(--noxion-border);
+}
+
+.noxion-template-post .noxion-inline-code {
+  border-radius: var(--noxion-border-radius, 3px);
+}
+
+.noxion-template-post .noxion-link {
+  border-color: color-mix(in srgb, var(--noxion-primary) 40%, transparent);
+}
+
+.noxion-template-post .noxion-link:hover {
+  border-color: var(--noxion-primary);
+}
+
 /* ============================================
    FeaturedPostCard
    ============================================ */
@@ -649,6 +886,66 @@ img {
   margin: 0 0 1.25rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--noxion-border);
+}
+
+.noxion-home-feed__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.noxion-loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.noxion-loading-spinner__ring {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--noxion-border, #e5e5e5);
+  border-top-color: var(--noxion-foreground, #171717);
+  border-radius: 50%;
+  animation: noxion-spin 0.6s linear infinite;
+}
+
+@keyframes noxion-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Tag Page Template
+   ============================================ */
+
+.noxion-template-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.noxion-template-tag__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--noxion-mutedForeground);
+}
+
+/* ============================================
+   Archive Page Template
+   ============================================ */
+
+.noxion-template-archive {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.noxion-template-archive__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--noxion-foreground);
 }
 
 /* ============================================

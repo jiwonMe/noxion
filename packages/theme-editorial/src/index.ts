@@ -1,6 +1,6 @@
-import type { NoxionThemePackage } from "../theme/types";
-import { extendTheme } from "../theme/extend-theme";
-import { defaultThemePackage } from "./default";
+import type { NoxionThemePackage } from "@noxion/renderer";
+import { extendTheme } from "@noxion/renderer";
+import { defaultThemePackage } from "@noxion/theme-default";
 
 const editorialStylesheet = `
 .noxion-header {
@@ -397,6 +397,110 @@ const editorialStylesheet = `
   font-weight: 800;
   letter-spacing: 0.08em;
   border-bottom: 2px solid var(--noxion-foreground);
+}
+
+.noxion-template-post .noxion-page__title {
+  font-family: var(--noxion-font-display);
+  font-weight: 800;
+  font-size: 2.75em;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.noxion-template-post .noxion-heading {
+  font-family: var(--noxion-font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.noxion-template-post .noxion-heading--h1 {
+  font-size: 2rem;
+  padding-top: 0.25em;
+  border-top: 2px solid var(--noxion-foreground);
+  margin-top: 1.5em;
+}
+
+.noxion-template-post .noxion-heading--h2 {
+  font-size: 1.625rem;
+}
+
+.noxion-template-post .noxion-heading--h3 {
+  font-size: 1.25rem;
+  font-style: italic;
+}
+
+.noxion-template-post .noxion-text {
+  font-family: var(--noxion-font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.noxion-template-post .noxion-quote {
+  border-left: 3px solid var(--noxion-primary);
+  font-family: var(--noxion-font-serif);
+  font-style: italic;
+  font-size: 1.125em;
+  color: var(--noxion-foreground);
+}
+
+.noxion-template-post .noxion-callout {
+  border: 2px solid var(--noxion-border);
+  border-radius: 4px;
+}
+
+.noxion-template-post .noxion-code {
+  border: 2px solid var(--noxion-border);
+  border-radius: 4px;
+}
+
+.noxion-template-post .noxion-code__header {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--noxion-border);
+}
+
+.noxion-template-post .noxion-inline-code {
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.noxion-template-post .noxion-divider {
+  border-bottom: 2px solid var(--noxion-border);
+  margin: 2rem 0;
+}
+
+.noxion-template-post .noxion-link {
+  color: var(--noxion-primary);
+  border-color: color-mix(in srgb, var(--noxion-primary) 30%, transparent);
+  opacity: 1;
+  font-weight: 500;
+}
+
+.noxion-template-post .noxion-link:hover {
+  border-color: var(--noxion-primary);
+}
+
+.noxion-template-post .noxion-bookmark__link {
+  border: 2px solid var(--noxion-border);
+  border-radius: 4px;
+}
+
+.noxion-template-post .noxion-bookmark__title {
+  font-family: var(--noxion-font-display);
+  font-weight: 700;
+}
+
+.noxion-template-post .noxion-image__caption {
+  font-family: var(--noxion-font-serif);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .noxion-template-post .noxion-page__title {
+    font-size: 2rem;
+  }
 }
 `;
 

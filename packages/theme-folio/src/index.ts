@@ -1,6 +1,6 @@
-import type { NoxionThemePackage } from "../theme/types";
-import { extendTheme } from "../theme/extend-theme";
-import { defaultThemePackage } from "./default";
+import type { NoxionThemePackage } from "@noxion/renderer";
+import { extendTheme } from "@noxion/renderer";
+import { defaultThemePackage } from "@noxion/theme-default";
 
 const folioStylesheet = `
 .noxion-header {
@@ -524,6 +524,99 @@ const folioStylesheet = `
   opacity: 0.5;
   border-bottom: none;
   padding-bottom: 0;
+}
+
+.noxion-template-post .noxion-page__title {
+  font-weight: 500;
+  font-size: 2.25em;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.noxion-template-post .noxion-heading {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.noxion-template-post .noxion-heading--h1 {
+  font-size: 1.5rem;
+  margin-top: 2em;
+}
+
+.noxion-template-post .noxion-heading--h2 {
+  font-size: 1.25rem;
+}
+
+.noxion-template-post .noxion-heading--h3 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.noxion-template-post .noxion-text {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.noxion-template-post .noxion-quote {
+  border-left: 2px solid var(--noxion-foreground);
+  font-size: 1em;
+  opacity: 0.7;
+}
+
+.noxion-template-post .noxion-callout {
+  border: none;
+  border-radius: 0;
+  background-color: var(--noxion-muted);
+}
+
+.noxion-template-post .noxion-code {
+  border: none;
+  border-radius: 0;
+}
+
+.noxion-template-post .noxion-code__header {
+  border-bottom-color: var(--noxion-border);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.noxion-template-post .noxion-inline-code {
+  border-radius: 0;
+}
+
+.noxion-template-post .noxion-divider {
+  border-bottom: none;
+  height: 2rem;
+}
+
+.noxion-template-post .noxion-link {
+  border-bottom: 1px solid var(--noxion-foreground);
+  opacity: 0.6;
+}
+
+.noxion-template-post .noxion-link:hover {
+  opacity: 1;
+}
+
+.noxion-template-post .noxion-bookmark__link {
+  border: 1px solid var(--noxion-border);
+  border-radius: 0;
+}
+
+.noxion-template-post .noxion-bookmark__link:hover {
+  border-color: var(--noxion-foreground);
+}
+
+.noxion-template-post .noxion-image__caption {
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0.5;
 }
 `;
 

@@ -67,6 +67,7 @@ export interface NoxionThemeTokens extends NoxionTheme {
 
 export interface HeaderProps {
   siteName: string;
+  logo?: import("react").ReactNode;
   navigation?: { label: string; href: string }[];
 }
 

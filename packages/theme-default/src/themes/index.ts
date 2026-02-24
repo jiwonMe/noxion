@@ -1,0 +1,1 @@
+export { defaultThemePackage } from "./default";

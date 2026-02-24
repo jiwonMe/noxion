@@ -1,18 +1,17 @@
-import type { NoxionTemplateProps } from "../theme/types";
-import { NotionPage } from "../components/NotionPage";
+import type { NoxionTemplateProps } from "@noxion/renderer";
+import { NotionPage } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "notion-types";
 
-/**
- * Post page template.
- *
- * When `data.title` is provided, renders a full article layout with
- * cover image, header (category, tags, title, description, author, date),
- * and the Notion body (fullPage=false).
- *
- * When only `data.recordMap` is provided (backward-compat), renders just
- * the Notion page with fullPage=true.
- */
-export function PostPage({ data, className }: NoxionTemplateProps) {
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr + (dateStr.includes("T") ? "" : "T00:00:00"));
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function BeaconPostPage({ data, className }: NoxionTemplateProps) {
   const recordMap = data.recordMap as ExtendedRecordMap | undefined;
   const rootPageId = data.rootPageId as string | undefined;
 
@@ -23,7 +22,7 @@ export function PostPage({ data, className }: NoxionTemplateProps) {
   const tags = (data.tags ?? []) as string[];
   const author = data.author as string | undefined;
   const date = data.date as string | undefined;
-  const formattedDate = data.formattedDate as string | undefined;
+  const formattedDate = (data.formattedDate as string | undefined) ?? (date ? formatDate(date) : undefined);
 
   if (!recordMap) {
     return (
@@ -40,16 +39,6 @@ export function PostPage({ data, className }: NoxionTemplateProps) {
 
   return (
     <article className={baseClass}>
-      {coverImage && (
-        <div className="noxion-template-post__cover">
-          <img
-            src={coverImage}
-            alt=""
-            className="noxion-template-post__cover-image"
-          />
-        </div>
-      )}
-
       {hasArticleHeader && (
         <header className="noxion-template-post__header">
           {(category || tags.length > 0) && (
@@ -85,12 +74,22 @@ export function PostPage({ data, className }: NoxionTemplateProps) {
                   <span className="noxion-template-post__meta-dot" aria-hidden="true" />
                 )}
                 <time className="noxion-template-post__date" dateTime={date}>
-                  {formattedDate ?? date}
+                  {formattedDate}
                 </time>
               </>
             )}
           </div>
         </header>
+      )}
+
+      {coverImage && (
+        <div className="noxion-template-post__cover">
+          <img
+            src={coverImage}
+            alt=""
+            className="noxion-template-post__cover-image"
+          />
+        </div>
       )}
 
       <div className="noxion-template-post__body">

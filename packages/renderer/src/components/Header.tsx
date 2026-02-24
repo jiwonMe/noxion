@@ -3,11 +3,11 @@
 import type { HeaderProps } from "../theme/types";
 import { ThemeToggle } from "./ThemeToggle";
 
-export function Header({ siteName, navigation = [], className }: HeaderProps & { className?: string }) {
+export function Header({ siteName, logo, navigation = [], className }: HeaderProps & { className?: string }) {
   return (
     <header className={className ? `noxion-header ${className}` : "noxion-header"}>
       <a href="/" className="noxion-header__logo">
-        {siteName}
+        {logo || siteName}
       </a>
 
       {navigation.length > 0 && (

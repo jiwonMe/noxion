@@ -1,10 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { validateTheme, formatValidationResult } from "../theme/validate-theme";
 import type { ValidationResult } from "../theme/validate-theme";
-import { defaultThemePackage } from "../themes/default";
-import { inkThemePackage } from "../themes/ink";
-import { editorialThemePackage } from "../themes/editorial";
-import { folioThemePackage } from "../themes/folio";
 import type { NoxionThemePackage } from "../theme/types";
 
 function makeMinimalTheme(overrides: Partial<NoxionThemePackage> = {}): NoxionThemePackage {
@@ -54,22 +50,6 @@ function makeMinimalTheme(overrides: Partial<NoxionThemePackage> = {}): NoxionTh
 }
 
 describe("validateTheme", () => {
-  describe("built-in theme presets pass validation", () => {
-    const presets: [string, NoxionThemePackage][] = [
-      ["default", defaultThemePackage],
-      ["ink", inkThemePackage],
-      ["editorial", editorialThemePackage],
-      ["folio", folioThemePackage],
-    ];
-
-    it.each(presets)("%s theme is valid", (_name, theme) => {
-      const result = validateTheme(theme);
-      const errors = result.issues.filter((i) => i.severity === "error");
-      expect(errors).toEqual([]);
-      expect(result.valid).toBe(true);
-    });
-  });
-
   describe("name validation", () => {
     it("rejects missing name", () => {
       const theme = makeMinimalTheme({ name: "" });

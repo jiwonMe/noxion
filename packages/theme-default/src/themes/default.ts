@@ -1,15 +1,17 @@
-import type { NoxionThemePackage } from "../theme/types";
-import { defaultTheme } from "../theme/define-theme";
-import { BaseLayout } from "../layouts/BaseLayout";
-import { BlogLayout } from "../layouts/BlogLayout";
-import { DocsLayout } from "../layouts/DocsLayout";
-import { HomePage } from "../templates/HomePage";
-import { PostPage } from "../templates/PostPage";
-import { ArchivePage } from "../templates/ArchivePage";
-import { TagPage } from "../templates/TagPage";
-import { DocsPage } from "../templates/DocsPage";
-import { PortfolioGrid } from "../templates/PortfolioGrid";
-import { PortfolioProject } from "../templates/PortfolioProject";
+import type { NoxionThemePackage } from "@noxion/renderer";
+import {
+  defaultTheme,
+  BaseLayout,
+  BlogLayout,
+  DocsLayout,
+  HomePage,
+  PostPage,
+  ArchivePage,
+  TagPage,
+  DocsPage,
+  PortfolioGrid,
+  PortfolioProject,
+} from "@noxion/renderer";
 
 export const defaultThemePackage: NoxionThemePackage = {
   name: "default",

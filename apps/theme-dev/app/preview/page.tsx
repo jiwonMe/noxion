@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   NoxionThemeProvider,
   Header,
   Footer,
+  NoxionLogo,
   BlogLayout,
   DocsLayout,
   DocsSidebar,
-  HomePage,
-  ArchivePage,
-  TagPage,
-  PortfolioGrid,
+  HomePage as DefaultHomePage,
+  ArchivePage as DefaultArchivePage,
+  TagPage as DefaultTagPage,
+  PortfolioGrid as DefaultPortfolioGrid,
+  PostPage as DefaultPostPage,
   NotionPage,
 } from "@noxion/renderer";
 import type { NoxionThemePackage, NoxionThemeTokens } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "notion-types";
+import { getPageTitle, defaultMapImageUrl } from "notion-utils";
 import { themeRegistry } from "@/lib/themes";
 import { mockPosts, mockProjects, mockNavigation, mockSidebarItems } from "@/lib/mock-data";
 
@@ -25,6 +28,7 @@ type PreviewState = {
   themeId: string;
   pageView: PageView;
   isDark: boolean;
+  notionPageId?: string;
 };
 
 function tokensToStyleVars(tokens: NoxionThemeTokens, isDark: boolean): Record<string, string> {
@@ -93,6 +97,7 @@ export default function PreviewPage() {
           themeId: e.data.themeId ?? "default",
           pageView: (e.data.pageView ?? "home") as PageView,
           isDark: e.data.isDark ?? false,
+          notionPageId: e.data.notionPageId ?? "",
         });
       }
     };
@@ -114,7 +119,7 @@ export default function PreviewPage() {
   const scopedVars = tokensToStyleVars(pkg.tokens, state.isDark);
 
   const SiteHeader = () => (
-    <Header siteName="Noxion Preview" navigation={mockNavigation} />
+    <Header siteName="Noxion" logo={<NoxionLogo />} navigation={mockNavigation} />
   );
   const SiteFooter = () => (
     <Footer siteName="Noxion Preview" author="Theme Author" />
@@ -122,6 +127,8 @@ export default function PreviewPage() {
   const SidebarSlot = () => (
     <DocsSidebar items={mockSidebarItems} currentSlug="docs/theme-system" />
   );
+
+  const notionPageId = state.notionPageId ?? "";
 
   const isDocsView = state.pageView === "docs-sidebar";
   const Layout = isDocsView ? DocsLayout : BlogLayout;
@@ -135,8 +142,10 @@ export default function PreviewPage() {
         <Layout slots={slots}>
           <PageContent
             pageView={state.pageView}
+            notionPageId={notionPageId}
             notionRecordMap={notionRecordMap}
             onNotionLoad={setNotionRecordMap}
+            pkg={pkg}
           />
         </Layout>
       </NoxionThemeProvider>
@@ -146,13 +155,22 @@ export default function PreviewPage() {
 
 function PageContent({
   pageView,
+  notionPageId,
   notionRecordMap,
   onNotionLoad,
+  pkg,
 }: {
   pageView: PageView;
+  notionPageId: string;
   notionRecordMap: ExtendedRecordMap | null;
   onNotionLoad: (recordMap: ExtendedRecordMap | null) => void;
+  pkg: NoxionThemePackage;
 }) {
+  const HomePage = pkg.templates.home ?? DefaultHomePage;
+  const ArchivePage = pkg.templates.archive ?? DefaultArchivePage;
+  const TagPage = pkg.templates.tag ?? DefaultTagPage;
+  const PortfolioGridTemplate = pkg.templates["portfolio-grid"] ?? DefaultPortfolioGrid;
+
   switch (pageView) {
     case "home":
       return <HomePage data={{ posts: mockPosts, recentCount: 3 }} />;
@@ -161,98 +179,133 @@ function PageContent({
     case "tag":
       return <TagPage data={{ posts: mockPosts.slice(0, 3), tag: "React" }} />;
     case "portfolio":
-      return <PortfolioGrid data={{ projects: mockProjects }} />;
+      return <PortfolioGridTemplate data={{ projects: mockProjects }} />;
     case "docs-sidebar":
       return <DocsContent />;
     case "notion":
-      return <NotionContentView recordMap={notionRecordMap} onLoad={onNotionLoad} />;
+      return <NotionContentView notionPageId={notionPageId} recordMap={notionRecordMap} onLoad={onNotionLoad} pkg={pkg} />;
   }
 }
 
 function NotionContentView({
+  notionPageId,
   recordMap,
   onLoad,
+  pkg,
 }: {
+  notionPageId: string;
   recordMap: ExtendedRecordMap | null;
   onLoad: (recordMap: ExtendedRecordMap | null) => void;
+  pkg: NoxionThemePackage;
 }) {
-  const [pageId, setPageId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const lastFetchedRef = useRef("");
 
-  const handleFetch = useCallback(async () => {
-    const id = pageId.trim();
-    if (!id) return;
+  useEffect(() => {
+    const id = notionPageId.trim();
+    if (!id || id === lastFetchedRef.current) return;
+
+    let cancelled = false;
+    lastFetchedRef.current = id;
     setLoading(true);
     setError(null);
-    try {
-      const res = await fetch(`/api/notion?pageId=${encodeURIComponent(id)}`);
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: "Request failed" }));
-        throw new Error(body.error ?? `HTTP ${res.status}`);
-      }
-      const data: ExtendedRecordMap = await res.json();
-      onLoad(data);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Unknown error");
-      onLoad(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [pageId, onLoad]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") handleFetch();
-    },
-    [handleFetch]
-  );
+    (async () => {
+      try {
+        const res = await fetch(`/api/notion?pageId=${encodeURIComponent(id)}`);
+        if (cancelled) return;
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({ error: "Request failed" }));
+          throw new Error(body.error ?? `HTTP ${res.status}`);
+        }
+        const data: ExtendedRecordMap = await res.json();
+        if (!cancelled) onLoad(data);
+      } catch (e: unknown) {
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : "Unknown error");
+          onLoad(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [notionPageId, onLoad]);
+
+  if (loading) {
+    return (
+      <div className="dev-notion-view">
+        <div className="dev-notion-empty">Loading Notion page\u2026</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dev-notion-view">
+        <div className="dev-notion-form__error">{error}</div>
+      </div>
+    );
+  }
+
+  if (recordMap) {
+    const PostPageTemplate = pkg.templates.post ?? DefaultPostPage;
+
+    const title = getPageTitle(recordMap) || undefined;
+    const blockIds = Object.keys(recordMap.block);
+    const rootEntry = blockIds.length > 0 ? recordMap.block[blockIds[0]] : undefined;
+    const rootBlock = rootEntry && "value" in rootEntry ? rootEntry.value : rootEntry;
+    const fmt = (rootBlock as Record<string, unknown>)?.format as Record<string, unknown> | undefined;
+
+    const rawCover = fmt?.page_cover as string | undefined;
+    const cover = rawCover
+      ? (defaultMapImageUrl(rawCover, rootBlock as Parameters<typeof defaultMapImageUrl>[1]) ?? rawCover)
+      : undefined;
+
+    const createdTime = (rootBlock as Record<string, unknown>)?.created_time as number | undefined;
+    const date = createdTime ? new Date(createdTime).toISOString().slice(0, 10) : undefined;
+
+    let author: string | undefined;
+    if (recordMap.notion_user) {
+      const createdById = (rootBlock as Record<string, unknown>)?.created_by_id as string | undefined;
+      const lastEditedById = (rootBlock as Record<string, unknown>)?.last_edited_by_id as string | undefined;
+      const userId = createdById || lastEditedById;
+      if (userId) {
+        const userEntry = recordMap.notion_user[userId];
+        const user = userEntry && "value" in userEntry ? userEntry.value : userEntry;
+        const name = (user as Record<string, unknown>)?.name as string | undefined;
+        if (name) author = name;
+      }
+      if (!author) {
+        const firstUserEntry = Object.values(recordMap.notion_user)[0];
+        const firstUser = firstUserEntry && "value" in firstUserEntry ? firstUserEntry.value : firstUserEntry;
+        const firstName = (firstUser as Record<string, unknown>)?.name as string | undefined;
+        if (firstName) author = firstName;
+      }
+    }
+
+    return (
+      <div className="dev-notion-view">
+        <div className="dev-notion-content">
+          <PostPageTemplate data={{
+            recordMap,
+            ...(title ? { title } : {}),
+            ...(author ? { author } : {}),
+            ...(date ? { date } : {}),
+            ...(cover ? { coverImage: cover } : {}),
+          }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dev-notion-view">
-      <div className="dev-notion-form">
-        <label className="dev-notion-form__label" htmlFor="notion-page-id">
-          Notion Page ID
-        </label>
-        <div className="dev-notion-form__row">
-          <input
-            ref={inputRef}
-            id="notion-page-id"
-            className="dev-notion-form__input"
-            type="text"
-            value={pageId}
-            onChange={(e) => setPageId(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="e.g. 1a2b3c4d5e6f7890abcdef1234567890"
-            spellCheck={false}
-            autoComplete="off"
-          />
-          <button
-            className="dev-notion-form__btn"
-            onClick={handleFetch}
-            disabled={loading || !pageId.trim()}
-          >
-            {loading ? "Loading\u2026" : "Fetch"}
-          </button>
-        </div>
-        <div className="dev-notion-form__hint">
-          Paste any public Notion page ID or full URL. The page must be publicly shared.
-        </div>
-        {error && <div className="dev-notion-form__error">{error}</div>}
+      <div className="dev-notion-empty">
+        Enter a Notion page ID in the toolbar to preview it with the current theme.
       </div>
-
-      {recordMap && (
-        <div className="dev-notion-content">
-          <NotionPage recordMap={recordMap} fullPage={true} />
-        </div>
-      )}
-
-      {!recordMap && !loading && !error && (
-        <div className="dev-notion-empty">
-          Enter a Notion page ID above to preview it with the current theme.
-        </div>
-      )}
     </div>
   );
 }

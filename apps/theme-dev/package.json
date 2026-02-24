@@ -14,10 +14,16 @@
   "dependencies": {
     "@noxion/notion-renderer": "workspace:*",
     "@noxion/renderer": "workspace:*",
+    "@noxion/theme-default": "workspace:*",
+    "@noxion/theme-ink": "workspace:*",
+    "@noxion/theme-editorial": "workspace:*",
+    "@noxion/theme-folio": "workspace:*",
+    "@noxion/theme-beacon": "workspace:*",
     "lucide-react": "^0.575.0",
     "next": "^16.1.6",
     "notion-client": "^7.8.2",
     "notion-types": "^7.8.2",
+    "notion-utils": "^7.1.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

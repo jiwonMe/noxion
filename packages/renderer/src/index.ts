@@ -61,6 +61,7 @@ export { PostList } from "./components/PostList";
 export { HeroSection } from "./components/HeroSection";
 export type { HeroSectionProps } from "./components/HeroSection";
 export { Header } from "./components/Header";
+export { NoxionLogo } from "./components/NoxionLogo";
 export { Footer } from "./components/Footer";
 export { TagFilter } from "./components/TagFilter";
 export { EmptyState } from "./components/EmptyState";
@@ -81,9 +82,4 @@ export { useSearch } from "./hooks/useSearch";
 export { validateTheme, formatValidationResult } from "./theme/validate-theme";
 export type { ValidationResult, ValidationIssue, ValidationSeverity } from "./theme/validate-theme";
 
-export {
-  defaultThemePackage,
-  inkThemePackage,
-  editorialThemePackage,
-  folioThemePackage,
-} from "./themes";
+

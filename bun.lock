@@ -39,10 +39,16 @@
       "dependencies": {
         "@noxion/notion-renderer": "workspace:*",
         "@noxion/renderer": "workspace:*",
+        "@noxion/theme-beacon": "workspace:*",
+        "@noxion/theme-default": "workspace:*",
+        "@noxion/theme-editorial": "workspace:*",
+        "@noxion/theme-folio": "workspace:*",
+        "@noxion/theme-ink": "workspace:*",
         "lucide-react": "^0.575.0",
         "next": "^16.1.6",
         "notion-client": "^7.8.2",
         "notion-types": "^7.8.2",
+        "notion-utils": "^7.1.6",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
       },
@@ -190,6 +196,24 @@
         "react-dom": ">=18.0.0",
       },
     },
+    "packages/theme-beacon": {
+      "name": "@noxion/theme-beacon",
+      "version": "0.2.0",
+      "devDependencies": {
+        "@noxion/renderer": "workspace:*",
+        "@noxion/theme-default": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "@types/react": "^19.2.14",
+        "notion-types": "^7.1.6",
+        "react": "^19.2.4",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/renderer": ">=0.2.0",
+        "@noxion/theme-default": ">=0.2.0",
+        "react": ">=18.0.0",
+      },
+    },
     "packages/theme-default": {
       "name": "@noxion/theme-default",
       "version": "0.2.0",
@@ -202,6 +226,57 @@
       },
       "peerDependencies": {
         "@noxion/renderer": ">=0.2.0",
+        "react": ">=18.0.0",
+      },
+    },
+    "packages/theme-editorial": {
+      "name": "@noxion/theme-editorial",
+      "version": "0.2.0",
+      "devDependencies": {
+        "@noxion/renderer": "workspace:*",
+        "@noxion/theme-default": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "@types/react": "^19.2.14",
+        "react": "^19.2.4",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/renderer": ">=0.2.0",
+        "@noxion/theme-default": ">=0.2.0",
+        "react": ">=18.0.0",
+      },
+    },
+    "packages/theme-folio": {
+      "name": "@noxion/theme-folio",
+      "version": "0.2.0",
+      "devDependencies": {
+        "@noxion/renderer": "workspace:*",
+        "@noxion/theme-default": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "@types/react": "^19.2.14",
+        "react": "^19.2.4",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/renderer": ">=0.2.0",
+        "@noxion/theme-default": ">=0.2.0",
+        "react": ">=18.0.0",
+      },
+    },
+    "packages/theme-ink": {
+      "name": "@noxion/theme-ink",
+      "version": "0.2.0",
+      "devDependencies": {
+        "@noxion/renderer": "workspace:*",
+        "@noxion/theme-default": "workspace:*",
+        "@types/bun": "^1.2.0",
+        "@types/react": "^19.2.14",
+        "react": "^19.2.4",
+        "typescript": "^5.7.0",
+      },
+      "peerDependencies": {
+        "@noxion/renderer": ">=0.2.0",
+        "@noxion/theme-default": ">=0.2.0",
         "react": ">=18.0.0",
       },
     },
@@ -799,9 +874,17 @@
 
     "@noxion/renderer": ["@noxion/renderer@workspace:packages/renderer"],
 
+    "@noxion/theme-beacon": ["@noxion/theme-beacon@workspace:packages/theme-beacon"],
+
     "@noxion/theme-default": ["@noxion/theme-default@workspace:packages/theme-default"],
 
     "@noxion/theme-dev": ["@noxion/theme-dev@workspace:apps/theme-dev"],
+
+    "@noxion/theme-editorial": ["@noxion/theme-editorial@workspace:packages/theme-editorial"],
+
+    "@noxion/theme-folio": ["@noxion/theme-folio@workspace:packages/theme-folio"],
+
+    "@noxion/theme-ink": ["@noxion/theme-ink@workspace:packages/theme-ink"],
 
     "@noxion/web": ["@noxion/web@workspace:apps/web"],
 

@@ -1,6 +1,6 @@
-import type { NoxionThemePackage } from "../theme/types";
-import { extendTheme } from "../theme/extend-theme";
-import { defaultThemePackage } from "./default";
+import type { NoxionThemePackage } from "@noxion/renderer";
+import { extendTheme } from "@noxion/renderer";
+import { defaultThemePackage } from "@noxion/theme-default";
 
 const inkStylesheet = `
 .noxion-header {
@@ -361,6 +361,76 @@ const inkStylesheet = `
   text-transform: lowercase;
   letter-spacing: 0;
   border-bottom-style: dashed;
+}
+
+.noxion-template-post .noxion-page__title {
+  font-family: var(--noxion-font-mono);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-transform: lowercase;
+}
+
+.noxion-template-post .noxion-heading {
+  font-family: var(--noxion-font-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.noxion-template-post .noxion-text {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.noxion-template-post .noxion-quote {
+  border-left: 2px dashed var(--noxion-border);
+  font-family: var(--noxion-font-mono);
+  font-size: 0.875rem;
+}
+
+.noxion-template-post .noxion-callout {
+  border: 1px dashed var(--noxion-border);
+  border-radius: 2px;
+  background-color: transparent;
+}
+
+.noxion-template-post .noxion-code {
+  border: 1px solid var(--noxion-border);
+  border-radius: 2px;
+}
+
+.noxion-template-post .noxion-code__header {
+  border-bottom: 1px dashed var(--noxion-border);
+}
+
+.noxion-template-post .noxion-inline-code {
+  border-radius: 2px;
+  font-size: 0.8125rem;
+}
+
+.noxion-template-post .noxion-divider {
+  border-bottom-style: dashed;
+}
+
+.noxion-template-post .noxion-link {
+  text-decoration: none;
+  border-bottom: 1px dashed var(--noxion-foreground);
+  opacity: 0.7;
+}
+
+.noxion-template-post .noxion-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+}
+
+.noxion-template-post .noxion-bookmark__link {
+  border: 1px dashed var(--noxion-border);
+  border-radius: 2px;
+}
+
+.noxion-template-post .noxion-image__caption {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
 }
 `;
 

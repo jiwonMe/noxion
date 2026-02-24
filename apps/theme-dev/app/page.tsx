@@ -48,6 +48,7 @@ export default function ThemeDevPage() {
   const [devPanel, setDevPanel] = useState<DevPanel>("none");
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [viewMode, setViewMode] = useState<ViewMode>("single");
+  const [notionPageId, setNotionPageId] = useState("");
   const { resolved: resolvedMode, setPreference: setThemePreference } = useThemePreference();
   const isDark = resolvedMode === "dark";
 
@@ -90,6 +91,9 @@ export default function ThemeDevPage() {
         onViewportChange={setViewport}
         viewMode={viewMode}
         onViewModeToggle={toggleViewMode}
+        pageView={pageView}
+        notionPageId={notionPageId}
+        onNotionPageIdChange={setNotionPageId}
       />
 
       <PageTabs pageView={pageView} onPageViewChange={setPageView} />
@@ -107,21 +111,21 @@ export default function ThemeDevPage() {
       <div className="dev-preview-area">
         {viewMode === "single" ? (
           <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-            <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} />
+            <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
           </div>
         ) : (
           <div className="dev-compare">
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{currentTheme.label}</div>
               <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-                <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} />
+                <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
               </div>
             </div>
             <div className="dev-compare__divider" />
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{compareTheme.label}</div>
               <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-                <PreviewFrame themeId={compareThemeId} pageView={pageView} isDark={isDark} />
+                <PreviewFrame themeId={compareThemeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
               </div>
             </div>
           </div>
@@ -145,6 +149,9 @@ function Toolbar({
   onViewportChange,
   viewMode,
   onViewModeToggle,
+  pageView,
+  notionPageId,
+  onNotionPageIdChange,
 }: {
   themeId: string;
   onThemeChange: (id: string) => void;
@@ -159,6 +166,9 @@ function Toolbar({
   onViewportChange: (v: Viewport) => void;
   viewMode: ViewMode;
   onViewModeToggle: () => void;
+  pageView: PageView;
+  notionPageId: string;
+  onNotionPageIdChange: (id: string) => void;
 }) {
   const errorCount = validation.issues.filter((i) => i.severity === "error").length;
   const warnCount = validation.issues.filter((i) => i.severity === "warning").length;
@@ -231,6 +241,13 @@ function Toolbar({
         <Columns2 size={14} />
       </button>
 
+      {pageView === "notion" && (
+        <>
+          <div className="dev-toolbar__divider" />
+          <NotionPageIdInput value={notionPageId} onSubmit={onNotionPageIdChange} />
+        </>
+      )}
+
       <div className="dev-toolbar__right">
         <button
           className={`dev-toolbar__btn ${devPanel === "tokens" ? "dev-toolbar__btn--active" : ""}`}
@@ -260,6 +277,41 @@ function Toolbar({
           <span className="dev-toolbar__badge dev-toolbar__badge--valid">valid</span>
         )}
       </div>
+    </div>
+  );
+}
+
+function NotionPageIdInput({ value, onSubmit }: { value: string; onSubmit: (id: string) => void }) {
+  const [input, setInput] = useState(value);
+
+  useEffect(() => { setInput(value); }, [value]);
+
+  const submit = useCallback(() => {
+    const trimmed = input.trim();
+    if (trimmed) onSubmit(trimmed);
+  }, [input, onSubmit]);
+
+  return (
+    <div className="dev-toolbar__group dev-toolbar__notion-input">
+      <span className="dev-toolbar__label">Page ID</span>
+      <input
+        className="dev-toolbar__input"
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+        placeholder="Paste Notion page ID or URL"
+        spellCheck={false}
+        autoComplete="off"
+      />
+      <button
+        className="dev-toolbar__btn dev-toolbar__btn--wide"
+        onClick={submit}
+        disabled={!input.trim()}
+        title="Fetch Notion page"
+      >
+        Fetch
+      </button>
     </div>
   );
 }
@@ -458,15 +510,17 @@ function PreviewFrame({
   themeId,
   pageView,
   isDark,
+  notionPageId,
 }: {
   themeId: string;
   pageView: PageView;
   isDark: boolean;
+  notionPageId: string;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const readyRef = useRef(false);
-  const stateRef = useRef({ themeId, pageView, isDark });
-  stateRef.current = { themeId, pageView, isDark };
+  const stateRef = useRef({ themeId, pageView, isDark, notionPageId });
+  stateRef.current = { themeId, pageView, isDark, notionPageId };
 
   const sendState = useCallback(() => {
     iframeRef.current?.contentWindow?.postMessage({
@@ -477,7 +531,7 @@ function PreviewFrame({
 
   useEffect(() => {
     if (readyRef.current) sendState();
-  }, [themeId, pageView, isDark, sendState]);
+  }, [themeId, pageView, isDark, notionPageId, sendState]);
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {

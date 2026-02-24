@@ -247,6 +247,65 @@ body {
   color: rgb(255, 159, 10);
 }
 
+/* ── TOOLBAR INPUT ── */
+
+.dev-toolbar__input {
+  appearance: none;
+  background: #ffffff;
+  color: rgb(37, 37, 37);
+  border: 1px solid rgba(55, 53, 47, 0.09);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+  min-width: 260px;
+  transition: border-color 0.15s;
+}
+
+.dev-toolbar__input:hover {
+  border-color: rgba(55, 53, 47, 0.25);
+}
+
+.dev-toolbar__input:focus {
+  outline: none;
+  border-color: rgb(0, 118, 215);
+  box-shadow: 0 0 0 3px rgba(0, 118, 215, 0.1);
+}
+
+.dev-toolbar__input::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+  font-family: "Inter", -apple-system, "system-ui", sans-serif;
+}
+
+[data-theme="dark"] .dev-toolbar__input {
+  background: #1a1a1a;
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="dark"] .dev-toolbar__input:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .dev-toolbar__input:focus {
+  border-color: rgb(45, 149, 235);
+  box-shadow: 0 0 0 3px rgba(45, 149, 235, 0.15);
+}
+
+[data-theme="dark"] .dev-toolbar__input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.dev-toolbar__notion-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.dev-toolbar__notion-input .dev-toolbar__input {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ── PAGE TABS ── */
 
 .dev-tabs {

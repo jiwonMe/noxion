@@ -2,7 +2,6 @@
   --noxion-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
   --noxion-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
   --noxion-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --noxion-shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
   --noxion-transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
   --noxion-transition-normal: 180ms cubic-bezier(0.4, 0, 0.2, 1);
   --noxion-transition-slow: 280ms cubic-bezier(0.4, 0, 0.2, 1);

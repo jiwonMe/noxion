@@ -1,8 +1,10 @@
 "use client";
 
-import { PostList, TagFilter, Search } from "@noxion/renderer";
+import { HeroSection, PostList, TagFilter, Search } from "@noxion/renderer";
 import type { PostCardProps } from "@noxion/renderer";
 import { useState, useCallback, useRef, useEffect } from "react";
+
+const HERO_COUNT = 3;
 
 interface HomeContentProps {
   initialPosts: PostCardProps[];
@@ -155,52 +157,41 @@ export function HomeContent({
     setSearchQuery(query);
   }, []);
 
+  const isFiltering = selectedTags.length > 0 || Boolean(searchQuery.trim());
+  const heroPosts = !isFiltering && state.posts.length >= HERO_COUNT
+    ? state.posts.slice(0, HERO_COUNT)
+    : [];
+  const feedPosts = heroPosts.length > 0
+    ? state.posts.slice(HERO_COUNT)
+    : state.posts;
+
   return (
-    <div>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, letterSpacing: "-0.03em" }}>Posts</h1>
-      </div>
+    <div className="noxion-template-home">
+      {heroPosts.length > 0 && <HeroSection posts={heroPosts} />}
 
-      <div style={{ marginBottom: "1.5rem" }}>
-        <Search onSearch={handleSearch} placeholder="Search posts..." />
-      </div>
-
-      {allTags.length > 0 && (
-        <div style={{ marginBottom: "2rem" }}>
-          <TagFilter
-            tags={allTags}
-            selectedTags={selectedTags}
-            onToggle={handleToggleTag}
-            maxVisible={8}
-          />
+      <section className="noxion-home-feed">
+        <div className="noxion-home-feed__toolbar">
+          <Search onSearch={handleSearch} placeholder="Search posts..." />
+          {allTags.length > 0 && (
+            <TagFilter
+              tags={allTags}
+              selectedTags={selectedTags}
+              onToggle={handleToggleTag}
+              maxVisible={8}
+            />
+          )}
         </div>
-      )}
 
-      <PostList posts={state.posts} />
+        <PostList posts={feedPosts} />
 
-      <div ref={sentinelRef} style={{ height: 1 }} />
+        <div ref={sentinelRef} style={{ height: 1 }} />
 
-      {state.loading && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "2rem 0",
-          }}
-        >
-          <div
-            style={{
-              width: 24,
-              height: 24,
-              border: "2px solid var(--noxion-border, #e5e5e5)",
-              borderTopColor: "var(--noxion-foreground, #171717)",
-              borderRadius: "50%",
-              animation: "noxion-spin 0.6s linear infinite",
-            }}
-          />
-          <style>{`@keyframes noxion-spin { to { transform: rotate(360deg) } }`}</style>
-        </div>
-      )}
+        {state.loading && (
+          <div className="noxion-loading-spinner">
+            <div className="noxion-loading-spinner__ring" />
+          </div>
+        )}
+      </section>
     </div>
   );
 }
