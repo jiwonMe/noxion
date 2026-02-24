@@ -659,6 +659,7 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
 }
 
 .dev-compare__label {
@@ -690,6 +691,12 @@ body {
 
 .dev-compare__pane .dev-preview-frame {
   flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.dev-compare__pane .dev-preview-frame .dev-preview-iframe {
+  min-width: var(--compare-viewport-width, 100%);
 }
 
 /* ── NOTION PAGE FORM ── */

@@ -114,17 +114,17 @@ export default function ThemeDevPage() {
             <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
           </div>
         ) : (
-          <div className="dev-compare">
+          <div className="dev-compare" style={{ "--compare-viewport-width": VIEWPORT_WIDTHS[viewport] } as React.CSSProperties}>
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{currentTheme.label}</div>
-              <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
+              <div className="dev-preview-frame">
                 <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
               </div>
             </div>
             <div className="dev-compare__divider" />
             <div className="dev-compare__pane">
               <div className="dev-compare__label">{compareTheme.label}</div>
-              <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
+              <div className="dev-preview-frame">
                 <PreviewFrame themeId={compareThemeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
               </div>
             </div>
