@@ -327,6 +327,35 @@ const inkStylesheet = `
   content: "#";
 }
 
+@media (max-width: 768px) {
+  .noxion-featured-card {
+    min-height: 240px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 240px;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .noxion-featured-card {
+    min-height: 200px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 200px;
+    padding: 1.25rem;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 1.125rem;
+  }
+}
+
 .noxion-home-feed__title {
   font-family: var(--noxion-font-mono);
   text-transform: lowercase;

@@ -487,6 +487,35 @@ const folioStylesheet = `
   display: none;
 }
 
+@media (max-width: 768px) {
+  .noxion-featured-card {
+    min-height: 300px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 300px;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .noxion-featured-card {
+    min-height: 240px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 240px;
+    padding: 1.5rem;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 1.25rem;
+  }
+}
+
 .noxion-home-feed__title {
   font-size: 0.625rem;
   font-weight: 500;

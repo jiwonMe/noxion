@@ -359,6 +359,40 @@ const editorialStylesheet = `
   display: none;
 }
 
+@media (max-width: 768px) {
+  .noxion-featured-card {
+    min-height: 320px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 320px;
+    padding: 2rem;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .noxion-featured-card {
+    min-height: 260px;
+  }
+
+  .noxion-featured-card__content {
+    min-height: 260px;
+    padding: 1.5rem;
+  }
+
+  .noxion-featured-card__title {
+    font-size: 1.5rem;
+  }
+
+  .noxion-featured-card__description {
+    font-size: 0.875rem;
+  }
+}
+
 .noxion-home-feed__title {
   font-weight: 800;
   letter-spacing: 0.08em;
