@@ -207,6 +207,18 @@ const folioStylesheet = `
 
 .noxion-portfolio-card--featured {
   grid-column: 1 / -1;
+  flex-direction: column;
+}
+
+.noxion-portfolio-card--featured .noxion-portfolio-card__cover {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  min-height: unset;
+}
+
+.noxion-portfolio-card--featured .noxion-portfolio-card__body {
+  flex: unset;
+  justify-content: flex-start;
 }
 
 .noxion-portfolio-card__cover {
