@@ -571,7 +571,7 @@ function PageContent({
 }) {
   switch (pageView) {
     case "home":
-      return <HomePage data={{ posts: mockPosts }} />;
+      return <HomePage data={{ posts: mockPosts, recentCount: 3 }} />;
     case "archive":
       return <ArchivePage data={{ posts: mockPosts, title: "Archive" }} />;
     case "tag":

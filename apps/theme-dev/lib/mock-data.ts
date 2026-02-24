@@ -62,6 +62,38 @@ export const mockPosts: PostCardProps[] = [
     description: "Beyond toggling colors — handling images, shadows, contrast ratios, and user preferences in dark mode.",
     author: "Jiwon Park",
   },
+  {
+    id: "7",
+    title: "Edge Functions and the Future of SSR",
+    slug: "edge-functions-ssr",
+    date: "2025-01-15",
+    tags: ["Edge", "SSR", "Performance"],
+    category: "Engineering",
+    description: "Running server-side code at the edge eliminates cold starts and brings rendering closer to your users.",
+    author: "Jiwon Park",
+    coverImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=400&fit=crop",
+  },
+  {
+    id: "8",
+    title: "Accessible Forms Without the Headache",
+    slug: "accessible-forms",
+    date: "2025-01-10",
+    tags: ["Accessibility", "HTML", "UX"],
+    category: "Tutorial",
+    description: "Practical patterns for building forms that work for everyone — screen readers, keyboard navigation, and error handling.",
+    author: "Jiwon Park",
+  },
+  {
+    id: "9",
+    title: "Rethinking State Management in 2025",
+    slug: "state-management-2025",
+    date: "2025-01-05",
+    tags: ["React", "State", "Architecture"],
+    category: "Engineering",
+    description: "Signals, server state, and the slow death of global stores. What modern state management actually looks like.",
+    author: "Jiwon Park",
+    coverImage: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&h=400&fit=crop",
+  },
 ];
 
 export const mockProjects: PortfolioCardProps[] = [
