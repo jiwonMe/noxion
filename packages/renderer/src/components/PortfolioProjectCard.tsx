@@ -18,8 +18,8 @@ export function PortfolioProjectCard({
 
   return (
     <div className={cardClass}>
-      {coverImage && (
-        <div className="noxion-portfolio-card__cover">
+      <div className="noxion-portfolio-card__cover">
+        {coverImage && (
           <img
             src={coverImage}
             alt={title}
@@ -27,8 +27,8 @@ export function PortfolioProjectCard({
             decoding="async"
             className="noxion-portfolio-card__cover-image"
           />
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="noxion-portfolio-card__body">
         <div className="noxion-portfolio-card__header">
