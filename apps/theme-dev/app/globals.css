@@ -576,9 +576,16 @@ body {
 
 .dev-preview-frame {
   margin: 0 auto;
-  background: var(--noxion-background, #fff);
-  min-height: calc(100vh - 90px);
+  height: calc(100vh - 90px);
   transition: max-width 0.3s ease;
+}
+
+.dev-preview-iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--noxion-background, #fff);
 }
 
 /* ── COMPARE MODE ── */
