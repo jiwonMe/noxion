@@ -17,16 +17,17 @@ export async function GET() {
   const baseUrl = `https://${siteConfig.domain}`;
 
   const items = posts.slice(0, 50).map((post) => {
-    const pubDate = post.date ? new Date(post.date).toUTCString() : new Date(post.lastEditedTime).toUTCString();
+    const { date, author, category, tags } = post.metadata;
+    const pubDate = date ? new Date(date).toUTCString() : new Date(post.lastEditedTime).toUTCString();
     return `    <item>
       <title>${escapeXml(post.title)}</title>
       <link>${baseUrl}/${post.slug}</link>
       <guid isPermaLink="true">${baseUrl}/${post.slug}</guid>
       <pubDate>${pubDate}</pubDate>
       <description>${escapeXml(post.description ?? post.title)}</description>
-      ${post.author ? `<dc:creator>${escapeXml(post.author)}</dc:creator>` : ""}
-      ${post.category ? `<category>${escapeXml(post.category)}</category>` : ""}
-      ${post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n      ")}
+      ${author ? `<dc:creator>${escapeXml(author)}</dc:creator>` : ""}
+      ${category ? `<category>${escapeXml(category)}</category>` : ""}
+      ${(tags ?? []).map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n      ")}
     </item>`;
   });
 
