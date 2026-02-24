@@ -168,6 +168,7 @@ export interface ComponentOverrides {
   Header?: ComponentType<HeaderProps>;
   Footer?: ComponentType<FooterProps>;
   PostCard?: ComponentType<PostCardProps>;
+  FeaturedPostCard?: ComponentType<PostCardProps>;
   PostList?: ComponentType<PostListProps>;
   NotionPage?: ComponentType<NotionPageProps>;
   TOC?: ComponentType<TOCProps>;

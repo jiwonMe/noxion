@@ -415,6 +415,81 @@ const folioStylesheet = `
 .noxion-docs-breadcrumb__link:hover {
   opacity: 1;
 }
+
+.noxion-featured-card {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.noxion-featured-card:hover {
+  box-shadow: none;
+}
+
+.noxion-featured-card__cover {
+  aspect-ratio: 21 / 9;
+  border-radius: 0;
+  background-color: var(--noxion-muted);
+}
+
+.noxion-featured-card:hover .noxion-featured-card__cover-image {
+  transform: scale(1.02);
+}
+
+.noxion-featured-card__cover-overlay {
+  background: none;
+}
+
+.noxion-featured-card__content {
+  padding: 1.25rem 0;
+}
+
+.noxion-featured-card__category {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.noxion-featured-card__title {
+  font-size: 1.375rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.noxion-featured-card__description {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.noxion-featured-card__meta {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.noxion-featured-card__tag {
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.6875rem;
+  opacity: 0.5;
+}
+
+.noxion-featured-card__tag + .noxion-featured-card__tag::before {
+  content: ", ";
+}
+
+.noxion-home-feed__title {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  border-bottom: none;
+  padding-bottom: 0;
+}
 `;
 
 export const folioThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {

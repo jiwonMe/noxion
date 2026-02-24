@@ -56,7 +56,10 @@ export type {
 export { NotionPage } from "./components/NotionPage";
 export type { NotionPageProps } from "./components/NotionPage";
 export { PostCard } from "./components/PostCard";
+export { FeaturedPostCard } from "./components/FeaturedPostCard";
 export { PostList } from "./components/PostList";
+export { HeroSection } from "./components/HeroSection";
+export type { HeroSectionProps } from "./components/HeroSection";
 export { Header } from "./components/Header";
 export { Footer } from "./components/Footer";
 export { TagFilter } from "./components/TagFilter";

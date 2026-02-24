@@ -408,40 +408,125 @@ img {
   padding: 1.125rem 0;
 }
 
-/* ── Hero variant ── */
+/* ============================================
+   FeaturedPostCard
+   ============================================ */
 
-.noxion-post-list--hero {
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
+.noxion-featured-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--noxion-border-radius);
+  overflow: hidden;
+  background-color: var(--noxion-card);
+  border: 1px solid var(--noxion-border);
+  transition:
+    border-color var(--noxion-transition-normal),
+    box-shadow var(--noxion-transition-normal);
 }
 
-@media (min-width: 769px) {
-  .noxion-post-list--hero {
-    grid-template-columns: 1fr 1fr;
-  }
+.noxion-featured-card:hover {
+  border-color: color-mix(in srgb, var(--noxion-foreground) 20%, transparent);
+  box-shadow: var(--noxion-shadow-lg);
+}
 
-  .noxion-post-list--hero > :first-child {
-    grid-row: 1 / 3;
-  }
+.noxion-featured-card__cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  background-color: var(--noxion-muted);
+}
 
-  .noxion-post-list--hero > :first-child .noxion-post-card__cover {
-    flex: 1;
-    aspect-ratio: unset;
-    min-height: 200px;
-  }
+.noxion-featured-card--no-cover .noxion-featured-card__cover {
+  aspect-ratio: 4 / 1;
+}
 
-  .noxion-post-list--hero > :first-child .noxion-post-card__title {
-    font-size: 1.375rem;
-    -webkit-line-clamp: 3;
-  }
+.noxion-featured-card__cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .noxion-post-list--hero > :first-child .noxion-post-card__description {
-    -webkit-line-clamp: 3;
-  }
+.noxion-featured-card:hover .noxion-featured-card__cover-image {
+  transform: scale(1.03);
+}
 
-  .noxion-post-list--hero > :only-child {
-    grid-column: 1 / -1;
-  }
+.noxion-featured-card__cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.noxion-featured-card__content {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 0.5rem;
+}
+
+.noxion-featured-card__category {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--noxion-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.noxion-featured-card__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--noxion-cardForeground);
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+
+.noxion-featured-card__description {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--noxion-mutedForeground);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.noxion-featured-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--noxion-mutedForeground);
+}
+
+.noxion-featured-card__author + .noxion-featured-card__date::before {
+  content: "\00b7";
+  margin-right: 0.5rem;
+}
+
+.noxion-featured-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+}
+
+.noxion-featured-card__tag {
+  font-size: 0.6875rem;
+  color: var(--noxion-mutedForeground);
+  background-color: var(--noxion-muted);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  letter-spacing: 0.01em;
 }
 
 /* ============================================
@@ -452,6 +537,34 @@ img {
   display: flex;
   flex-direction: column;
   gap: 3rem;
+}
+
+.noxion-home-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 769px) {
+  .noxion-home-hero {
+    grid-template-columns: 3fr 2fr;
+  }
+
+  .noxion-home-hero__primary {
+    grid-row: 1 / -1;
+  }
+
+  .noxion-home-hero__primary .noxion-featured-card__cover {
+    flex: 1;
+    aspect-ratio: unset;
+    min-height: 220px;
+  }
+}
+
+.noxion-home-hero__secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .noxion-home-feed__title {

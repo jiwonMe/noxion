@@ -1,5 +1,6 @@
 import type { NoxionTemplateProps } from "../theme/types";
 import type { PostCardProps } from "../theme/types";
+import { HeroSection } from "../components/HeroSection";
 import { PostList } from "../components/PostList";
 
 export function HomePage({ data, className }: NoxionTemplateProps) {
@@ -21,9 +22,7 @@ export function HomePage({ data, className }: NoxionTemplateProps) {
 
   return (
     <div className={baseClass}>
-      <section className="noxion-home-hero">
-        <PostList posts={heroPosts} className="noxion-post-list--hero" />
-      </section>
+      <HeroSection posts={heroPosts} />
 
       {feedPosts.length > 0 && (
         <section className="noxion-home-feed">

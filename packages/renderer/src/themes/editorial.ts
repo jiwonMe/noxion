@@ -283,6 +283,76 @@ const editorialStylesheet = `
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+.noxion-featured-card {
+  border: 2px solid var(--noxion-foreground);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.noxion-featured-card:hover {
+  box-shadow: none;
+}
+
+.noxion-featured-card__cover {
+  aspect-ratio: 21 / 9;
+}
+
+.noxion-featured-card__cover-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%);
+}
+
+.noxion-featured-card__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  color: #ffffff;
+}
+
+.noxion-featured-card__category {
+  font-weight: 700;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--noxion-primary);
+}
+
+.noxion-featured-card__title {
+  font-family: var(--noxion-font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.noxion-featured-card__description {
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--noxion-font-serif);
+  font-size: 1rem;
+}
+
+.noxion-featured-card__meta {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.noxion-featured-card__tags {
+  display: none;
+}
+
+.noxion-home-feed__title {
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--noxion-foreground);
+}
 `;
 
 export const editorialThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {

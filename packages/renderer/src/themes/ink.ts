@@ -240,6 +240,68 @@ const inkStylesheet = `
 .noxion-docs-breadcrumb__separator {
   font-family: var(--noxion-font-mono);
 }
+
+.noxion-featured-card {
+  border: 1px solid var(--noxion-border);
+  border-radius: 0;
+}
+
+.noxion-featured-card:hover {
+  box-shadow: none;
+}
+
+.noxion-featured-card__cover {
+  aspect-ratio: 3 / 1;
+  border-radius: 0;
+}
+
+.noxion-featured-card__content {
+  padding: 1.25rem;
+}
+
+.noxion-featured-card__category {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.6875rem;
+  text-transform: lowercase;
+  letter-spacing: 0;
+}
+
+.noxion-featured-card__title {
+  font-family: var(--noxion-font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-transform: lowercase;
+}
+
+.noxion-featured-card__description {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.8125rem;
+}
+
+.noxion-featured-card__meta {
+  font-family: var(--noxion-font-mono);
+  font-size: 0.75rem;
+}
+
+.noxion-featured-card__tag {
+  font-family: var(--noxion-font-mono);
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.6875rem;
+}
+
+.noxion-featured-card__tag::before {
+  content: "#";
+}
+
+.noxion-home-feed__title {
+  font-family: var(--noxion-font-mono);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  border-bottom-style: dashed;
+}
 `;
 
 export const inkThemePackage: NoxionThemePackage = extendTheme(defaultThemePackage, {
