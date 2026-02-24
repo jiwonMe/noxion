@@ -21,33 +21,30 @@ export function PostCard({
   className,
 }: PostCardProps & { className?: string }) {
   const hasImage = Boolean(coverImage);
-  const baseClass = hasImage ? "noxion-post-card" : "noxion-post-card noxion-post-card--text-only";
+  const baseClass = hasImage ? "noxion-post-card" : "noxion-post-card noxion-post-card--no-cover";
   const cardClass = className ? `${baseClass} ${className}` : baseClass;
 
   return (
     <a href={`/${slug}`} className={cardClass}>
-      {hasImage && (
-        <div className="noxion-post-card__cover">
-          <img
-            src={coverImage}
-            alt={title}
-            loading="lazy"
-            decoding="async"
-            className="noxion-post-card__cover-image"
-          />
-          <div className="noxion-post-card__cover-overlay" />
-        </div>
-      )}
+      <div className="noxion-post-card__cover">
+        {hasImage && (
+          <>
+            <img
+              src={coverImage}
+              alt={title}
+              loading="lazy"
+              decoding="async"
+              className="noxion-post-card__cover-image"
+            />
+            <div className="noxion-post-card__cover-overlay" />
+          </>
+        )}
+      </div>
 
       <div className="noxion-post-card__body">
         <div className="noxion-post-card__header">
           {category && (
             <span className="noxion-post-card__category">{category}</span>
-          )}
-          {!hasImage && date && (
-            <time dateTime={date} className="noxion-post-card__date">
-              {formatDate(date)}
-            </time>
           )}
         </div>
 
@@ -61,7 +58,7 @@ export function PostCard({
           {author && (
             <span className="noxion-post-card__author">{author}</span>
           )}
-          {hasImage && date && (
+          {date && (
             <time dateTime={date} className="noxion-post-card__date">
               {formatDate(date)}
             </time>

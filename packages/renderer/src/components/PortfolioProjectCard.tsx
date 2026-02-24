@@ -11,10 +11,11 @@ export function PortfolioProjectCard({
   featured,
   className,
 }: PortfolioCardProps & { className?: string }) {
-  const baseClass = featured
-    ? "noxion-portfolio-card noxion-portfolio-card--featured"
-    : "noxion-portfolio-card";
-  const cardClass = className ? `${baseClass} ${className}` : baseClass;
+  const classes = ["noxion-portfolio-card"];
+  if (featured) classes.push("noxion-portfolio-card--featured");
+  if (!coverImage) classes.push("noxion-portfolio-card--no-cover");
+  if (className) classes.push(className);
+  const cardClass = classes.join(" ");
 
   return (
     <div className={cardClass}>
