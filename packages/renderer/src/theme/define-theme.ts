@@ -25,7 +25,7 @@ export const defaultTheme: NoxionTheme = defineTheme({
     mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace',
   },
   spacing: {
-    content: "720px",
+    content: "1080px",
     sidebar: "260px",
   },
   borderRadius: "0.5rem",

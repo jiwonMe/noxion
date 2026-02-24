@@ -335,7 +335,7 @@ export const inkThemePackage: NoxionThemePackage = extendTheme(defaultThemePacka
       serif: '"IBM Plex Serif", Georgia, "Times New Roman", serif',
     },
     spacing: {
-      content: "640px",
+      content: "880px",
       sidebar: "240px",
     },
     borderRadius: "2px",
