@@ -4,23 +4,43 @@ import { defaultThemePackage } from "./default";
 
 const folioStylesheet = `
 .noxion-header {
-  height: 52px;
+  height: 60px;
   border-bottom: none;
   background: transparent;
   backdrop-filter: none;
+  padding: 0 2rem;
 }
 
 .noxion-header__logo {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
+.noxion-header__logo:hover {
+  opacity: 0.4;
+}
+
+.noxion-header__nav {
+  gap: 0;
+}
+
 .noxion-header__nav-link {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+  padding: 0.25rem 0.75rem;
+  color: var(--noxion-foreground);
+  opacity: 0.5;
+  transition: opacity var(--noxion-transition-fast);
+}
+
+.noxion-header__nav-link:hover {
+  background: transparent;
+  opacity: 1;
+  color: var(--noxion-foreground);
 }
 
 .noxion-layout__content {

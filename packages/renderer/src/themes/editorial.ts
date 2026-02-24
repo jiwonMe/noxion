@@ -4,21 +4,56 @@ import { defaultThemePackage } from "./default";
 
 const editorialStylesheet = `
 .noxion-header {
-  height: 64px;
+  flex-wrap: wrap;
+  height: auto;
+  padding: 0;
   border-bottom: 2px solid var(--noxion-foreground);
+  background-color: var(--noxion-background);
+  backdrop-filter: none;
 }
 
 .noxion-header__logo {
+  width: 100%;
+  text-align: center;
   font-family: var(--noxion-font-display);
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   letter-spacing: -0.04em;
+  padding: 1.25rem 1rem 0;
+  border-bottom: none;
+}
+
+.noxion-header__logo:hover {
+  opacity: 1;
+  color: var(--noxion-primary);
+}
+
+.noxion-header__nav {
+  width: 100%;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  gap: 0;
+  border-top: 1px solid var(--noxion-border);
 }
 
 .noxion-header__nav-link {
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+  padding: 0.375rem 0.75rem;
+}
+
+.noxion-header__nav-link:hover {
+  background: transparent;
+  color: var(--noxion-primary);
+}
+
+.noxion-header__actions {
+  position: absolute;
+  right: 1rem;
+  top: 1.25rem;
 }
 
 .noxion-layout__content {

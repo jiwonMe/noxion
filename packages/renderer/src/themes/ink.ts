@@ -4,23 +4,45 @@ import { defaultThemePackage } from "./default";
 
 const inkStylesheet = `
 .noxion-header {
-  border-bottom: none;
+  height: 48px;
+  border-bottom: 1px dashed var(--noxion-border);
   background-color: var(--noxion-background);
   backdrop-filter: none;
 }
 
 .noxion-header__logo {
   font-family: var(--noxion-font-mono);
-  font-size: 0.875rem;
-  letter-spacing: -0.05em;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
   text-transform: lowercase;
+}
+
+.noxion-header__logo::before {
+  content: "~/";
+  opacity: 0.4;
+}
+
+.noxion-header__logo:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 3px;
 }
 
 .noxion-header__nav-link {
   font-family: var(--noxion-font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.02em;
+  font-weight: 400;
+  letter-spacing: 0;
   text-transform: lowercase;
+  border-radius: 2px;
+  padding: 0.25rem 0.5rem;
+}
+
+.noxion-header__nav-link:hover {
+  background-color: var(--noxion-foreground);
+  color: var(--noxion-background);
 }
 
 .noxion-post-card {
