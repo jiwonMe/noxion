@@ -292,13 +292,19 @@ revalidateSecret: process.env.REVALIDATE_SECRET,
 
 ```bash
 # 특정 페이지 재검증
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/my-post-slug"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"my-post-slug"}'
 
 # 홈페이지 재검증
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET"}'
 
 # 문서 페이지 재검증
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/docs/getting-started"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"docs/getting-started"}'
 ```
 
 ### Notion과 자동화
@@ -317,7 +323,9 @@ jobs:
     steps:
       - name: Trigger revalidation
         run: |
-          curl -X POST "${{ secrets.SITE_URL }}/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}&path=/"
+          curl -X POST "${{ secrets.SITE_URL }}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${{ secrets.REVALIDATE_SECRET }}\"}"
 ```
 
 ---

@@ -92,21 +92,21 @@ createCommentsPlugin({
 
 ### Theme integration
 
-The `"preferred_color_scheme"` theme for Giscus automatically matches the user's OS light/dark preference. If you want it to follow Noxion's theme toggle instead, use the `useNoxionTheme()` hook to dynamically update the Giscus theme:
+The `"preferred_color_scheme"` theme for Giscus automatically matches the user's OS light/dark preference. If you want it to follow Noxion's in-app theme preference, use `useThemePreference()` and pass the resolved mode to your custom comments component:
 
 ```tsx
 // In your post layout component
-import { useNoxionTheme } from "@noxion/renderer";
+import { useThemePreference } from "@noxion/renderer";
 
 function GiscusComments() {
-  const { name: theme } = useNoxionTheme();
+  const { resolved } = useThemePreference();
 
   return (
     <div>
       {/* Giscus will pick up the data-theme attribute */}
       <div
         className="giscus"
-        data-theme={theme === "dark" ? "dark" : "light"}
+        data-theme={resolved === "dark" ? "dark" : "light"}
       />
     </div>
   );

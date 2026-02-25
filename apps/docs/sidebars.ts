@@ -78,6 +78,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'reference/core/config',
         'reference/core/fetcher',
+        'reference/core/slug',
         'reference/core/frontmatter',
         'reference/core/plugins',
         'reference/core/types',
@@ -116,6 +117,7 @@ const sidebars: SidebarsConfig = {
         'reference/adapter-nextjs/metadata',
         'reference/adapter-nextjs/structured-data',
         'reference/adapter-nextjs/sitemap',
+        'reference/adapter-nextjs/revalidation',
       ],
     },
     {

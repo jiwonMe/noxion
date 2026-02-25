@@ -361,10 +361,14 @@ When you publish or update a post in Notion, trigger an immediate cache refresh 
 
 ```bash
 # Revalidate a specific post
-curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/post-slug"
+curl -X POST "https://myblog.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"post-slug"}'
 
 # Revalidate the homepage (updates the post list)
-curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/"
+curl -X POST "https://myblog.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET"}'
 ```
 
 After revalidation, Google's crawler can discover the updated content on its next crawl. For faster indexing of new posts, use the [Google Search Console URL Inspection tool](https://support.google.com/webmasters/answer/9012289) to request indexing manually.

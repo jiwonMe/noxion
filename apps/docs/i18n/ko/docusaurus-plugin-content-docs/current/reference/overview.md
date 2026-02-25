@@ -6,7 +6,7 @@ description: Noxion 패키지 API 레퍼런스 — 모든 익스포트, 타입, 
 
 # API 레퍼런스
 
-Noxion은 다섯 개의 npm 패키지와 CLI 스캐폴딩 도구로 배포됩니다. 이 섹션은 모든 익스포트된 함수, 컴포넌트, 훅, 타입에 대한 상세 문서를 제공합니다.
+Noxion은 다섯 개의 npm 패키지와 CLI 스캐폴딩 도구로 배포됩니다. 이 섹션은 공개 API 표면과 각 패키지의 상세 레퍼런스로 연결되는 링크를 제공합니다.
 
 ---
 
@@ -55,6 +55,15 @@ bun add @noxion/core
 | [`fetchPage(client, pageId)`](./core/fetcher#fetchpage) | Notion 페이지의 전체 `ExtendedRecordMap` 페치 |
 | [`fetchAllSlugs(client, pageId)`](./core/fetcher#fetchallslugs) | 공개된 모든 포스트 slug 페치 |
 
+#### Slug 유틸리티
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`generateSlug(title)`](./core/slug#generateslug) | 제목에서 URL-safe slug 생성 |
+| [`parseNotionPageId(input)`](./core/slug#parsenotionpageid) | Notion 페이지 ID를 UUID 형식으로 정규화 |
+| [`buildPageUrl(slug)`](./core/slug#buildpageurl) | 페이지 URL에 선행 `/` 보장 |
+| [`resolveSlug(post)`](./core/slug#resolveslug) | 포스트 slug를 해석하고 제목 기반 fallback 적용 |
+
 #### 프론트매터
 
 | 익스포트 | 설명 |
@@ -72,6 +81,17 @@ bun add @noxion/core
 | [`createRSSPlugin(options)`](./core/plugins#createrssplugin) | 내장 RSS 플러그인 팩토리 |
 | `generateRSSXml(posts, config, options?)` | 블로그 페이지로 RSS 2.0 XML 생성 |
 | [`createCommentsPlugin(options)`](./core/plugins#createcommentsplugin) | 내장 댓글 플러그인 팩토리 |
+
+#### 고급 플러그인 런타임
+
+| 익스포트 | 설명 |
+|---------|------|
+| `loadPlugins(entries)` | 플러그인 엔트리 인스턴스화 및 검증 |
+| `executeHook(plugins, hookName, args)` | 비동기 플러그인 라이프사이클 훅 실행 |
+| `executeTransformHook(plugins, hookName, initialValue, extraArgs)` | 체이닝 방식의 transform 훅 실행 |
+| `executeRegisterPageTypes(plugins, registry)` | 플러그인에서 커스텀 페이지 타입 등록 |
+| `executeRouteResolve(plugins, route)` | 플러그인 파이프라인으로 라우트 해석 |
+| `executeExtendSlots(plugins, initialSlots)` | 레거시 슬롯 확장 파이프라인 |
 
 #### 타입 (재익스포트)
 
@@ -254,6 +274,22 @@ bun add @noxion/adapter-nextjs @noxion/core
 | [`generateNoxionSitemap(posts, config)`](./adapter-nextjs/sitemap#generatenoxionsitemap) | `MetadataRoute.Sitemap` 항목 생성 |
 | [`generateNoxionRobots(config)`](./adapter-nextjs/sitemap#generatenoxionrobots) | `MetadataRoute.Robots` 생성 |
 | [`generateNoxionStaticParams(client, pageId)`](./adapter-nextjs/sitemap#generatenoxionstaticparams) | `generateStaticParams()`용 `{ slug: string }[]` 생성 |
+
+### 라우팅
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`generateNoxionRoutes(config)`](./adapter-nextjs/sitemap#generatenoxionroutes) | 컬렉션 기반 라우트 설정 생성 |
+| [`resolvePageType(path, routes)`](./adapter-nextjs/sitemap#resolvepagetype) | URL 경로에서 라우트 설정 해석 |
+| [`buildPageUrl(page, routes)`](./adapter-nextjs/sitemap#buildpageurl) | 라우트 접두사를 반영한 URL 생성 |
+| [`generateStaticParamsForRoute(pages, route)`](./adapter-nextjs/sitemap#generatestaticparamsforroute) | 특정 라우트 타입의 static params 생성 |
+
+### 재검증 & 웹훅
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`createRevalidateHandler(options)`](./adapter-nextjs/revalidation#createrevalidatehandler) | 온디맨드 ISR 재검증 라우트 핸들러 |
+| [`createNotionWebhookHandler(options)`](./adapter-nextjs/revalidation#createnotionwebhookhandler) | 서명 검증이 포함된 Notion 웹훅 핸들러 |
 
 ---
 

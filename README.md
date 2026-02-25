@@ -136,7 +136,9 @@ docker compose up
 Trigger a cache refresh without waiting for the hourly ISR:
 
 ```bash
-curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/my-post-slug"
+curl -X POST "https://myblog.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"my-post-slug"}'
 ```
 
 ## Monorepo Structure

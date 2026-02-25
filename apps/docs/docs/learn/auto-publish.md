@@ -138,7 +138,7 @@ If you can't use Notion webhooks (e.g. your Notion plan doesn't support integrat
 
 1. Create a Make scenario with **Notion → Watch Database Items** trigger
 2. Add a filter: only when `Public` = `true`
-3. Add **HTTP → Make a request**: POST to `https://yourdomain.com/api/revalidate` with query params `secret=YOUR_REVALIDATE_SECRET&path=/`
+3. Add **HTTP → Make a request**: POST to `https://yourdomain.com/api/revalidate` with JSON body `{"secret":"YOUR_REVALIDATE_SECRET"}`
 4. Set polling interval (15 min on free tier)
 
 Free tier: 1,000 ops/month, 15-min polling interval.
@@ -159,7 +159,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -s -X POST "${{ secrets.SITE_URL }}/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}&path=/"
+          curl -s -X POST "${{ secrets.SITE_URL }}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${{ secrets.REVALIDATE_SECRET }}\"}"
 ```
 
 ### Vercel Deploy Hooks

@@ -68,5 +68,7 @@ Host: https://yourdomain.com
 Notion 포스트를 수정했을 때 1시간을 기다리지 않고 즉시 갱신:
 
 ```bash
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/post-slug"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"post-slug"}'
 ```

@@ -33,5 +33,7 @@ Vercel이 ISR, 이미지 최적화, CDN을 자동으로 처리합니다.
 배포 후 Vercel 환경 변수에 `REVALIDATE_SECRET`을 설정한 뒤:
 
 ```bash
-curl -X POST "https://myblog.vercel.app/api/revalidate?secret=YOUR_SECRET&path=/post-slug"
+curl -X POST "https://myblog.vercel.app/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"post-slug"}'
 ```

@@ -292,13 +292,19 @@ By default, Noxion re-fetches content from Notion every `revalidate` seconds. On
 
 ```bash
 # Revalidate a specific page
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/my-post-slug"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"my-post-slug"}'
 
 # Revalidate the homepage
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET"}'
 
 # Revalidate a docs page
-curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&path=/docs/getting-started"
+curl -X POST "https://yourdomain.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"docs/getting-started"}'
 ```
 
 ### Automating with Notion
@@ -317,7 +323,9 @@ jobs:
     steps:
       - name: Trigger revalidation
         run: |
-          curl -X POST "${{ secrets.SITE_URL }}/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}&path=/"
+          curl -X POST "${{ secrets.SITE_URL }}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${{ secrets.REVALIDATE_SECRET }}\"}"
 ```
 
 ---

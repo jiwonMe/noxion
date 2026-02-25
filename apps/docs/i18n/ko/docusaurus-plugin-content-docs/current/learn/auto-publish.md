@@ -138,7 +138,7 @@ Notion 웹훅을 사용할 수 없는 경우 (예: Notion 플랜이 통합을 �
 
 1. **Notion → Watch Database Items** 트리거로 Make 시나리오 생성
 2. 필터 추가: `Public` = `true`일 때만
-3. **HTTP → Make a request** 추가: `https://yourdomain.com/api/revalidate`로 POST, 쿼리 파라미터 `secret=YOUR_REVALIDATE_SECRET&path=/`
+3. **HTTP → Make a request** 추가: `https://yourdomain.com/api/revalidate`로 POST, JSON body `{"secret":"YOUR_REVALIDATE_SECRET"}`
 4. 폴링 간격 설정 (무료 티어 15분)
 
 무료 티어: 월 1,000 오퍼레이션, 15분 폴링 간격.
@@ -159,7 +159,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -s -X POST "${{ secrets.SITE_URL }}/api/revalidate?secret=${{ secrets.REVALIDATE_SECRET }}&path=/"
+          curl -s -X POST "${{ secrets.SITE_URL }}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${{ secrets.REVALIDATE_SECRET }}\"}"
 ```
 
 ### Vercel Deploy Hooks

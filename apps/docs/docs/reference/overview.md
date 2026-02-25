@@ -6,7 +6,7 @@ description: Noxion package API reference — all exports, types, and functions.
 
 # API Reference
 
-Noxion is distributed as five npm packages plus a CLI scaffolding tool. This section provides exhaustive documentation for every exported function, component, hook, and type.
+Noxion is distributed as five npm packages plus a CLI scaffolding tool. This section covers the public API surface and links to detailed package references.
 
 ---
 
@@ -55,6 +55,15 @@ bun add @noxion/core
 | [`fetchPage(client, pageId)`](./core/fetcher#fetchpage) | Fetch a full Notion page's `ExtendedRecordMap` |
 | [`fetchAllSlugs(client, pageId)`](./core/fetcher#fetchallslugs) | Fetch all published post slugs |
 
+#### Slug utilities
+
+| Export | Description |
+|--------|-------------|
+| [`generateSlug(title)`](./core/slug#generateslug) | Generate a URL-safe slug from a title |
+| [`parseNotionPageId(input)`](./core/slug#parsenotionpageid) | Normalize a Notion page ID into UUID format |
+| [`buildPageUrl(slug)`](./core/slug#buildpageurl) | Ensure a leading `/` for a page URL |
+| [`resolveSlug(post)`](./core/slug#resolveslug) | Resolve a post slug with title fallback |
+
 #### Frontmatter
 
 | Export | Description |
@@ -72,6 +81,17 @@ bun add @noxion/core
 | [`createRSSPlugin(options)`](./core/plugins#createrssplugin) | Built-in RSS plugin factory |
 | `generateRSSXml(posts, config, options?)` | Generate RSS 2.0 XML from blog pages |
 | [`createCommentsPlugin(options)`](./core/plugins#createcommentsplugin) | Built-in comments plugin factory |
+
+#### Advanced plugin runtime
+
+| Export | Description |
+|--------|-------------|
+| `loadPlugins(entries)` | Instantiate and validate plugin entries |
+| `executeHook(plugins, hookName, args)` | Execute async plugin lifecycle hooks |
+| `executeTransformHook(plugins, hookName, initialValue, extraArgs)` | Execute transform hooks with chaining |
+| `executeRegisterPageTypes(plugins, registry)` | Register custom page types from plugins |
+| `executeRouteResolve(plugins, route)` | Resolve route through plugin pipeline |
+| `executeExtendSlots(plugins, initialSlots)` | Legacy slot extension pipeline |
 
 #### Types (re-exports)
 
@@ -254,6 +274,22 @@ bun add @noxion/adapter-nextjs @noxion/core
 | [`generateNoxionSitemap(posts, config)`](./adapter-nextjs/sitemap#generatenoxionsitemap) | Generate `MetadataRoute.Sitemap` entries |
 | [`generateNoxionRobots(config)`](./adapter-nextjs/sitemap#generatenoxionrobots) | Generate `MetadataRoute.Robots` |
 | [`generateNoxionStaticParams(client, pageId)`](./adapter-nextjs/sitemap#generatenoxionstaticparams) | Generate `{ slug: string }[]` for `generateStaticParams()` |
+
+### Routing
+
+| Export | Description |
+|--------|-------------|
+| [`generateNoxionRoutes(config)`](./adapter-nextjs/sitemap#generatenoxionroutes) | Generate route configs from collections |
+| [`resolvePageType(path, routes)`](./adapter-nextjs/sitemap#resolvepagetype) | Resolve route config from URL path |
+| [`buildPageUrl(page, routes)`](./adapter-nextjs/sitemap#buildpageurl) | Build URL path using route prefix |
+| [`generateStaticParamsForRoute(pages, route)`](./adapter-nextjs/sitemap#generatestaticparamsforroute) | Generate params for one route type |
+
+### Revalidation & Webhooks
+
+| Export | Description |
+|--------|-------------|
+| [`createRevalidateHandler(options)`](./adapter-nextjs/revalidation#createrevalidatehandler) | On-demand ISR revalidation route handler |
+| [`createNotionWebhookHandler(options)`](./adapter-nextjs/revalidation#createnotionwebhookhandler) | Notion webhook route handler with signature verification |
 
 ---
 

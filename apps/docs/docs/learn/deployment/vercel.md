@@ -92,10 +92,14 @@ Vercel's ISR cache can be cleared on-demand without a full redeploy. This lets y
 
 ```bash
 # After publishing a new post in Notion:
-curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/my-new-post"
+curl -X POST "https://myblog.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET","slug":"my-new-post"}'
 
 # After updating the homepage (e.g., post order changed):
-curl -X POST "https://myblog.com/api/revalidate?secret=YOUR_SECRET&path=/"
+curl -X POST "https://myblog.com/api/revalidate" \
+  -H "Content-Type: application/json" \
+  -d '{"secret":"YOUR_SECRET"}'
 ```
 
 ### Using Vercel webhooks
