@@ -51,10 +51,10 @@ Notion's official API returns presigned S3 URLs that expire in ~1 hour — unusa
 | **Full SEO stack** | Open Graph, Twitter Cards, JSON-LD (BlogPosting, TechArticle, CreativeWork, BreadcrumbList, WebSite + SearchAction), RSS 2.0, XML sitemap, robots.txt — all generated automatically |
 | **Image optimization** | AVIF/WebP auto-conversion via `next/image`, with stable non-expiring proxy URLs. Optional build-time download for full offline independence |
 | **Plugin system** | Analytics, RSS, comments, reading time — plus a plugin SDK (`@noxion/plugin-utils`) for building your own |
-| **Theme system** | Contract-based theming via `defineThemeContract()` with CSS variable customization. Light/dark/system modes out of the box |
+| **Theme system** | Direct-import theming with Tailwind CSS and CSS variable customization. Light/dark/system modes out of the box |
 | **Syntax highlighting** | VS Code-quality code blocks via [Shiki](https://shiki.style) with dual-theme support — no client-side JS |
 | **Math equations** | KaTeX SSR — equations rendered server-side, zero client-side math runtime |
-| **Deploy anywhere** | Vercel (one-click), Docker, static export |
+| **Deploy options** | Vercel (one-click) or self-hosted Docker |
 
 ---
 
@@ -177,7 +177,7 @@ Plugins extend Noxion at well-defined lifecycle hooks: `transformPosts`, `regist
 
 ### Themes
 
-Themes are contract-based packages defined via `defineThemeContract()` that bundle components, layouts, and templates. The default theme supports blog and docs page types. Community themes can declare which page types they support. See [Themes](./themes).
+Themes are npm packages that export React components, layouts, and templates directly. Import what you need — no providers or contracts required. The default theme supports blog and docs page types, and all components use Tailwind CSS. See [Themes](./themes).
 
 ---
 

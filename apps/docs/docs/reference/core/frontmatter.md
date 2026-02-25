@@ -135,43 +135,41 @@ floatFirstTOC: right
 
 ## `applyFrontmatter()`
 
-Applies frontmatter key-value pairs to a `BlogPost` object, mapping known keys to specific fields and preserving all keys in `post.frontmatter`.
+Applies frontmatter key-value pairs to a `NoxionPage` object (or subtype), mapping known keys to top-level fields and metadata while preserving all keys in `page.frontmatter`.
 
 ### Signature
 
 ```ts
-function applyFrontmatter(
-  post: BlogPost,
+function applyFrontmatter<T extends NoxionPage>(
+  page: T,
   frontmatter: Record<string, string>
-): BlogPost
+): T
 ```
 
 ### Parameters
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `post` | `BlogPost` | The source post object |
+| `page` | `NoxionPage` | The source page object |
 | `frontmatter` | `Record<string, string>` | Parsed frontmatter (from `parseFrontmatter()` or `parseKeyValuePairs()`) |
 
 ### Returns
 
-`BlogPost` — a new post object with frontmatter overrides applied. The original `post` is **not** mutated.
+`NoxionPage` — a new page object with frontmatter overrides applied. The original object is **not** mutated.
 
 ### Known key mappings
 
-| Frontmatter key | `BlogPost` field | Transformation |
+| Frontmatter key | Target field | Transformation |
 |-----------------|-----------------|----------------|
 | `cleanUrl` | `slug` | Leading `/` is stripped: `/my-post` → `my-post` |
-| `slug` | `slug` | Used as-is |
+| `slug` | `slug` | Leading `/` is stripped |
 | `title` | `title` | Direct replacement |
 | `description` | `description` | Direct replacement |
-| `date` | `date` | Direct replacement (should be `YYYY-MM-DD` format) |
-| `category` | `category` | Direct replacement |
-| `tags` | `tags` | Split by `,` and trimmed: `"react, ts"` → `["react", "ts"]` |
+| `tags` | `metadata.tags` | Split by `,` and trimmed: `"react, ts"` → `["react", "ts"]` |
 | `coverImage` | `coverImage` | Direct replacement |
 | `cover` | `coverImage` | Alias for `coverImage` |
 
-All frontmatter keys (including unknown/custom ones) are preserved in `post.frontmatter` as a `Record<string, string>`.
+All frontmatter keys (including unknown/custom ones) are preserved in `page.frontmatter` as a `Record<string, string>`. Unknown keys are copied into `page.metadata`.
 
 ### Example
 
@@ -196,7 +194,7 @@ const frontmatter = {
 const updatedPost = applyFrontmatter(post, frontmatter);
 // updatedPost.slug          → "better-slug"  (leading / stripped)
 // updatedPost.title         → "SEO-Optimized Title"
-// updatedPost.tags          → ["react", "typescript", "tutorial"]
+// updatedPost.metadata.tags → ["react", "typescript", "tutorial"]
 // updatedPost.frontmatter   → { cleanUrl: "/better-slug", title: "SEO-Optimized Title", tags: "react, typescript, tutorial", myCustomKey: "some-value" }
 ```
 

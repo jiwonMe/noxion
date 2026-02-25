@@ -1,6 +1,6 @@
 # create-noxion
 
-CLI scaffolding tool for [Noxion](https://github.com/jiwonme/noxion) — a Notion-powered blog builder.
+CLI scaffolding tool for [Noxion](https://github.com/jiwonme/noxion) — a Notion-powered website builder.
 
 ## Usage
 
@@ -10,7 +10,7 @@ bun create noxion my-blog
 npx create-noxion my-blog
 ```
 
-This scaffolds a complete Next.js blog project in seconds, pre-configured with:
+This scaffolds a complete Next.js project in seconds (blog, docs, portfolio, or full), pre-configured with:
 
 - Next.js App Router
 - Notion as CMS (via `@noxion/core`)

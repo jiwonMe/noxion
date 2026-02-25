@@ -5,18 +5,16 @@ description: "PostCard component — individual blog post card"
 
 # `<PostCard />`
 
-:::info Theme contract component
-`PostCard` is no longer exported directly from `@noxion/renderer`. It is now part of theme contracts. The type `PostCardProps` is still exported from `@noxion/renderer`.
+:::info Theme component
+`PostCard` is exported directly from theme packages. The type `PostCardProps` is exported from `@noxion/renderer`.
 
-To use the component, access it from the theme contract:
 ```tsx
-import { useThemeComponent } from "@noxion/renderer";
-
-const PostCard = useThemeComponent("PostCard");
+import { PostCard } from "@noxion/theme-default";
+import type { PostCardProps } from "@noxion/renderer";
 ```
 :::
 
-Renders a single blog post card, typically used inside `<PostList>`. Displays the post cover image, title, publication date, category, tags, and description excerpt.
+Renders a single post card, typically used inside `<PostList>`. Exact markup/styling is theme-specific.
 
 ---
 
@@ -26,13 +24,13 @@ Renders a single blog post card, typically used inside `<PostList>`. Displays th
 |------|------|----------|-------------|
 | `id` | `string` | ✅ | Notion page ID. Used as the React `key` when rendered in a list. |
 | `title` | `string` | ✅ | Post title. |
-| `slug` | `string` | ✅ | URL slug. The card links to `/${slug}`. |
-| `date` | `string` | ✅ | Publication date string. Displayed as-is (e.g. `"2025-02-01"`). |
-| `tags` | `string[]` | ✅ | Post tags. Rendered as clickable links to `/tag/[tag]`. |
-| `coverImage` | `string` | — | Cover image URL (from `post.coverImage`). If absent, no image is shown. |
-| `category` | `string` | — | Post category. Shown as a badge above the title. |
-| `description` | `string` | — | Post description/excerpt. Shown below the title. |
-| `author` | `string` | — | Author name. Shown below the description. |
+| `slug` | `string` | ✅ | URL slug. Commonly used for the post link target. |
+| `date` | `string` | ✅ | Publication date value (e.g. `"2025-02-01"`). Formatting is theme-specific. |
+| `tags` | `string[]` | ✅ | Post tag values. Theme may render them or ignore them. |
+| `coverImage` | `string` | — | Optional cover image URL. |
+| `category` | `string` | — | Optional category label. |
+| `description` | `string` | — | Optional post description/excerpt. |
+| `author` | `string` | — | Optional author name. |
 
 ---
 
@@ -40,10 +38,9 @@ Renders a single blog post card, typically used inside `<PostList>`. Displays th
 
 ```tsx
 "use client";
-import { useThemeComponent } from "@noxion/renderer";
+import { PostCard } from "@noxion/theme-default";
 
 function MyPostCard({ post }) {
-  const PostCard = useThemeComponent("PostCard");
 
   return (
     <PostCard
@@ -64,41 +61,24 @@ function MyPostCard({ post }) {
 
 ## Card anatomy
 
-```
-+--------------------------------------+
-| [Cover Image]                         |
-|                                       |
-| [Category Badge]                      |
-| Post Title                            |
-| Description excerpt text...           |
-|                                       |
-| Feb 1, 2025  .  Jane Doe             |
-| [react] [typescript] [tutorial]       |
-+--------------------------------------+
-```
-
-- **Cover image** — rendered with lazy loading. Pass `next/image`-proxied URLs for optimized loading. The image is contained within a fixed aspect-ratio container (16:9 by default) to prevent layout shift.
-- **Category badge** — shown as a small pill above the title, links to `/tag/[category]`
-- **Tags** — each tag is a link to `/tag/[tag]`
+`PostCard` output depends on the theme package. For example, `@noxion/theme-default` currently renders a minimal text-first card (title, description, date) and may ignore optional fields like tags or cover image.
 
 ---
 
 ## Cover image behavior
 
-The cover image is rendered as an `<img>` tag (not `next/image`) in `<PostCard>`. This is intentional — cover images in the post list are typically small thumbnails and the overhead of `next/image` optimization is not worth it for list pages.
-
-However, if you're using [build-time image download](../../learn/image-optimization#option-build-time-image-download) (`NOXION_DOWNLOAD_IMAGES=true`), the `coverImage` URL will already be a local path (`/images/[hash].webp`), which is served as a static asset.
-
-For post detail pages, cover images **are** optimized via `next/image` in the `<NotionPage>` renderer.
+`coverImage` is part of `PostCardProps`, but a theme can choose whether and how to render it (`<img>`, `next/image`, or hidden). Check your selected theme's `PostCard` source for exact behavior.
 
 ---
 
 ## Date formatting
 
-The `date` prop is displayed as-is. If you want localized date formatting, format it before passing:
+Date formatting is theme-controlled. `@noxion/theme-default` currently formats dates to a localized short format internally.
+
+If you need full control, format the value before passing it and/or provide your own `PostCard` implementation:
 
 ```tsx
-const PostList = useThemeComponent("PostList");
+import { PostList } from "@noxion/theme-default";
 
 <PostList
   posts={posts.map((p) => ({
@@ -117,7 +97,12 @@ const PostList = useThemeComponent("PostList");
 
 ## Customizing the card
 
-To customize `<PostCard>` styling, use CSS variable overrides:
+To customize `<PostCard>`, either:
+
+- style the classes exposed by your current theme implementation, or
+- provide your own `PostCard` component and style it directly.
+
+Example custom class styling:
 
 ```css
 /* globals.css */
@@ -132,4 +117,4 @@ To customize `<PostCard>` styling, use CSS variable overrides:
 }
 ```
 
-For structural changes (different layout, additional metadata fields), create your own card component and include it in your theme contract.
+For structural changes (layout, extra metadata fields), create your own card component in your app/theme package and render it from your chosen layout/template.

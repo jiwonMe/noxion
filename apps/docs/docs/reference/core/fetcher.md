@@ -113,7 +113,7 @@ async function fetchCollection(
 
 ### Returns
 
-`Promise<NoxionPage[]>` — array of pages typed according to the collection's `pageType`. Blog pages are sorted by date descending. Docs pages are sorted by section then order.
+`Promise<NoxionPage[]>` — pages extracted for the collection's `pageType`. Blog pages are sorted by date descending.
 
 ### Schema mapping
 
@@ -160,14 +160,14 @@ const docsPages = await fetchCollection(notion, {
 
 ## `fetchAllCollections()`
 
-Fetches pages from all configured collections in parallel.
+Fetches pages from all configured collections and flattens them into one array.
 
 ### Signature
 
 ```ts
 async function fetchAllCollections(
   client: NotionAPI,
-  collections: NoxionCollection[]
+  config: NoxionConfig
 ): Promise<NoxionPage[]>
 ```
 
@@ -178,7 +178,7 @@ async function fetchAllCollections(
 ### Example
 
 ```ts
-const allPages = await fetchAllCollections(notion, siteConfig.collections!);
+const allPages = await fetchAllCollections(notion, siteConfig);
 const blogPages = allPages.filter(isBlogPage);
 const docsPages = allPages.filter(isDocsPage);
 ```

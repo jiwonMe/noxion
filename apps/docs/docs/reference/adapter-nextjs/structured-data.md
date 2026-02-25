@@ -30,7 +30,8 @@ Automatically selects the correct JSON-LD type based on `page.pageType`. This is
 ```ts
 function generatePageLD(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: PageTypeRegistry
 ): Record<string, unknown>
 ```
 
@@ -41,7 +42,7 @@ function generatePageLD(
 | `"blog"` | `BlogPosting` | `generateBlogPostingLD()` |
 | `"docs"` | `TechArticle` | `generateTechArticleLD()` |
 | `"portfolio"` | `CreativeWork` | `generateCreativeWorkLD()` |
-| Other | `Article` | Generic article schema |
+| Other | `BlogPosting` (default fallback) | `generateBlogPostingLD()` |
 
 ### Usage
 
@@ -102,7 +103,7 @@ function generateBlogPostingLD(
 
 ## `generateTechArticleLD()`
 
-Generates a [`TechArticle`](https://schema.org/TechArticle) schema for documentation pages. Includes `proficiencyLevel` and `dependencies` fields.
+Generates a [`TechArticle`](https://schema.org/TechArticle) schema for documentation pages.
 
 ### Signature
 
@@ -133,7 +134,7 @@ function generateTechArticleLD(
 
 ## `generateCreativeWorkLD()`
 
-Generates a [`CreativeWork`](https://schema.org/CreativeWork) schema for portfolio projects. Includes `technology`, `url`, and `dateCreated` fields.
+Generates a [`CreativeWork`](https://schema.org/CreativeWork) schema for portfolio projects. Uses metadata like `technologies`, `projectUrl`, and `year` when available.
 
 ### Signature
 
@@ -163,7 +164,7 @@ function generateCreativeWorkLD(
 
 ## `generateBreadcrumbLD()`
 
-Generates a [`BreadcrumbList`](https://schema.org/BreadcrumbList) schema. Adapts to page type — blog pages use category as middle crumb, docs pages use section, portfolio uses "Portfolio".
+Generates a [`BreadcrumbList`](https://schema.org/BreadcrumbList) schema. If `page.metadata.category` exists, it is used as a middle breadcrumb item; otherwise the breadcrumb is `Home -> Page`.
 
 ### Signature
 

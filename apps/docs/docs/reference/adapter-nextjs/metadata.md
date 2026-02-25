@@ -25,7 +25,8 @@ Generates `Metadata` for a single page. Works with all page types (`NoxionPage`)
 ```ts
 function generateNoxionMetadata(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: PageTypeRegistry
 ): Metadata
 ```
 
@@ -41,16 +42,16 @@ function generateNoxionMetadata(
 | Metadata field | Source |
 |----------------|--------|
 | `title` | `page.title` |
-| `description` | `page.description ?? page.title` (max 160 chars) |
+| `description` | `page.description` or fallback `"<page title> - <site name>"` (max 160 chars) |
 | `authors` | `page.metadata.author ?? config.author` |
-| `openGraph.type` | `"article"` |
+| `openGraph.type` | `"article"` for blog pages, otherwise `"website"` |
 | `openGraph.publishedTime` | `page.metadata.date` (blog pages) |
 | `openGraph.modifiedTime` | `page.lastEditedTime` |
 | `openGraph.tags` | `page.metadata.tags` (blog pages) |
-| `openGraph.section` | `page.metadata.category` (blog) or `page.metadata.section` (docs) |
+| `openGraph.section` | `page.metadata.category` (when present) |
 | `openGraph.images` | `page.coverImage` (1200×630) |
 | `twitter.card` | `"summary_large_image"` |
-| `alternates.canonical` | `https://{domain}/{prefix}/{slug}` |
+| `alternates.canonical` | `https://{domain}/{slug}` |
 
 Metadata fields are accessed from `page.metadata` using internal helper functions `getMetaString()` and `getMetaStringArray()`.
 
@@ -86,7 +87,7 @@ function generateNoxionListMetadata(config: NoxionConfig): Metadata
 | `title.default` | `config.name` |
 | `title.template` | `"%s \| config.name"` |
 | `description` | `config.description` |
-| `metadataBase` | `new URL("https://${config.domain}")` |
+| `metadataBase` | `new URL("https://<site-domain>")` |
 | `openGraph.type` | `"website"` |
 | `robots.index` / `robots.follow` | `true` |
 | `alternates.types["application/rss+xml"]` | RSS feed discovery (if RSS plugin configured) |

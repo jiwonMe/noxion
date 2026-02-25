@@ -1,11 +1,11 @@
 ---
 title: create-noxion
-description: CLI scaffolding tool for creating a new Noxion blog project
+description: CLI scaffolding tool for creating Noxion projects (blog/docs/portfolio/full)
 ---
 
 # `create-noxion`
 
-Scaffolds a new, fully-configured Noxion blog project. Generates a Next.js 16 App Router app with all Noxion packages wired together, including SEO utilities, ISR, image optimization, and optional plugins.
+Scaffolds a new Noxion project. Supports site templates (`blog`, `docs`, `portfolio`, `full`) plus plugin/theme starter scaffolds.
 
 ---
 
@@ -43,19 +43,18 @@ bun create noxion my-blog
 
 ```
 ✔ Project name: my-blog
+✔ Project template: Blog
 ✔ Notion database page ID: abc123def456...
 ✔ Site name: My Blog
 ✔ Site description: A blog about web development
-✔ Author name: Jane Doe
+✔ Author: Jane Doe
 ✔ Production domain: myblog.com
 
-✨ Creating Noxion blog in ./my-blog...
-✔ Installed dependencies
-✔ Created .env.example
+✔ Created 20+ files
 
   Next steps:
     cd my-blog
-    cp .env.example .env
+    bun install
     bun run dev
 ```
 
@@ -64,6 +63,7 @@ bun create noxion my-blog
 | Prompt | Example | Required | Notes |
 |--------|---------|----------|-------|
 | Project name | `my-blog` | ✅ | Becomes the folder name. |
+| Project template | `blog` | ✅ | One of `blog`, `docs`, `portfolio`, `full`. |
 | Notion page ID | `abc123def456` | ✅ | 32-char hex ID from your Notion database URL. |
 | Site name | `My Blog` | ✅ | Used in `<title>`, OG metadata, RSS. |
 | Description | `A blog about...` | ✅ | Used in `<meta description>`. Keep under 160 chars. |
@@ -74,7 +74,7 @@ bun create noxion my-blog
 
 ## Non-interactive mode (CI/CD)
 
-Use `--yes` with all flags to skip prompts:
+Use `--yes` to skip prompts:
 
 ```bash
 bun create noxion my-blog \
@@ -90,12 +90,15 @@ bun create noxion my-blog \
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--yes` | boolean | — | Skip all interactive prompts. Requires all other flags to be set. |
-| `--notion-id=<id>` | string | ✅ (with `--yes`) | Notion database page ID |
-| `--name=<name>` | string | ✅ (with `--yes`) | Site name |
-| `--description=<desc>` | string | ✅ (with `--yes`) | Site description |
-| `--author=<name>` | string | ✅ (with `--yes`) | Author name |
-| `--domain=<domain>` | string | ✅ (with `--yes`) | Production domain (no protocol) |
+| `--yes` | boolean | — | Skip interactive prompts and use defaults for omitted values. |
+| `--template=<type>` | string | — | `blog`, `docs`, `portfolio`, or `full` |
+| `--notion-id=<id>` | string | Recommended | Primary Notion database page ID |
+| `--docs-notion-id=<id>` | string | — | Docs database ID (used by `full` template) |
+| `--portfolio-notion-id=<id>` | string | — | Portfolio database ID (used by `full` template) |
+| `--name=<name>` | string | — | Site name |
+| `--description=<desc>` | string | — | Site description |
+| `--author=<name>` | string | — | Author name |
+| `--domain=<domain>` | string | — | Production domain (no protocol) |
 
 ---
 
@@ -105,23 +108,23 @@ bun create noxion my-blog \
 my-blog/
 │
 ├── app/                            # Next.js App Router
-│   ├── layout.tsx                  # Root layout: ThemeProvider, fonts, global metadata
-│   ├── page.tsx                    # Homepage: PostList + JSON-LD WebSite/CollectionPage
+│   ├── layout.tsx                  # Root layout: ThemeScript, SiteLayout, global metadata
+│   ├── page.tsx                    # Homepage data fetch + post list composition
 │   ├── [slug]/
-│   │   └── page.tsx                # Post detail: NotionPage + JSON-LD BlogPosting + ISR
+│   │   └── page.tsx                # Post detail: NotionPage + BlogPosting JSON-LD + ISR
 │   ├── tag/
 │   │   └── [tag]/
 │   │       └── page.tsx            # Tag filter page: filtered PostList
-│   ├── feed.xml/
-│   │   └── route.ts                # RSS 2.0 feed (enabled by RSS plugin)
 │   ├── api/
-│   │   └── revalidate/
+│   │   ├── revalidate/
 │   │       └── route.ts            # On-demand ISR revalidation endpoint
+│   │   └── notion-webhook/
+│   │       └── route.ts            # Notion integration webhook endpoint
 │   ├── sitemap.ts                  # XML sitemap generation
 │   └── robots.ts                   # robots.txt generation
 │
 ├── lib/
-│   ├── config.ts                   # Loads noxion.config.ts with env var overrides
+│   ├── config.ts                   # Loads and validates noxion.config.ts
 │   └── notion.ts                   # Notion client + getAllPosts() + getPostBySlug()
 │
 ├── public/                         # Static assets
@@ -142,8 +145,8 @@ my-blog/
 **`app/layout.tsx`**
 
 Sets up the root layout with:
-- `<NoxionThemeProvider>` wrapping all content
 - `<ThemeScript>` in `<head>` for FOUC prevention
+- Direct theme component imports (no provider needed)
 - Site-level `Metadata` from `generateNoxionListMetadata()`
 - Global CSS and font loading
 
@@ -152,7 +155,6 @@ Sets up the root layout with:
 Homepage component:
 - Fetches all published posts with `getAllPosts()`
 - Renders `<PostList posts={...} />`
-- Injects `WebSite` and `CollectionPage` JSON-LD
 - `export const revalidate = config.revalidate` for ISR
 
 **`app/[slug]/page.tsx`**
@@ -162,33 +164,11 @@ Post detail component:
 - `generateMetadata()` generates per-post Open Graph / Twitter metadata
 - Fetches post data and page blocks
 - Renders `<NotionPage recordMap={...} />`
-- Injects `BlogPosting` and `BreadcrumbList` JSON-LD
+- Injects `BlogPosting` JSON-LD
 
 **`lib/notion.ts`**
 
-```ts
-import { cache } from "react";
-import { createNotionClient, fetchBlogPosts, fetchPostBySlug, fetchPage } from "@noxion/core";
-import { siteConfig } from "./config";
-
-export const notion = createNotionClient({
-  authToken: process.env.NOTION_TOKEN,
-});
-
-export const getAllPosts = cache(async () => {
-  return fetchBlogPosts(notion, siteConfig.rootNotionPageId);
-});
-
-export const getPostBySlug = cache(async (slug: string) => {
-  return fetchPostBySlug(notion, siteConfig.rootNotionPageId, slug);
-});
-
-export const getPageData = cache(async (pageId: string) => {
-  return fetchPage(notion, pageId);
-});
-```
-
-The [`cache()`](https://react.dev/reference/react/cache) wrapper deduplicates requests within a single render cycle — if multiple Server Components call `getAllPosts()` in the same render, only one Notion API call is made.
+`lib/notion.ts` exports async helpers (`getAllPosts`, `getPostBySlug`, `getPageRecordMap`, `getAllTags`) built on top of `createNotionClient`, `fetchBlogPosts`, `fetchPostBySlug`, and `fetchPage`.
 
 ---
 
@@ -196,10 +176,9 @@ The [`cache()`](https://react.dev/reference/react/cache) wrapper deduplicates re
 
 ```bash
 cd my-blog
-cp .env.example .env
-# Edit .env: add NOTION_PAGE_ID and any other variables
+# Edit .env: verify NOTION_PAGE_ID and other variables
 
-bun install   # Install dependencies (create-noxion may do this automatically)
+bun install
 bun run dev   # Start development server at http://localhost:3000
 ```
 
@@ -207,7 +186,7 @@ bun run dev   # Start development server at http://localhost:3000
 
 1. Open http://localhost:3000 — your Notion posts should appear
 2. Click a post — it should render the full Notion content
-3. Check http://localhost:3000/feed.xml — the RSS feed (if RSS plugin is configured)
+3. (Optional) If you enabled RSS, check http://localhost:3000/feed.xml
 4. Check http://localhost:3000/sitemap.xml — the XML sitemap
 
 If posts don't appear, see [Quick Start → Verify it's working](../../learn/quick-start#verify-its-working) for troubleshooting.

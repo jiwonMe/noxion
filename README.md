@@ -16,7 +16,7 @@ Think [super.so](https://super.so) or [oopy.io](https://oopy.io), but free and y
 - **Plugin system** — analytics (Google, Plausible, Umami), RSS, comments (Giscus, Utterances, Disqus), reading time
 - **2 built-in themes** — Default and Beacon — contract-based theme system, fully customizable via CSS variables
 - **ISR** — posts update automatically every hour; on-demand revalidation API included
-- **Deploy anywhere** — Vercel (one click), Docker, or static export
+- **Deploy flexibly** — Vercel (one click) or self-hosted with Docker
 
 ## Quick Start
 
@@ -156,6 +156,7 @@ noxion/
 └── apps/
     ├── web/                # Demo blog (Next.js 16 App Router)
     ├── docs/               # Documentation site (Docusaurus)
+    ├── example-default/    # Minimal example app using the default theme
     └── theme-dev/          # Theme development & preview app
 ```
 

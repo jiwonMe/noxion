@@ -20,14 +20,14 @@ import type { NoxionPlugin, PluginFactory, PluginConfig } from "@noxion/core";
 
 ## `definePlugin()`
 
-Creates a type-safe `NoxionPlugin` object. Optional — you can pass a plain object matching the `NoxionPlugin` interface — but it provides TypeScript type inference for all hook parameters.
+Creates a type-safe plugin **factory**. It is an identity helper used for better TypeScript inference.
 
 ### Signature
 
 ```ts
-function definePlugin<Content = unknown>(
-  plugin: NoxionPlugin<Content>
-): NoxionPlugin<Content>
+function definePlugin<Options = unknown, Content = unknown>(
+  factory: PluginFactory<Options, Content>
+): PluginFactory<Options, Content>
 ```
 
 ### Example
@@ -35,20 +35,15 @@ function definePlugin<Content = unknown>(
 ```ts
 import { definePlugin } from "@noxion/core";
 
-const myPlugin = definePlugin({
-  name: "my-plugin",
+const createMyPlugin = definePlugin<{ hideTag?: string }>((options) => {
+  return {
+    name: "my-plugin",
 
-  transformPosts({ posts }) {
-    return posts.filter(post => !post.metadata.tags?.includes("private"));
-  },
-
-  injectHead({ post, config }) {
-    if (!post) return [];
-    return [{
-      tagName: "meta",
-      attributes: { name: "author", content: post.metadata.author ?? config.author },
-    }];
-  },
+    transformPosts({ posts }) {
+      const hideTag = options.hideTag ?? "private";
+      return posts.filter((post) => !post.metadata.tags?.includes(hideTag));
+    },
+  };
 });
 ```
 
@@ -75,21 +70,23 @@ interface NoxionPlugin<Content = unknown> {
   postBuild?: (args: { config: NoxionConfig; routes: RouteInfo[] }) => Promise<void> | void;
 
   // Content transformation
-  transformContent?: (args: { recordMap: ExtendedRecordMap; post: NoxionPage }) => ExtendedRecordMap;
+  transformContent?: (args: { recordMap: ExtendedRecordMap; post: BlogPost }) => ExtendedRecordMap;
   transformPosts?: (args: { posts: BlogPost[] }) => BlogPost[];
 
   // SEO / metadata
-  extendMetadata?: (args: { metadata: NoxionMetadata; post?: NoxionPage; config: NoxionConfig }) => NoxionMetadata;
-  injectHead?: (args: { post?: NoxionPage; config: NoxionConfig }) => HeadTag[];
+  extendMetadata?: (args: { metadata: NoxionMetadata; post?: BlogPost; config: NoxionConfig }) => NoxionMetadata;
+  injectHead?: (args: { post?: BlogPost; config: NoxionConfig }) => HeadTag[];
   extendSitemap?: (args: { entries: SitemapEntry[]; config: NoxionConfig }) => SitemapEntry[];
 
   // Routing
   extendRoutes?: (args: { routes: RouteInfo[]; config: NoxionConfig }) => RouteInfo[];
 
   // v0.2 hooks
-  registerPageTypes?: (args: { registry: PageTypeRegistry }) => void;
-  onRouteResolve?: (args: { page: NoxionPage; defaultUrl: string }) => string;
-  extendSlots?: (slots: Record<string, string>) => Record<string, string>;
+  registerPageTypes?: () => PageTypeDefinition[];
+  onRouteResolve?: (route: RouteInfo) => RouteInfo | null;
+
+  /** @deprecated */
+  extendSlots?: (slots: Record<string, unknown>) => Record<string, unknown>;
 }
 ```
 
@@ -120,16 +117,15 @@ transformPosts({ posts }) {
 **Use for**: Registering custom page types beyond the built-in blog, docs, and portfolio.
 
 ```ts
-registerPageTypes({ registry }) {
-  registry.register({
+registerPageTypes() {
+  return [{
     name: "recipe",
-    label: "Recipe",
     defaultTemplate: "recipe/page",
     schemaConventions: {
-      ingredients: "Ingredients",
-      prepTime: "Prep Time",
+      ingredients: { names: ["Ingredients"] },
+      prepTime: { names: ["Prep Time"] },
     },
-  });
+  }];
 }
 ```
 
@@ -140,19 +136,19 @@ registerPageTypes({ registry }) {
 **Use for**: Customizing URL patterns per page type.
 
 ```ts
-onRouteResolve({ page, defaultUrl }) {
-  if (page.pageType === "recipe") {
-    return `/recipes/${page.slug}`;
+onRouteResolve(route) {
+  if (route.path.startsWith("/recipe/")) {
+    return { ...route, path: route.path.replace("/recipe/", "/recipes/") };
   }
-  return defaultUrl;
+  return route;
 }
 ```
 
 #### `extendSlots`
 
-**Called**: When rendering page templates.
+**Called**: Legacy hook from the pre-v0.3 theme-slot model.
 
-**Use for**: Injecting content into named template slots.
+**Use for**: Backward compatibility only. New themes should expose components directly and be composed in app code.
 
 ```ts
 extendSlots(slots) {
@@ -200,7 +196,9 @@ configSchema: {
 ## `PluginFactory` type
 
 ```ts
-type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
+type PluginFactory<Options = unknown, Content = unknown> = (
+  options: Options
+) => NoxionPlugin<Content>;
 ```
 
 Recommended pattern for configurable plugins:

@@ -28,7 +28,8 @@ Generates a sitemap with page-type-aware priority levels.
 ```ts
 function generateNoxionSitemap(
   pages: NoxionPage[],
-  config: NoxionConfig
+  config: NoxionConfig,
+  routePrefix?: Record<string, string>
 ): MetadataRoute.Sitemap
 ```
 
@@ -73,8 +74,8 @@ function generateNoxionRoutes(
 ```ts
 interface NoxionRouteConfig {
   pageType: string;
-  pathPrefix?: string;
-  databaseId: string;
+  pathPrefix: string;
+  paramName: string;
 }
 ```
 
@@ -89,16 +90,17 @@ Determines the page type from a URL path by matching against configured route pr
 ```ts
 function resolvePageType(
   path: string,
-  config: NoxionConfig
-): string
+  routes: NoxionRouteConfig[]
+): NoxionRouteConfig | undefined
 ```
 
 ### Example
 
 ```ts
-resolvePageType("/docs/getting-started", config);  // "docs"
-resolvePageType("/portfolio/noxion", config);       // "portfolio"
-resolvePageType("/my-post", config);                // "blog"
+const routes = generateNoxionRoutes(config);
+
+resolvePageType("/docs/getting-started", routes);
+// => { pageType: "docs", pathPrefix: "/docs", paramName: "slug" }
 ```
 
 ---
@@ -112,16 +114,17 @@ Builds the full URL path for a page, using its collection's `pathPrefix`.
 ```ts
 function buildPageUrl(
   page: NoxionPage,
-  config: NoxionConfig
+  routes: NoxionRouteConfig[]
 ): string
 ```
 
 ### Example
 
 ```ts
-buildPageUrl(docsPage, config);      // "/docs/getting-started"
-buildPageUrl(blogPage, config);      // "/my-post"
-buildPageUrl(portfolioPage, config); // "/portfolio/noxion"
+const routes = generateNoxionRoutes(config);
+buildPageUrl(docsPage, routes);      // "/docs/getting-started"
+buildPageUrl(blogPage, routes);      // "/my-post"
+buildPageUrl(portfolioPage, routes); // "/portfolio/noxion" (if pathPrefix is set to /portfolio)
 ```
 
 ---
@@ -133,10 +136,10 @@ Generates static params for a specific page type route.
 ### Signature
 
 ```ts
-async function generateStaticParamsForRoute(
-  client: NotionAPI,
+function generateStaticParamsForRoute(
+  pages: NoxionPage[],
   route: NoxionRouteConfig
-): Promise<{ slug: string }[]>
+): { slug: string }[]
 ```
 
 ---

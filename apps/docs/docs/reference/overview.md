@@ -49,6 +49,8 @@ bun add @noxion/core
 |--------|-------------|
 | [`createNotionClient(options)`](./core/fetcher#createnotionclient) | Create an authenticated Notion API client |
 | [`fetchBlogPosts(client, pageId)`](./core/fetcher#fetchblogposts) | Fetch all published posts from a database |
+| [`fetchCollection(client, collection)`](./core/fetcher#fetchcollection) | Fetch published pages for a configured collection |
+| [`fetchAllCollections(client, config)`](./core/fetcher#fetchallcollections) | Fetch and flatten pages across all configured collections |
 | [`fetchPostBySlug(client, pageId, slug)`](./core/fetcher#fetchpostbyslug) | Fetch a single post by slug |
 | [`fetchPage(client, pageId)`](./core/fetcher#fetchpage) | Fetch a full Notion page's `ExtendedRecordMap` |
 | [`fetchAllSlugs(client, pageId)`](./core/fetcher#fetchallslugs) | Fetch all published post slugs |
@@ -65,9 +67,10 @@ bun add @noxion/core
 
 | Export | Description |
 |--------|-------------|
-| [`definePlugin(plugin)`](./core/plugins#defineplugin) | Create a type-safe plugin object |
+| [`definePlugin(factory)`](./core/plugins#defineplugin) | Create a type-safe plugin factory |
 | [`createAnalyticsPlugin(options)`](./core/plugins#createanalyticsplugin) | Built-in analytics plugin factory |
 | [`createRSSPlugin(options)`](./core/plugins#createrssplugin) | Built-in RSS plugin factory |
+| `generateRSSXml(posts, config, options?)` | Generate RSS 2.0 XML from blog pages |
 | [`createCommentsPlugin(options)`](./core/plugins#createcommentsplugin) | Built-in comments plugin factory |
 
 #### Types (re-exports)
@@ -196,34 +199,20 @@ bun add @noxion/renderer react react-dom
 |--------|-------------|
 | [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page — wraps `<NotionRenderer />` with Shiki, dark mode, image URL mapping |
 | `<NoxionLogo />` | Noxion logo component |
-| [`<NoxionThemeProvider />`](./renderer/theme-provider) | Theme contract provider (required wrapper) |
-
-### Theme Contract
-
-| Export | Description |
-|--------|-------------|
-| `defineThemeContract(contract)` | Create a validated theme contract |
-| `validateThemeContract(contract)` | Validate a theme contract at runtime |
-
 ### Hooks
 
 | Export | Description |
 |--------|-------------|
-| [`useThemeContract()`](./renderer/theme-provider#usethemecontract) | Returns the active theme contract |
-| [`useThemeComponent(name)`](./renderer/theme-provider#usethemecomponentname) | Returns a specific component from the active theme |
-| [`useThemeLayout(name)`](./renderer/theme-provider#usethemelayoutname) | Returns a layout component from the active theme |
-| [`useThemeTemplate(name)`](./renderer/theme-provider#usethemetemplatename) | Returns a template component from the active theme |
-| [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | Returns and controls the user's theme preference |
+| [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | Returns and controls the user's theme preference (light/dark/system) |
 | `useSearch()` | Search hook |
 
 ### Types
 
 | Export | Description |
 |--------|-------------|
-| `NoxionThemeContract` | Full theme contract interface |
-| `NoxionThemeContractComponents` | Required components in a theme contract |
-| `NoxionThemeContractLayouts` | Required layouts in a theme contract |
-| `NoxionThemeContractTemplates` | Required templates in a theme contract |
+| `NoxionTheme`, `NoxionThemeTokens` | Theme token/type definitions |
+| `NoxionSlotMap`, `NoxionTemplateMap`, `NoxionTemplateProps`, `NoxionLayoutProps` | Layout/template composition types |
+| `NoxionThemeMetadata` | Theme package metadata shape |
 | `PostCardProps`, `PostListProps`, `HeaderProps`, `FooterProps`, etc. | Component prop types (still exported for theme authors) |
 
 ---

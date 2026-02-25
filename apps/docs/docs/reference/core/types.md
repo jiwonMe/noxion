@@ -49,6 +49,9 @@ interface NoxionPage {
   lastEditedTime: string;
   frontmatter?: Record<string, string>;
   metadata: Record<string, unknown>;
+  parent?: string;
+  children?: string[];
+  order?: number;
 }
 ```
 
@@ -104,8 +107,8 @@ interface DocsPage extends NoxionPage {
   pageType: "docs";
   metadata: {
     section?: string;
-    order?: number;
     version?: string;
+    editUrl?: string;
   };
 }
 ```
@@ -115,8 +118,8 @@ Access metadata:
 ```ts
 const page: DocsPage = /* ... */;
 page.metadata.section;  // "Getting Started"
-page.metadata.order;    // 1
 page.metadata.version;  // "latest"
+page.metadata.editUrl;  // "https://github.com/..."
 ```
 
 ---
@@ -194,9 +197,14 @@ Defines a custom page type, registered via the `registerPageTypes` plugin hook.
 ```ts
 interface PageTypeDefinition {
   name: string;
-  label: string;
-  defaultTemplate: string;
-  schemaConventions: SchemaConventions;
+  schemaConventions?: SchemaConventions;
+  defaultTemplate?: string;
+  defaultLayout?: string;
+  routes?: (page: NoxionPage) => string;
+  sortBy?: { field: string; order: "asc" | "desc" };
+  sitemapConfig?: { priority: number; changefreq: "daily" | "weekly" | "monthly" };
+  structuredDataType?: string;
+  metadataConfig?: { openGraphType: "article" | "website" };
 }
 ```
 
@@ -207,7 +215,12 @@ interface PageTypeDefinition {
 Maps metadata field names to their default Notion property names for a page type.
 
 ```ts
-type SchemaConventions = Record<string, string>;
+interface SchemaConventions {
+  [fieldName: string]: {
+    names: string[];
+    type?: string;
+  };
+}
 ```
 
 Built-in conventions:
@@ -226,7 +239,7 @@ The fully-resolved configuration object. All optional fields have defaults appli
 
 ```ts
 interface NoxionConfig {
-  rootNotionPageId: string;
+  rootNotionPageId?: string;
   rootNotionSpaceId?: string;
   name: string;
   domain: string;
@@ -308,7 +321,9 @@ interface NoxionPageData {
 Type for plugin factory functions that accept configuration options.
 
 ```ts
-type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
+type PluginFactory<Options = unknown, Content = unknown> = (
+  options: Options
+) => NoxionPlugin<Content>;
 ```
 
 ---
@@ -327,10 +342,12 @@ import type { ExtendedRecordMap } from "@noxion/core";
 
 ```ts
 type PluginConfig =
-  | NoxionPlugin
-  | [NoxionPlugin, unknown]
+  | PluginModule
+  | [PluginModule, unknown]
   | false;
 ```
+
+Where `PluginModule = NoxionPlugin | PluginFactory`.
 
 The `false` variant allows conditionally disabling plugins:
 
