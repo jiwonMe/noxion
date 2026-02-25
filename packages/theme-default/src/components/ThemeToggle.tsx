@@ -3,7 +3,6 @@
 import { useThemePreference } from "@noxion/renderer";
 import type { ThemePreference } from "@noxion/renderer";
 import type { ThemeToggleProps } from "@noxion/renderer";
-import * as styles from "./ThemeToggle.css";
 
 const CYCLE: ThemePreference[] = ["system", "light", "dark"];
 
@@ -53,7 +52,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       aria-label={`Theme: ${LABELS[preference]}. Click to change.`}
       title={LABELS[preference]}
-      className={className ? `${styles.button} ${className}` : styles.button}
+      className={className ? "" : ""}
     >
       {preference === "light" && <SunIcon />}
       {preference === "dark" && <MoonIcon />}

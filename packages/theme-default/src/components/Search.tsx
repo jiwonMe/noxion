@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import type { SearchProps } from "@noxion/renderer";
-import * as styles from "./Search.css";
 
 function SearchIcon() {
   return (
@@ -37,8 +36,8 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
   }, []);
 
   return (
-    <div className={styles.wrapper}>
-      <span className={styles.icon}>
+    <div className="">
+      <span className="">
         <SearchIcon />
       </span>
       <input
@@ -46,9 +45,9 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
         type="text"
         placeholder={placeholder}
         onChange={(e) => handleInput(e.target.value)}
-        className={styles.input}
+        className=""
       />
-      <kbd className={styles.kbd}>⌘K</kbd>
+      <kbd className="">⌘K</kbd>
     </div>
   );
 }

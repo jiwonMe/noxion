@@ -2,7 +2,6 @@ import type { NoxionTemplateProps, PostCardProps } from "@noxion/renderer";
 import { FeaturedPostCard } from "../components/FeaturedPostCard";
 import { PostCard } from "../components/PostCard";
 import { PostList } from "../components/PostList";
-import * as styles from "./HomePage.css";
 
 export function HomePage({ data }: NoxionTemplateProps) {
   const posts = (data.posts ?? []) as PostCardProps[];
@@ -10,7 +9,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
 
   if (posts.length === 0) {
     return (
-      <div className={styles.page}>
+      <div className="">
         <PostList posts={posts} />
       </div>
     );
@@ -30,10 +29,10 @@ export function HomePage({ data }: NoxionTemplateProps) {
   const sidebarPosts = heroPosts.slice(LEFT_COUNT + MIDDLE_COUNT);
 
   return (
-    <div className={styles.page}>
-      <section className={styles.headerGrid}>
+    <div className="">
+      <section className="">
         {leftPosts.length > 0 && (
-          <div className={styles.gridLeft}>
+          <div className="">
             {leftPosts.map((post) => (
               <FeaturedPostCard key={post.slug} {...post} />
             ))}
@@ -41,7 +40,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
         )}
 
         {middlePosts.length > 0 && (
-          <div className={styles.gridMiddle}>
+          <div className="">
             {middlePosts.map((post) => (
               <PostCard key={post.slug} {...post} />
             ))}
@@ -49,8 +48,8 @@ export function HomePage({ data }: NoxionTemplateProps) {
         )}
 
         {sidebarPosts.length > 0 && (
-          <div className={styles.gridRight}>
-            <div className={styles.featuredFeed}>
+          <div className="">
+            <div className="">
               {sidebarPosts.map((post) => (
                 <PostCard key={post.slug} {...post} />
               ))}
@@ -60,9 +59,9 @@ export function HomePage({ data }: NoxionTemplateProps) {
       </section>
 
       {feedPosts.length > 0 && (
-        <section className={styles.feed}>
-          <h2 className={styles.feedTitle}>{feedTitle}</h2>
-          <div className={styles.feedList}>
+        <section className="">
+          <h2 className="">{feedTitle}</h2>
+          <div className="">
             {feedPosts.map((post) => (
               <PostCard key={post.slug} {...post} />
             ))}

@@ -1,13 +1,12 @@
 import type { FooterProps } from "@noxion/renderer";
-import * as styles from "./Footer.css";
 
 export function Footer({ siteName, author }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
-      <div className={styles.inner}>
-        <span className={styles.copy}>
+    <footer className="">
+      <div className="">
+        <span className="">
           &copy; {year} {author ?? siteName}
         </span>
 
@@ -15,7 +14,7 @@ export function Footer({ siteName, author }: FooterProps) {
           href="https://github.com/jiwonme/noxion"
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.link}
+          className=""
         >
           Powered by Noxion
         </a>

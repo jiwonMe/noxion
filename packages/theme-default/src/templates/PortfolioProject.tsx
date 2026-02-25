@@ -2,7 +2,6 @@
 
 import type { NoxionTemplateProps, PortfolioCardProps } from "@noxion/renderer";
 import { NotionPage } from "../components/NotionPage";
-import * as styles from "./PortfolioProject.css";
 
 export function PortfolioProject({ data }: NoxionTemplateProps) {
   const recordMap = data.recordMap;
@@ -10,24 +9,24 @@ export function PortfolioProject({ data }: NoxionTemplateProps) {
   const project = data.project as PortfolioCardProps | undefined;
 
   if (!recordMap) {
-    return <div className={styles.notFound}>Project not found.</div>;
+    return <div className="">Project not found.</div>;
   }
 
   return (
-    <div className={styles.page}>
+    <div className="">
       {project && (
-        <div className={styles.projectHeader}>
+        <div className="">
           {project.technologies && project.technologies.length > 0 && (
-            <div className={styles.tech}>
+            <div className="">
               {project.technologies.map((tech) => (
-                <span key={tech} className={styles.techTag}>{tech}</span>
+                <span key={tech} className="">{tech}</span>
               ))}
             </div>
           )}
           {project.projectUrl && (
             <a
               href={project.projectUrl}
-              className={styles.visitLink}
+              className=""
               target="_blank"
               rel="noopener noreferrer"
             >

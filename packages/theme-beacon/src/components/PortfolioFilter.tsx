@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { PortfolioFilterProps } from "@noxion/renderer";
-import * as styles from "./PortfolioFilter.css";
 
 const MAX_VISIBLE = 8;
 
@@ -16,7 +15,7 @@ export function PortfolioFilter({ technologies, selectedTechnologies, onToggle }
   const hiddenCount = shouldCollapse ? technologies.length - MAX_VISIBLE : 0;
 
   return (
-    <div className={styles.wrapper}>
+    <div className="">
       {visible.map((tech) => {
         const isSelected = selectedTechnologies.includes(tech);
         return (
@@ -24,7 +23,7 @@ export function PortfolioFilter({ technologies, selectedTechnologies, onToggle }
             key={tech}
             onClick={() => onToggle(tech)}
             type="button"
-            className={isSelected ? `${styles.tag} ${styles.tagSelected}` : styles.tag}
+            className={isSelected ? "" : ""}
           >
             {tech}
           </button>
@@ -32,13 +31,13 @@ export function PortfolioFilter({ technologies, selectedTechnologies, onToggle }
       })}
 
       {shouldCollapse && !expanded && hiddenCount > 0 && (
-        <button type="button" onClick={() => setExpanded(true)} className={styles.tag}>
+        <button type="button" onClick={() => setExpanded(true)} className="">
           +{hiddenCount}
         </button>
       )}
 
       {shouldCollapse && expanded && (
-        <button type="button" onClick={() => setExpanded(false)} className={styles.tag}>
+        <button type="button" onClick={() => setExpanded(false)} className="">
           Show less
         </button>
       )}

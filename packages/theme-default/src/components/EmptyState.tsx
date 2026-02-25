@@ -1,7 +1,6 @@
 "use client";
 
 import type { EmptyStateProps } from "@noxion/renderer";
-import * as styles from "./EmptyState.css";
 
 function FileIcon() {
   return (
@@ -20,12 +19,12 @@ export function EmptyState({
   message = "Check back later for new content.",
 }: EmptyStateProps) {
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.icon}>
+    <div className="">
+      <div className="">
         <FileIcon />
       </div>
-      <h2 className={styles.title}>{title}</h2>
-      <p className={styles.message}>{message}</p>
+      <h2 className="">{title}</h2>
+      <p className="">{message}</p>
     </div>
   );
 }

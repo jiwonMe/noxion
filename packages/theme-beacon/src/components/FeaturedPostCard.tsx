@@ -1,5 +1,4 @@
 import type { PostCardProps } from "@noxion/renderer";
-import * as styles from "./FeaturedPostCard.css";
 
 function formatDate(dateStr: string): string {
   try {
@@ -12,21 +11,21 @@ function formatDate(dateStr: string): string {
 
 export function FeaturedPostCard({ title, slug, date, coverImage, category, description, author }: PostCardProps) {
   return (
-    <a href={`/${slug}`} className={styles.card}>
+    <a href={`/${slug}`} className="">
       {coverImage && (
-        <div className={styles.cover}>
-          <img src={coverImage} alt={title} loading="lazy" decoding="async" className={styles.coverImage} />
+        <div className="">
+          <img src={coverImage} alt={title} loading="lazy" decoding="async" className="" />
         </div>
       )}
 
-      <div className={styles.body}>
-        {category && <span className={styles.category}>{category}</span>}
+      <div className="">
+        {category && <span className="">{category}</span>}
 
-        <h2 className={styles.title}>{title}</h2>
+        <h2 className="">{title}</h2>
 
-        {description && <p className={styles.description}>{description}</p>}
+        {description && <p className="">{description}</p>}
 
-        <div className={styles.meta}>
+        <div className="">
           {author && <span>{author}</span>}
           {author && date && <span aria-hidden="true">·</span>}
           {date && (

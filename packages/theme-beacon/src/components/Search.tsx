@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import type { SearchProps } from "@noxion/renderer";
-import * as styles from "./Search.css";
 
 export function Search({ onSearch, placeholder = "Search posts..." }: SearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,13 +27,13 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
   }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div className="">
       <input
         ref={inputRef}
         type="text"
         placeholder={placeholder}
         onChange={(e) => handleInput(e.target.value)}
-        className={styles.input}
+        className=""
       />
     </div>
   );

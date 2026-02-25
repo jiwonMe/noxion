@@ -2,7 +2,6 @@
 
 import type { NoxionTemplateProps, PostCardProps } from "@noxion/renderer";
 import { PostList } from "../components/PostList";
-import * as styles from "./TagPage.css";
 
 export function TagPage({ data }: NoxionTemplateProps) {
   const posts = (data.posts ?? []) as PostCardProps[];
@@ -10,10 +9,10 @@ export function TagPage({ data }: NoxionTemplateProps) {
   const count = posts.length;
 
   return (
-    <div className={styles.page}>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>#{tag}</h1>
-        <p className={styles.subtitle}>
+    <div className="">
+      <div className="">
+        <h1 className="">#{tag}</h1>
+        <p className="">
           {count} {count === 1 ? "post" : "posts"}
         </p>
       </div>

@@ -3,7 +3,6 @@
 import type { NoxionTemplateProps, PostCardProps } from "@noxion/renderer";
 import { HeroSection } from "../components/HeroSection";
 import { PostList } from "../components/PostList";
-import * as styles from "./HomePage.css";
 
 export function HomePage({ data }: NoxionTemplateProps) {
   const posts = (data.posts ?? []) as PostCardProps[];
@@ -12,7 +11,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
 
   if (recentCount <= 0) {
     return (
-      <div className={styles.page}>
+      <div className="">
         <PostList posts={posts} />
       </div>
     );
@@ -22,12 +21,12 @@ export function HomePage({ data }: NoxionTemplateProps) {
   const feedPosts = posts.slice(recentCount);
 
   return (
-    <div className={styles.page}>
+    <div className="">
       <HeroSection posts={heroPosts} />
 
       {feedPosts.length > 0 && (
-        <section className={styles.feed}>
-          <h2 className={styles.feedTitle}>{feedTitle}</h2>
+        <section className="">
+          <h2 className="">{feedTitle}</h2>
           <PostList posts={feedPosts} />
         </section>
       )}

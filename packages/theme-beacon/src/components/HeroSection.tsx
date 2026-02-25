@@ -1,7 +1,6 @@
 import type { HeroSectionProps } from "@noxion/renderer";
 import { FeaturedPostCard } from "./FeaturedPostCard";
 import { PostCard } from "./PostCard";
-import * as styles from "./HeroSection.css";
 
 export function HeroSection({ posts }: HeroSectionProps) {
   if (posts.length === 0) return null;
@@ -9,10 +8,10 @@ export function HeroSection({ posts }: HeroSectionProps) {
   const [primary, ...secondary] = posts;
 
   return (
-    <section className={styles.hero}>
+    <section className="">
       <FeaturedPostCard {...primary} />
       {secondary.length > 0 && (
-        <div className={styles.posts}>
+        <div className="">
           {secondary.map((post) => (
             <PostCard key={post.slug} {...post} />
           ))}

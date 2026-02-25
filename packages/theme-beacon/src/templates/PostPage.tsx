@@ -1,6 +1,5 @@
 import type { NoxionTemplateProps } from "@noxion/renderer";
 import { NotionPage } from "../components/NotionPage";
-import * as styles from "./PostPage.css";
 
 export function PostPage({ data }: NoxionTemplateProps) {
   const recordMap = data.recordMap;
@@ -16,39 +15,39 @@ export function PostPage({ data }: NoxionTemplateProps) {
   const formattedDate = data.formattedDate as string | undefined;
 
   if (!recordMap) {
-    return <div className={styles.notFound}>Post not found.</div>;
+    return <div className="">Post not found.</div>;
   }
 
   const hasHeader = Boolean(title);
 
   return (
-    <article className={styles.article}>
+    <article className="">
       {coverImage && (
-        <div className={styles.cover}>
-          <img src={coverImage} alt="" className={styles.coverImage} />
+        <div className="">
+          <img src={coverImage} alt="" className="" />
         </div>
       )}
 
       {hasHeader && (
-        <header className={styles.header}>
+        <header className="">
           {(category || tags.length > 0) && (
-            <div className={styles.topics}>
-              {category && <span className={styles.category}>{category}</span>}
+            <div className="">
+              {category && <span className="">{category}</span>}
               {tags.map((tag) => (
-                <a key={tag} href={`/tag/${encodeURIComponent(tag)}`} className={styles.tag}>
+                <a key={tag} href={`/tag/${encodeURIComponent(tag)}`} className="">
                   {tag}
                 </a>
               ))}
             </div>
           )}
 
-          <h1 className={styles.title}>{title}</h1>
+          <h1 className="">{title}</h1>
 
-          {description && <p className={styles.description}>{description}</p>}
+          {description && <p className="">{description}</p>}
 
-          <div className={styles.meta}>
+          <div className="">
             {author && <span>{author}</span>}
-            {author && date && <span className={styles.dot} aria-hidden="true" />}
+            {author && date && <span className="" aria-hidden="true" />}
             {date && (
               <time dateTime={date}>{formattedDate ?? date}</time>
             )}
@@ -56,7 +55,7 @@ export function PostPage({ data }: NoxionTemplateProps) {
         </header>
       )}
 
-      <div className={styles.body}>
+      <div className="">
         <NotionPage recordMap={recordMap} rootPageId={rootPageId} fullPage={!hasHeader} />
       </div>
     </article>

@@ -1,15 +1,14 @@
 import type { DocsSidebarProps, DocsSidebarItem } from "@noxion/renderer";
-import * as styles from "./DocsSidebar.css";
 
 function SidebarItem({ item, currentSlug, depth }: { item: DocsSidebarItem; currentSlug?: string; depth: number }) {
   const isActive = currentSlug === item.slug;
   const clampedDepth = Math.min(depth, 5);
-  const linkClass = [styles.link, styles.depthIndent[clampedDepth], isActive ? styles.linkActive : ""]
+  const linkClass = ["", "", isActive ? "" : ""]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <li className={styles.item}>
+    <li className="">
       <a
         href={`/${item.slug}`}
         className={linkClass}
@@ -18,7 +17,7 @@ function SidebarItem({ item, currentSlug, depth }: { item: DocsSidebarItem; curr
         {item.title}
       </a>
       {item.children && item.children.length > 0 && (
-        <ul className={styles.list}>
+        <ul className="">
           {item.children.map((child) => (
             <SidebarItem key={child.id} item={child} currentSlug={currentSlug} depth={depth + 1} />
           ))}
@@ -32,8 +31,8 @@ export function DocsSidebar({ items, currentSlug }: DocsSidebarProps) {
   if (items.length === 0) return null;
 
   return (
-    <nav className={styles.nav} aria-label="Documentation navigation">
-      <ul className={styles.list}>
+    <nav className="" aria-label="Documentation navigation">
+      <ul className="">
         {items.map((item) => (
           <SidebarItem key={item.id} item={item} currentSlug={currentSlug} depth={0} />
         ))}

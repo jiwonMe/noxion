@@ -1,7 +1,6 @@
 "use client";
 
 import type { PostCardProps } from "@noxion/renderer";
-import * as styles from "./FeaturedPostCard.css";
 
 function formatDate(dateStr: string): string {
   try {
@@ -14,10 +13,10 @@ function formatDate(dateStr: string): string {
 
 export function FeaturedPostCard({ title, slug, date, tags, coverImage, category, description, author }: PostCardProps) {
   const hasImage = Boolean(coverImage);
-  const contentClass = hasImage ? styles.content : styles.contentNoImage;
+  const contentClass = hasImage ? "" : "";
 
   return (
-    <a href={`/${slug}`} className={styles.card}>
+    <a href={`/${slug}`} className="">
       {hasImage && (
         <>
           <img
@@ -25,25 +24,25 @@ export function FeaturedPostCard({ title, slug, date, tags, coverImage, category
             alt={title}
             loading="eager"
             decoding="async"
-            className={styles.coverImage}
+            className=""
           />
-          <div className={styles.overlay} aria-hidden="true" />
+          <div className="" aria-hidden="true" />
         </>
       )}
 
       <div className={contentClass}>
-        {category && <span className={styles.category}>{category}</span>}
-        <h2 className={styles.title}>{title}</h2>
-        {description && <p className={styles.description}>{description}</p>}
-        <div className={styles.meta}>
+        {category && <span className="">{category}</span>}
+        <h2 className="">{title}</h2>
+        {description && <p className="">{description}</p>}
+        <div className="">
           {author && <span>{author}</span>}
           {author && date && <span aria-hidden="true">·</span>}
           {date && <time dateTime={date}>{formatDate(date)}</time>}
         </div>
         {tags.length > 0 && (
-          <div className={styles.tags}>
+          <div className="">
             {tags.map((t) => (
-              <span key={t} className={styles.tag}>{t}</span>
+              <span key={t} className="">{t}</span>
             ))}
           </div>
         )}

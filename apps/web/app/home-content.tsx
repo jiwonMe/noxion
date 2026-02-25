@@ -3,7 +3,6 @@
 import { HeroSection, PostList, TagFilter, Search } from "@noxion/theme-default";
 import type { PostCardProps } from "@noxion/renderer";
 import { useState, useCallback, useRef, useEffect } from "react";
-import * as styles from "./home-content.css";
 
 const HERO_COUNT = 3;
 
@@ -167,11 +166,11 @@ export function HomeContent({
     : state.posts;
 
   return (
-    <div className={styles.page}>
+    <div className="">
       {heroPosts.length > 0 && <HeroSection posts={heroPosts} />}
 
-      <section className={styles.feed}>
-        <div className={styles.toolbar}>
+      <section className="">
+        <div className="">
           <Search onSearch={handleSearch} placeholder="Search posts..." />
           {allTags.length > 0 && (
             <TagFilter

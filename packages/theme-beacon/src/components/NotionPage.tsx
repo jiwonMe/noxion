@@ -2,7 +2,6 @@
 
 import { NotionPage as RendererNotionPage } from "@noxion/renderer";
 import type { NotionPageProps as RendererNotionPageProps } from "@noxion/renderer";
-import * as styles from "./NotionPage.css";
 
 export interface BeaconNotionPageProps {
   recordMap: unknown;
@@ -15,7 +14,7 @@ export interface BeaconNotionPageProps {
 
 export function NotionPage(props: BeaconNotionPageProps) {
   return (
-    <div className={styles.wrapper}>
+    <div className="">
       <RendererNotionPage {...(props as RendererNotionPageProps)} />
     </div>
   );

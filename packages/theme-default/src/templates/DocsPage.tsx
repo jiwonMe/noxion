@@ -2,7 +2,6 @@
 
 import type { NoxionTemplateProps, DocsNavigationLink } from "@noxion/renderer";
 import { NotionPage } from "../components/NotionPage";
-import * as styles from "./DocsPage.css";
 
 export function DocsPage({ data }: NoxionTemplateProps) {
   const recordMap = data.recordMap;
@@ -11,28 +10,28 @@ export function DocsPage({ data }: NoxionTemplateProps) {
   const next = data.next as DocsNavigationLink | undefined;
 
   if (!recordMap) {
-    return <div className={styles.notFound}>Page not found.</div>;
+    return <div className="">Page not found.</div>;
   }
 
   return (
-    <div className={styles.page}>
+    <div className="">
       <NotionPage recordMap={recordMap} rootPageId={rootPageId} />
 
       {(prev || next) && (
-        <nav className={styles.docsNav} aria-label="Page navigation">
+        <nav className="" aria-label="Page navigation">
           <div>
             {prev && (
-              <a href={`/${prev.slug}`} className={styles.navLink}>
-                <span className={styles.navLabel}>← Previous</span>
-                <span className={styles.navTitle}>{prev.title}</span>
+              <a href={`/${prev.slug}`} className="">
+                <span className="">← Previous</span>
+                <span className="">{prev.title}</span>
               </a>
             )}
           </div>
-          <div className={styles.navNext}>
+          <div className="">
             {next && (
-              <a href={`/${next.slug}`} className={`${styles.navLink} ${styles.navNext}`}>
-                <span className={styles.navLabel}>Next →</span>
-                <span className={styles.navTitle}>{next.title}</span>
+              <a href={`/${next.slug}`} className={""}>
+                <span className="">Next →</span>
+                <span className="">{next.title}</span>
               </a>
             )}
           </div>

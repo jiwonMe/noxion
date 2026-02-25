@@ -1,7 +1,6 @@
 "use client";
 
 import type { PostCardProps } from "@noxion/renderer";
-import * as styles from "./PostCard.css";
 
 function formatDate(dateStr: string): string {
   try {
@@ -16,40 +15,40 @@ export function PostCard({ title, slug, date, tags, coverImage, category, descri
   const hasImage = Boolean(coverImage);
 
   return (
-    <a href={`/${slug}`} className={styles.card}>
+    <a href={`/${slug}`} className="">
       {hasImage && (
-        <div className={styles.cover}>
+        <div className="">
           <img
             src={coverImage}
             alt={title}
             loading="lazy"
             decoding="async"
-            className={styles.coverImage}
+            className=""
           />
         </div>
       )}
 
-      <div className={styles.body}>
-        {category && <span className={styles.category}>{category}</span>}
+      <div className="">
+        {category && <span className="">{category}</span>}
 
-        <h3 className={styles.title}>{title}</h3>
+        <h3 className="">{title}</h3>
 
-        {description && <p className={styles.description}>{description}</p>}
+        {description && <p className="">{description}</p>}
 
-        <div className={styles.meta}>
-          {author && <span className={styles.author}>{author}</span>}
+        <div className="">
+          {author && <span className="">{author}</span>}
           {author && date && <span aria-hidden="true">·</span>}
           {date && (
-            <time dateTime={date} className={styles.date}>
+            <time dateTime={date} className="">
               {formatDate(date)}
             </time>
           )}
         </div>
 
         {tags.length > 0 && (
-          <div className={styles.tags}>
+          <div className="">
             {tags.map((t) => (
-              <span key={t} className={styles.tag}>{t}</span>
+              <span key={t} className="">{t}</span>
             ))}
           </div>
         )}

@@ -1,7 +1,6 @@
 "use client";
 
 import type { PortfolioCardProps } from "@noxion/renderer";
-import * as styles from "./PortfolioProjectCard.css";
 
 export function PortfolioProjectCard({
   title,
@@ -13,46 +12,46 @@ export function PortfolioProjectCard({
   year,
   featured,
 }: PortfolioCardProps) {
-  const cardClass = featured ? `${styles.card} ${styles.cardFeatured}` : styles.card;
+  const cardClass = featured ? "" : "";
 
   return (
     <div className={cardClass}>
       {coverImage && (
-        <div className={styles.cover}>
+        <div className="">
           <img
             src={coverImage}
             alt={title}
             loading="lazy"
             decoding="async"
-            className={styles.coverImage}
+            className=""
           />
         </div>
       )}
 
-      <div className={styles.body}>
-        <div className={styles.header}>
-          <a href={`/${slug}`} className={styles.titleLink}>
-            <h3 className={styles.title}>{title}</h3>
+      <div className="">
+        <div className="">
+          <a href={`/${slug}`} className="">
+            <h3 className="">{title}</h3>
           </a>
-          {year && <span className={styles.year}>{year}</span>}
+          {year && <span className="">{year}</span>}
         </div>
 
-        {description && <p className={styles.description}>{description}</p>}
+        {description && <p className="">{description}</p>}
 
         {technologies && technologies.length > 0 && (
-          <div className={styles.tech}>
+          <div className="">
             {technologies.map((tech) => (
-              <span key={tech} className={styles.techTag}>{tech}</span>
+              <span key={tech} className="">{tech}</span>
             ))}
           </div>
         )}
 
-        <div className={styles.actions}>
-          <a href={`/${slug}`} className={styles.actionLink}>Details →</a>
+        <div className="">
+          <a href={`/${slug}`} className="">Details →</a>
           {projectUrl && (
             <a
               href={projectUrl}
-              className={styles.actionLink}
+              className=""
               target="_blank"
               rel="noopener noreferrer"
             >

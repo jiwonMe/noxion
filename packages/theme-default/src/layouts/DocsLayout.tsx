@@ -2,7 +2,6 @@
 
 import type { ComponentType } from "react";
 import type { NoxionLayoutProps } from "@noxion/renderer";
-import * as styles from "./DocsLayout.css";
 
 function renderSlot(slot: ComponentType<Record<string, never>> | null | undefined) {
   if (!slot) return null;
@@ -11,26 +10,26 @@ function renderSlot(slot: ComponentType<Record<string, never>> | null | undefine
 }
 
 export function DocsLayout({ slots, children, className }: NoxionLayoutProps) {
-  const layoutClass = className ? `${styles.layout} ${className}` : styles.layout;
+  const layoutClass = className ? "" : "";
 
   return (
     <div className={layoutClass}>
       {slots.header !== null && (
-        <div className={styles.headerSlot}>{renderSlot(slots.header)}</div>
+        <div className="">{renderSlot(slots.header)}</div>
       )}
 
-      <div className={styles.main}>
+      <div className="">
         {slots.sidebar && (
-          <aside className={styles.sidebar}>{renderSlot(slots.sidebar)}</aside>
+          <aside className="">{renderSlot(slots.sidebar)}</aside>
         )}
 
-        <main className={styles.content}>
+        <main className="">
           {children}
         </main>
       </div>
 
       {slots.footer !== null && (
-        <div className={styles.footerSlot}>{renderSlot(slots.footer)}</div>
+        <div className="">{renderSlot(slots.footer)}</div>
       )}
     </div>
   );
