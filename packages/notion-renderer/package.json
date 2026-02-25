@@ -1,6 +1,6 @@
 {
   "name": "@noxion/notion-renderer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Custom Notion block renderer for Noxion — replaces react-notion-x with full styling control, KaTeX SSR, and Shiki code highlighting",
   "license": "MIT",
   "type": "module",

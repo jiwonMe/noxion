@@ -30,11 +30,11 @@
     "noxion-plugin"
   ],
   "peerDependencies": {
-    "@noxion/core": ">=0.2.0"
+    "@noxion/core": ">=0.3.0"
   },
   "devDependencies": {
-    "@noxion/core": "^0.2.0",
-    "@noxion/plugin-utils": "^0.1.0",
+    "@noxion/core": "^0.3.0",
+    "@noxion/plugin-utils": "^0.3.0",
     "@types/bun": "^1.2.0",
     "typescript": "^5.7.0"
   }

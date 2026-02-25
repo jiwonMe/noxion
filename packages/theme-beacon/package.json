@@ -1,6 +1,6 @@
 {
   "name": "@noxion/theme-beacon",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Beacon theme for Noxion — high-contrast, Inter-based editorial design with newspaper-grid hero",
   "license": "MIT",
   "type": "module",
@@ -54,8 +54,8 @@
     "node": ">=18.0.0"
   },
   "peerDependencies": {
-    "@noxion/renderer": ">=0.2.0",
-    "@noxion/theme-default": ">=0.2.0",
+    "@noxion/renderer": ">=0.3.0",
+    "@noxion/theme-default": ">=0.3.0",
     "react": ">=18.0.0"
   },
   "devDependencies": {

@@ -9,9 +9,6 @@ PACKAGES=(
   "packages/plugin-utils"
   "packages/plugin-reading-time"
   "packages/theme-default"
-  "packages/theme-ink"
-  "packages/theme-editorial"
-  "packages/theme-folio"
   "packages/theme-beacon"
   "packages/create-noxion"
 )
