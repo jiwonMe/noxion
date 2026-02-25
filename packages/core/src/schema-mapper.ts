@@ -1,4 +1,5 @@
 import type { CollectionPropertySchemaMap } from "notion-types";
+import type { PageTypeRegistry } from "./page-type-registry";
 
 export interface PropertyMapping {
   titleKey: string | null;
@@ -51,7 +52,24 @@ const METADATA_CONVENTIONS: Record<string, Record<string, FieldConvention>> = {
   },
 };
 
-export function getMetadataConventions(pageType: string): Record<string, FieldConvention> {
+export function getMetadataConventions(
+  pageType: string,
+  registry?: PageTypeRegistry
+): Record<string, FieldConvention> {
+  if (registry) {
+    const definition = registry.get(pageType);
+    if (definition?.schemaConventions) {
+      const conventions: Record<string, FieldConvention> = {};
+      for (const [field, config] of Object.entries(definition.schemaConventions)) {
+        conventions[field] = {
+          names: config.names,
+          notionType: config.type,
+        };
+      }
+      return conventions;
+    }
+  }
+  
   return METADATA_CONVENTIONS[pageType] ?? {};
 }
 
@@ -90,6 +108,7 @@ export function buildPropertyMapping(
   schema: CollectionPropertySchemaMap,
   pageType: string,
   overrides?: Record<string, string>,
+  registry?: PageTypeRegistry,
 ): PropertyMapping {
   const mapping: PropertyMapping = {
     titleKey: null,
@@ -103,7 +122,7 @@ export function buildPropertyMapping(
     metadataKeys: {},
   };
 
-  const metadataConventions = getMetadataConventions(pageType);
+  const metadataConventions = getMetadataConventions(pageType, registry);
 
   for (const [key, value] of Object.entries(schema)) {
     const name = value.name?.toLowerCase();

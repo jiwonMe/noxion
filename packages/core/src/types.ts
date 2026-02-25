@@ -181,6 +181,14 @@ export interface PageTypeDefinition {
   defaultLayout?: string;
   /** URL pattern generator function */
   routes?: (page: NoxionPage) => string;
+  /** Sort configuration for collection pages */
+  sortBy?: { field: string; order: 'asc' | 'desc' };
+  /** Sitemap configuration */
+  sitemapConfig?: { priority: number; changefreq: 'daily' | 'weekly' | 'monthly' };
+  /** Structured data type for JSON-LD (e.g., 'BlogPosting', 'TechArticle', 'CreativeWork') */
+  structuredDataType?: string;
+  /** Metadata configuration */
+  metadataConfig?: { openGraphType: 'article' | 'website' };
 }
 
 /**

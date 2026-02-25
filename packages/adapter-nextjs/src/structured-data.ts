@@ -161,14 +161,30 @@ export function generateCreativeWorkLD(
 
 export function generatePageLD(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: import("@noxion/core").PageTypeRegistry
 ): JsonLd {
-  switch (page.pageType) {
-    case "blog":
+  let structuredDataType = "BlogPosting";
+  
+  if (registry) {
+    const definition = registry.get(page.pageType);
+    if (definition?.structuredDataType) {
+      structuredDataType = definition.structuredDataType;
+    }
+  } else {
+    switch (page.pageType) {
+      case "blog": structuredDataType = "BlogPosting"; break;
+      case "docs": structuredDataType = "TechArticle"; break;
+      case "portfolio": structuredDataType = "CreativeWork"; break;
+    }
+  }
+  
+  switch (structuredDataType) {
+    case "BlogPosting":
       return generateBlogPostingLD(page, config);
-    case "docs":
+    case "TechArticle":
       return generateTechArticleLD(page, config);
-    case "portfolio":
+    case "CreativeWork":
       return generateCreativeWorkLD(page, config);
     default:
       return generateBlogPostingLD(page, config);

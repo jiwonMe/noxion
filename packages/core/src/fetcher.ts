@@ -141,8 +141,6 @@ function detectPageType(
 ): string {
   if (!propertyMap.typeKey) return fallbackType;
   const typeValue = getTextContent(properties[propertyMap.typeKey] as never)?.toLowerCase();
-  if (!typeValue) return fallbackType;
-  if (["blog", "docs", "portfolio"].includes(typeValue)) return typeValue;
   return typeValue || fallbackType;
 }
 
@@ -178,7 +176,7 @@ function extractPage(
     ? new Date(block.last_edited_time).toISOString()
     : new Date().toISOString();
 
-  const metadata = buildMetadata(properties, mapping, pageType, date, author);
+  const metadata = buildMetadata(properties, mapping, date, author);
 
   return {
     id,
@@ -196,60 +194,26 @@ function extractPage(
 function buildMetadata(
   properties: Record<string, unknown[][]>,
   mapping: PropertyMapping,
-  pageType: string,
   date: string,
   author: string | undefined,
 ): Record<string, unknown> {
   const metadata: Record<string, unknown> = {};
 
-  if (pageType === "blog") {
-    metadata.date = date;
-    const tagsRaw = mapping.metadataKeys.tags
-      ? getTextContent(properties[mapping.metadataKeys.tags] as never)
-      : "";
-    metadata.tags = tagsRaw ? tagsRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
-    const category = mapping.metadataKeys.category
-      ? getTextContent(properties[mapping.metadataKeys.category] as never) || undefined
-      : undefined;
-    if (category) metadata.category = category;
-    if (author) metadata.author = author;
-  } else if (pageType === "docs") {
-    if (date) metadata.date = date;
-    const section = mapping.metadataKeys.section
-      ? getTextContent(properties[mapping.metadataKeys.section] as never) || undefined
-      : undefined;
-    if (section) metadata.section = section;
-    const orderRaw = mapping.metadataKeys.order
-      ? getTextContent(properties[mapping.metadataKeys.order] as never)
-      : "";
-    if (orderRaw) metadata.order = parseInt(orderRaw, 10) || 0;
-    const version = mapping.metadataKeys.version
-      ? getTextContent(properties[mapping.metadataKeys.version] as never) || undefined
-      : undefined;
-    if (version) metadata.version = version;
-  } else if (pageType === "portfolio") {
-    if (date) metadata.date = date;
-    const techRaw = mapping.metadataKeys.technologies
-      ? getTextContent(properties[mapping.metadataKeys.technologies] as never)
-      : "";
-    metadata.technologies = techRaw ? techRaw.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
-    const projectUrl = mapping.metadataKeys.projectUrl
-      ? getTextContent(properties[mapping.metadataKeys.projectUrl] as never) || undefined
-      : undefined;
-    if (projectUrl) metadata.projectUrl = projectUrl;
-    const year = mapping.metadataKeys.year
-      ? getTextContent(properties[mapping.metadataKeys.year] as never) || undefined
-      : undefined;
-    if (year) metadata.year = year;
-    const featuredRaw = mapping.metadataKeys.featured
-      ? getTextContent(properties[mapping.metadataKeys.featured] as never)
-      : "";
-    metadata.featured = featuredRaw === "Yes" || featuredRaw === "yes" || featuredRaw === "true";
-  } else {
-    if (date) metadata.date = date;
-    for (const [field, key] of Object.entries(mapping.metadataKeys)) {
-      const val = getTextContent(properties[key] as never);
-      if (val) metadata[field] = val;
+  if (date) metadata.date = date;
+  if (author) metadata.author = author;
+
+  for (const [field, key] of Object.entries(mapping.metadataKeys)) {
+    const val = getTextContent(properties[key] as never);
+    if (!val) continue;
+
+    if (field === "tags" || field === "technologies") {
+      metadata[field] = val.split(",").map((t: string) => t.trim()).filter(Boolean);
+    } else if (field === "order") {
+      metadata[field] = parseInt(val, 10) || 0;
+    } else if (field === "featured") {
+      metadata[field] = val === "Yes" || val === "yes" || val === "true";
+    } else {
+      metadata[field] = val;
     }
   }
 

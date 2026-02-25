@@ -23,7 +23,8 @@ function getMetaStringArray(page: NoxionPage, key: string): string[] {
 
 export function generateNoxionMetadata(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: import("@noxion/core").PageTypeRegistry
 ): Metadata {
   const title = `${page.title} | ${config.name}`;
   const description = buildDescription(page, config);
@@ -34,7 +35,15 @@ export function generateNoxionMetadata(
   const category = getMetaString(page, "category");
   const tags = getMetaStringArray(page, "tags");
 
-  const isBlog = page.pageType === "blog";
+  let isArticle = page.pageType === "blog";
+  if (registry) {
+    const definition = registry.get(page.pageType);
+    if (definition?.metadataConfig?.openGraphType) {
+      isArticle = definition.metadataConfig.openGraphType === "article";
+    }
+  }
+  
+  const isBlog = isArticle;
 
   const metadata: Metadata = {
     title,

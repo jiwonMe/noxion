@@ -9,7 +9,14 @@ function getPageUrl(page: NoxionPage, baseUrl: string, routePrefix?: Record<stri
   return `${baseUrl}/${page.slug}`;
 }
 
-function getPriority(pageType: string): number {
+function getPriority(pageType: string, registry?: import("@noxion/core").PageTypeRegistry): number {
+  if (registry) {
+    const definition = registry.get(pageType);
+    if (definition?.sitemapConfig?.priority !== undefined) {
+      return definition.sitemapConfig.priority;
+    }
+  }
+  
   switch (pageType) {
     case "blog": return 0.8;
     case "docs": return 0.7;
@@ -18,7 +25,14 @@ function getPriority(pageType: string): number {
   }
 }
 
-function getChangeFrequency(pageType: string): "daily" | "weekly" | "monthly" {
+function getChangeFrequency(pageType: string, registry?: import("@noxion/core").PageTypeRegistry): "daily" | "weekly" | "monthly" {
+  if (registry) {
+    const definition = registry.get(pageType);
+    if (definition?.sitemapConfig?.changefreq) {
+      return definition.sitemapConfig.changefreq;
+    }
+  }
+  
   switch (pageType) {
     case "blog": return "weekly";
     case "docs": return "weekly";
