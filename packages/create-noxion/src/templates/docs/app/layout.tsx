@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { generateNoxionListMetadata, generateWebSiteLD } from "@noxion/adapter-nextjs";
-import { DocsLayout, Header, Footer } from "@noxion/theme-default";
 import { siteConfig } from "../lib/config";
 import { ThemeScript } from "./theme-script";
+import { SiteLayout } from "./site-layout";
 import "@noxion/theme-default/styles/tailwind";
 import "./globals.css";
 
@@ -17,17 +17,6 @@ export default function RootLayout({
 }) {
   const jsonLd = generateWebSiteLD(siteConfig);
 
-  const SiteHeader = () => (
-    <Header
-      siteName={siteConfig.name}
-      navigation={[{ label: "Home", href: "/" }]}
-    />
-  );
-
-  const SiteFooter = () => (
-    <Footer siteName={siteConfig.name} author={siteConfig.author} />
-  );
-
   return (
     <html lang={siteConfig.language} suppressHydrationWarning>
       <head>
@@ -38,9 +27,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <DocsLayout slots={{ header: SiteHeader, footer: SiteFooter }}>
+        <SiteLayout siteName={siteConfig.name} author={siteConfig.author}>
           {children}
-        </DocsLayout>
+        </SiteLayout>
       </body>
     </html>
   );
