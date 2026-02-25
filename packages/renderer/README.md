@@ -1,13 +1,13 @@
 # @noxion/renderer
 
-React rendering components and theme system for [Noxion](https://github.com/jiwonme/noxion) — a Notion-powered blog builder.
+Theme contract system and React components for [Noxion](https://github.com/jiwonme/noxion) — a Notion-powered website builder.
 
 ## Features
 
+- Theme contract system (`NoxionThemeContract`, `defineThemeContract`, `validateThemeContract`)
+- Theme resolution hooks (`useThemeComponent`, `useThemeLayout`, `useThemeTemplate`)
 - Notion page renderer (via `@noxion/notion-renderer`)
-- Pre-built blog components: `PostCard`, `PostList`, `Header`, `Footer`, `TOC`, `Search`, `TagFilter`
-- CSS variable-based theme system with dark/light/system mode support
-- Fully customizable via component overrides
+- CSS variable-based theming with dark/light/system mode support
 
 ## Installation
 
@@ -23,12 +23,13 @@ npm install @noxion/renderer react react-dom
 ## Usage
 
 ```tsx
-import { NoxionThemeProvider, PostList } from "@noxion/renderer";
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
 
-export default function BlogPage({ posts }) {
+export default function App({ children }) {
   return (
-    <NoxionThemeProvider>
-      <PostList posts={posts} />
+    <NoxionThemeProvider themeContract={defaultThemeContract}>
+      {children}
     </NoxionThemeProvider>
   );
 }

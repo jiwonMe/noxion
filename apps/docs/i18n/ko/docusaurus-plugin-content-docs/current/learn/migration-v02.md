@@ -117,15 +117,15 @@ import { generateTechArticleLD, generateCreativeWorkLD, generatePageLD } from "@
 
 ### 테마 시스템
 
-- 딥 머지를 통한 차일드 테마 생성을 위한 `extendTheme()`
+- 컴포넌트, 레이아웃, 템플릿을 번들링하는 테마 컨트랙트 생성을 위한 `defineThemeContract()`
 - 네임스페이스 템플릿: `docs/page`, `portfolio/grid`, `portfolio/project`
-- `NoxionThemePackage.supports`로 테마가 지원하는 페이지 타입 선언
+- `NoxionThemeContract.supports`로 테마가 지원하는 페이지 타입 선언
 
 ### 새 컴포넌트
 
-`@noxion/renderer`에서:
-- `DocsSidebar`, `DocsBreadcrumb`, `DocsPage`
-- `PortfolioProjectCard`, `PortfolioFilter`, `PortfolioGrid`, `PortfolioProject`
+테마 컨트랙트(`NoxionThemeContractComponents`)를 통해 사용 가능:
+- `DocsSidebar`, `DocsBreadcrumb`
+- `PortfolioProjectCard`, `PortfolioFilter`
 
 ## 마이그레이션 체크리스트
 

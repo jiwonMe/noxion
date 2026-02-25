@@ -10,6 +10,81 @@ All notable changes to the Noxion project are documented here.
 
 ---
 
+## v0.3.0
+
+**Released: 2026-02-25**
+
+Major architecture simplification: the legacy token-based theme system (`extendTheme`, `NoxionThemePackage`) has been completely removed in favor of the contract-based theme system (`defineThemeContract`, `NoxionThemeContract`).
+
+### Breaking: Legacy theme system removed
+
+- **`extendTheme()`** — removed. Use `defineThemeContract()` instead.
+- **`NoxionThemePackage`** — removed. Use `NoxionThemeContract` instead.
+- **`ComponentOverrides`** — removed. Components are now part of theme contracts.
+- **`useNoxionTheme()`** — removed. Use `useThemeContract()` instead.
+- **`NoxionThemeProvider` props changed** — `theme`, `themePackage`, `slots`, `templates` props removed. Use `themeContract` prop instead.
+
+### Breaking: Theme packages removed
+
+The following theme packages have been deleted:
+- `@noxion/theme-ink`
+- `@noxion/theme-editorial`
+- `@noxion/theme-folio`
+- `@noxion/theme-carbon`
+
+Only `@noxion/theme-default` and `@noxion/theme-beacon` remain.
+
+### Breaking: Component exports removed from renderer
+
+Components like `PostList`, `PostCard`, `Header`, `Footer`, `TOC`, `Search`, `TagFilter`, `HeroSection`, `FeaturedPostCard`, `EmptyState`, `ThemeToggle` are no longer exported from `@noxion/renderer`. They are now bundled inside theme contracts.
+
+- **Type exports preserved** — all prop interfaces (`PostCardProps`, `PostListProps`, `HeaderProps`, etc.) are still exported from `@noxion/renderer`
+- **To access components** — use `useThemeComponent("PostList")` or access them from the contract object directly
+
+### New: Theme contract hooks
+
+- **`useThemeContract()`** — returns the current theme contract
+- **`useThemeComponent(name)`** — returns a specific component from the active theme
+- **`useThemeLayout(name)`** — returns a layout component
+- **`useThemeTemplate(name)`** — returns a template component
+
+### Removed: Internal modules
+
+- `packages/renderer/src/layouts/` — removed
+- `packages/renderer/src/templates/` — removed
+- `packages/renderer/src/theme/define-theme.ts` — removed
+- `packages/renderer/src/theme/extend-theme.ts` — removed
+- `packages/renderer/src/theme/css-generator.ts` — removed
+- `packages/renderer/src/theme/component-resolver.ts` — removed
+- `packages/renderer/src/theme/validate-theme.ts` — removed (types moved to contract.ts)
+- `packages/renderer/src/styles/noxion.css` — removed
+
+### Migration
+
+**Before (v0.2):**
+```tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { inkThemePackage } from "@noxion/theme-ink";
+
+<NoxionThemeProvider theme={inkThemePackage}>
+```
+
+**After (v0.3):**
+```tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
+
+<NoxionThemeProvider themeContract={defaultThemeContract}>
+```
+
+### Improved
+
+- **473 tests** passing across all packages
+- Cleaner, smaller `@noxion/renderer` API surface
+- Theme contracts provide full type safety for all theme components
+
+---
+
 ## v0.2.0
 
 **Released: 2026-02-23**
@@ -103,20 +178,19 @@ Themes are now published as standalone npm packages, each extending `@noxion/the
 | Package | Style | Description |
 |---------|-------|-------------|
 | `@noxion/theme-default` | Clean & modern | Balanced layout with system fonts, rounded cards, and a sticky header. The base theme all others extend. |
-| `@noxion/theme-ink` | Minimal & monospace | Terminal-inspired aesthetic with dashed borders, `~/` logo prefix, and monospace typography. |
-| `@noxion/theme-editorial` | Magazine & serif | Newspaper-style layout with centered masthead, bold borders, serif display font, and uppercase navigation. |
-| `@noxion/theme-folio` | Portfolio & gallery | Minimal chrome with transparent header, uppercase logo, and gallery-optimized card grid. |
 | `@noxion/theme-beacon` | Content-first | Wide content area (1320px), static header, and large typography for long-form reading. Custom home and post page components. |
+
+> **Note:** `@noxion/theme-ink`, `@noxion/theme-editorial`, and `@noxion/theme-folio` were removed in v0.3.0 as part of the theme contract migration.
 
 Install and apply any theme:
 
 ```bash
-bun add @noxion/theme-ink
+bun add @noxion/theme-default
 ```
 
 ```ts
-import { inkThemePackage } from "@noxion/theme-ink";
-// use in noxion.config.ts
+import { defaultThemeContract } from "@noxion/theme-default";
+// use with NoxionThemeProvider
 ```
 
 ### New: Hero section & homepage redesign

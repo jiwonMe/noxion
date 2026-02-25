@@ -11,7 +11,8 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles": "./styles/theme.css"
+    "./styles": "./styles/theme.css",
+    "./styles/tailwind": "./styles/tailwind.css"
   },
   "files": [
     "dist",
@@ -58,6 +59,8 @@
     "@types/react": "^19.2.14",
     "react": "^19.2.4",
     "typescript": "^5.7.0",
-    "@types/bun": "^1.2.0"
+    "@types/bun": "^1.2.0",
+    "@vanilla-extract/css": "^1.18.0",
+    "tailwindcss": "^4.2.0"
   }
 }

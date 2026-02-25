@@ -1,2 +1,5 @@
-export { defaultThemePackage } from "./themes";
-export { defaultThemePackage as themeDefault } from "./themes";
+export { defaultThemeContract } from "./contract";
+
+export * from "./components";
+export * from "./layouts";
+export * from "./templates";

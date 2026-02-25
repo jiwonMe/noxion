@@ -195,16 +195,36 @@ bun add @noxion/renderer react react-dom
 | 익스포트 | 설명 |
 |---------|------|
 | [`<NotionPage />`](./renderer/notion-page) | 전체 Notion 페이지 렌더링 — Shiki, 다크 모드, 이미지 URL 매핑이 포함된 `<NotionRenderer />` 래퍼 |
-| [`<PostList />`](./renderer/post-list) | `<PostCard>` 컴포넌트의 반응형 그리드 |
-| [`<PostCard />`](./renderer/post-card) | 커버, 제목, 날짜, 태그가 있는 단일 포스트 카드 |
-| [`<NoxionThemeProvider />`](./renderer/theme-provider) | 테마 컨텍스트 프로바이더 (필수 래퍼) |
+| `<NoxionLogo />` | Noxion 로고 컴포넌트 |
+| [`<NoxionThemeProvider />`](./renderer/theme-provider) | 테마 컨트랙트 프로바이더 (필수 래퍼) |
+
+### 테마 컨트랙트
+
+| 익스포트 | 설명 |
+|---------|------|
+| `defineThemeContract(contract)` | 검증된 테마 컨트랙트 생성 |
+| `validateThemeContract(contract)` | 런타임에 테마 컨트랙트 검증 |
 
 ### 훅
 
 | 익스포트 | 설명 |
 |---------|------|
-| [`useNoxionTheme()`](./renderer/theme-provider#usenoxiontheme) | 현재 활성 테마 반환 (`"light" \| "dark"`) |
+| [`useThemeContract()`](./renderer/theme-provider#usethemecontract) | 활성 테마 컨트랙트 반환 |
+| [`useThemeComponent(name)`](./renderer/theme-provider#usethemecomponentname) | 활성 테마에서 특정 컴포넌트 반환 |
+| [`useThemeLayout(name)`](./renderer/theme-provider#usethemelayoutname) | 활성 테마에서 레이아웃 컴포넌트 반환 |
+| [`useThemeTemplate(name)`](./renderer/theme-provider#usethemetemplatename) | 활성 테마에서 템플릿 컴포넌트 반환 |
 | [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | 사용자의 테마 설정 반환 및 제어 |
+| `useSearch()` | 검색 훅 |
+
+### 타입
+
+| 익스포트 | 설명 |
+|---------|------|
+| `NoxionThemeContract` | 전체 테마 컨트랙트 인터페이스 |
+| `NoxionThemeContractComponents` | 테마 컨트랙트의 필수 컴포넌트 |
+| `NoxionThemeContractLayouts` | 테마 컨트랙트의 필수 레이아웃 |
+| `NoxionThemeContractTemplates` | 테마 컨트랙트의 필수 템플릿 |
+| `PostCardProps`, `PostListProps`, `HeaderProps`, `FooterProps` 등 | 컴포넌트 prop 타입 (테마 저작자를 위해 여전히 익스포트됨) |
 
 ---
 

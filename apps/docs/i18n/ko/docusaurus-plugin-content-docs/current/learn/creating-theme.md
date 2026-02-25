@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 title: 커스텀 테마 만들기
-description: CSS 변수와 테마 상속을 사용하여 커스텀 Noxion 테마 패키지를 만들고 배포하세요.
+description: 계약 기반 테마 시스템을 사용하여 커스텀 Noxion 테마 패키지를 만들고 배포하세요.
 ---
 
 # 커스텀 테마 만들기
@@ -21,7 +21,10 @@ bun create noxion my-theme --theme
 ```
 my-theme/
 ├── src/
-│   └── index.ts            # 테마 패키지 내보내기
+│   ├── index.ts            # 테마 계약 내보내기
+│   ├── components/         # React 컴포넌트 (Header, Footer, PostCard 등)
+│   ├── layouts/            # 레이아웃 컴포넌트 (BaseLayout, BlogLayout)
+│   └── templates/          # 페이지 템플릿 (HomePage, PostPage 등)
 ├── styles/
 │   └── theme.css           # CSS 변수 오버라이드
 ├── package.json
@@ -30,68 +33,70 @@ my-theme/
 
 ---
 
-## 2단계: 테마 정의
+## 2단계: 테마 계약 정의
 
-`src/index.ts`를 편집하여 테마 토큰을 설정하세요:
+`src/index.ts`를 편집하여 테마 계약을 정의하세요. 테마 계약은 React 컴포넌트, 레이아웃, 템플릿을 묶습니다:
 
 ```ts
-import type { NoxionThemePackage } from "@noxion/renderer";
+import { defineThemeContract } from "@noxion/renderer";
+import type { NoxionThemeContract } from "@noxion/renderer";
 
-const myTheme: NoxionThemePackage = {
-  name: "noxion-theme-midnight",
-  tokens: {
-    colors: {
-      primary: "#8b5cf6",
-      primaryHover: "#7c3aed",
-      background: "#0f0f23",
-      foreground: "#e2e8f0",
-      card: "#1e1e3f",
-      cardForeground: "#e2e8f0",
-      muted: "#2a2a5e",
-      mutedForeground: "#94a3b8",
-      border: "#334155",
-    },
-    fonts: {
-      sans: '"Inter", system-ui, sans-serif',
-      mono: '"JetBrains Mono", monospace',
-    },
-  },
+import {
+  Header, Footer, PostCard, FeaturedPostCard, PostList,
+  HeroSection, TOC, Search, TagFilter, ThemeToggle,
+  EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
+  PortfolioProjectCard, PortfolioFilter,
+} from "./components";
+
+import { BaseLayout, BlogLayout } from "./layouts";
+import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+
+export const myThemeContract: NoxionThemeContract = defineThemeContract({
+  name: "my-theme",
+
   metadata: {
-    name: "Midnight",
+    description: "커스텀 다크 테마",
     author: "Your Name",
     version: "1.0.0",
-    description: "A dark purple theme for Noxion",
   },
-  supports: ["blog", "docs", "portfolio"],
-};
 
-export default myTheme;
+  components: {
+    Header, Footer, PostCard, FeaturedPostCard, PostList,
+    HeroSection, TOC, Search, TagFilter, ThemeToggle,
+    EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
+    PortfolioProjectCard, PortfolioFilter,
+  },
+
+  layouts: {
+    base: BaseLayout,
+    blog: BlogLayout,
+  },
+
+  templates: {
+    home: HomePage,
+    post: PostPage,
+    archive: ArchivePage,
+    tag: TagPage,
+  },
+
+  supports: ["blog", "docs"],
+});
 ```
 
-### 토큰 레퍼런스
+### 필수 컴포넌트
 
-| 토큰 그룹 | 사용 가능한 토큰 |
-|-----------|-----------------|
-| `colors.primary` | 기본 강조 색상 (링크, 버튼) |
-| `colors.primaryHover` | 기본 색상의 호버 상태 |
-| `colors.background` | 페이지 배경 |
-| `colors.foreground` | 메인 텍스트 색상 |
-| `colors.card` | 카드/위젯 배경 |
-| `colors.cardForeground` | 카드 위의 텍스트 |
-| `colors.muted` | 미묘한 배경 (코드 블록 등) |
-| `colors.mutedForeground` | 보조/비활성 텍스트 |
-| `colors.border` | 기본 테두리 색상 |
-| `fonts.sans` | 산세리프 폰트 스택 |
-| `fonts.mono` | 모노스페이스 폰트 스택 |
+계약에는 `NoxionThemeContractComponents`에 나열된 모든 컴포넌트를 제공해야 합니다. 모든 prop 타입은 `@noxion/renderer`에서 내보내집니다.
 
 ---
 
 ## 3단계: CSS 오버라이드 추가 (선택사항)
 
-더 세밀한 제어를 위해 `styles/theme.css`를 편집하세요:
+시각적 커스터마이징을 위해 `styles/theme.css`를 편집하세요:
 
 ```css
 :root {
+  --noxion-primary: #8b5cf6;
+  --noxion-primary-hover: #7c3aed;
   --noxion-border-radius: 0.75rem;
   --noxion-line-height-base: 1.8;
 }
@@ -104,31 +109,20 @@ export default myTheme;
 
 ---
 
-## 4단계: `extendTheme()`으로 상속 사용
+## 4단계: 기본 테마 위에 구축
 
-처음부터 만들지 않고 기본 테마를 확장하세요:
+모든 컴포넌트를 처음부터 만들 필요가 없습니다. `@noxion/theme-default`에서 컴포넌트를 가져와 재사용하고, 변경하고 싶은 것만 오버라이드하세요:
 
 ```ts
-import { extendTheme, themeDefault } from "@noxion/renderer";
+// 기본 테마에서 대부분의 컴포넌트를 재사용
+export { Footer, TOC, Search, TagFilter, ThemeToggle, EmptyState,
+  NotionPage, DocsSidebar, DocsBreadcrumb, PortfolioProjectCard,
+  PortfolioFilter } from "@noxion/theme-default";
 
-const myTheme = extendTheme(themeDefault, {
-  tokens: {
-    colors: {
-      primary: "#8b5cf6",
-      primaryHover: "#7c3aed",
-    },
-  },
-  metadata: {
-    name: "Midnight",
-    author: "Your Name",
-    version: "1.0.0",
-  },
-});
-
-export default myTheme;
+// 변경하고 싶은 컴포넌트만 직접 만들기
+export { Header } from "./Header";
+export { PostCard } from "./PostCard";
 ```
-
-`extendTheme()`은 딥 머지를 수행합니다 — 변경하고 싶은 토큰만 지정하면 됩니다.
 
 ---
 
@@ -162,15 +156,18 @@ npm publish
 bun add noxion-theme-midnight
 ```
 
-```ts
-// noxion.config.ts
-import { defineConfig } from "@noxion/core";
-import midnightTheme from "noxion-theme-midnight";
+```tsx
+// app/providers.tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { myThemeContract } from "noxion-theme-midnight";
 
-export default defineConfig({
-  theme: midnightTheme,
-  // ...
-});
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <NoxionThemeProvider themeContract={myThemeContract} defaultMode="system">
+      {children}
+    </NoxionThemeProvider>
+  );
+}
 ```
 
 ---
@@ -181,11 +178,9 @@ export default defineConfig({
 
 ```ts
 interface NoxionThemeMetadata {
-  name: string;
+  description?: string;
   author?: string;
   version?: string;
-  description?: string;
-  previewUrl?: string;
-  repository?: string;
+  preview?: string;
 }
 ```

@@ -1,13 +1,20 @@
 ---
 title: PostList
-description: "@noxion/renderer PostList component — responsive grid of post cards"
+description: "PostList component — responsive grid of post cards"
 ---
 
 # `<PostList />`
 
+:::info Theme contract component
+`PostList` is no longer exported directly from `@noxion/renderer`. It is now part of theme contracts. The type `PostListProps` is still exported from `@noxion/renderer`.
+
+To use the component, access it from the theme contract:
 ```tsx
-import { PostList } from "@noxion/renderer";
+import { useThemeComponent } from "@noxion/renderer";
+
+const PostList = useThemeComponent("PostList");
 ```
+:::
 
 Renders a responsive grid of [`<PostCard>`](./post-card) components. Client Component.
 
@@ -26,6 +33,8 @@ Renders a responsive grid of [`<PostCard>`](./post-card) components. Client Comp
 Each item in the `posts` array should conform to `PostCardProps`:
 
 ```ts
+import type { PostCardProps } from "@noxion/renderer";
+
 interface PostCardProps {
   id: string;           // Notion page ID — used as React key
   title: string;        // Post title
@@ -39,48 +48,32 @@ interface PostCardProps {
 }
 ```
 
-These fields are a subset of `BlogPost`, so you can pass `BlogPost` objects directly after transforming the field names (they're identical).
-
 ---
 
 ## Usage
 
 ```tsx
 // app/page.tsx (Server Component)
-import { PostList } from "@noxion/renderer";
 import { getAllPosts } from "@/lib/notion";
+import { HomeContent } from "./home-content";
 
 export default async function HomePage() {
   const posts = await getAllPosts();
-
-  return (
-    <main>
-      <h1>My Blog</h1>
-      <PostList
-        posts={posts.map((p) => ({
-          id: p.id,
-          title: p.title,
-          slug: p.slug,
-          date: p.date,
-          tags: p.tags,
-          coverImage: p.coverImage,
-          category: p.category,
-          description: p.description,
-          author: p.author,
-        }))}
-      />
-    </main>
-  );
+  return <HomeContent posts={posts} />;
 }
 ```
 
-Since `BlogPost` and `PostCardProps` share the same field names and types, you can also spread:
-
 ```tsx
-<PostList posts={posts} />
-```
+// app/home-content.tsx (Client Component)
+"use client";
+import { useThemeComponent } from "@noxion/renderer";
+import type { PostCardProps } from "@noxion/renderer";
 
-(TypeScript will verify that `BlogPost` satisfies `PostCardProps`.)
+export function HomeContent({ posts }: { posts: PostCardProps[] }) {
+  const PostList = useThemeComponent("PostList");
+  return <PostList posts={posts} />;
+}
+```
 
 ---
 
@@ -97,7 +90,7 @@ Since `BlogPost` and `PostCardProps` share the same field names and types, you c
 | Viewport | Columns |
 |----------|---------|
 | Mobile (`< 640px`) | 1 column |
-| Tablet (`640px – 1024px`) | 2 columns |
+| Tablet (`640px - 1024px`) | 2 columns |
 | Desktop (`> 1024px`) | 3 columns |
 
 The grid is styled with CSS variables, so you can override spacing:

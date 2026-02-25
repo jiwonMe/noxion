@@ -14,7 +14,7 @@ Think [super.so](https://super.so) or [oopy.io](https://oopy.io), but free and y
 - **Image optimization** — Next.js Image with AVIF/WebP, or opt-in build-time download for full URL independence
 - **Multiple page types** — Blog, Docs, and Portfolio with multi-database collections
 - **Plugin system** — analytics (Google, Plausible, Umami), RSS, comments (Giscus, Utterances, Disqus), reading time
-- **5 built-in themes** — Default, Ink, Editorial, Folio, Beacon — all customizable via CSS variables
+- **2 built-in themes** — Default and Beacon — contract-based theme system, fully customizable via CSS variables
 - **ISR** — posts update automatically every hour; on-demand revalidation API included
 - **Deploy anywhere** — Vercel (one click), Docker, or static export
 
@@ -151,11 +151,8 @@ noxion/
 │   ├── create-noxion/      # CLI scaffolding tool
 │   ├── plugin-utils/       # @noxion/plugin-utils — mock data, test helpers
 │   ├── plugin-reading-time/# noxion-plugin-reading-time — example community plugin
-│   ├── theme-default/      # @noxion/theme-default — base theme
-│   ├── theme-ink/          # @noxion/theme-ink — minimal monospace theme
-│   ├── theme-editorial/    # @noxion/theme-editorial — magazine/serif theme
-│   ├── theme-folio/        # @noxion/theme-folio — portfolio/gallery theme
-│   └── theme-beacon/       # @noxion/theme-beacon — content-first wide theme
+│   ├── theme-default/      # @noxion/theme-default — base theme (defaultThemeContract)
+│   └── theme-beacon/       # @noxion/theme-beacon — content-first wide theme (beaconThemeContract)
 └── apps/
     ├── web/                # Demo blog (Next.js 16 App Router)
     ├── docs/               # Documentation site (Docusaurus)

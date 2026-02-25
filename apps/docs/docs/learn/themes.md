@@ -1,49 +1,55 @@
 ---
 sidebar_position: 7
 title: Themes
-description: Customize the look and feel of your Noxion site with CSS variables, theme inheritance, and dark mode.
+description: Customize the look and feel of your Noxion site with theme contracts, CSS variables, and dark mode.
 ---
 
 # Themes
 
-Noxion uses a **CSS custom properties (CSS variables)** system for theming. You can customize every color, font, and spacing value by overriding variables — no build step, no configuration changes, and no JavaScript required.
+Noxion uses a **contract-based theme system**. Each theme is a `NoxionThemeContract` object that bundles components, layouts, and templates together. Visual customization is done through **CSS custom properties (CSS variables)** — no build step, no configuration changes, and no JavaScript required.
 
-For advanced use cases, `extendTheme()` lets you create derived themes from the default theme with partial overrides.
+For advanced use cases, `defineThemeContract()` lets you create full theme contracts with custom components, layouts, and templates.
 
 ---
 
 ## Built-in themes
 
-Noxion ships with **5 official themes**, each published as an independent npm package:
+Noxion ships with **2 official themes**, each published as an independent npm package:
 
 | Theme | Package | Style |
 |-------|---------|-------|
-| **Default** | `@noxion/theme-default` | Clean, modern layout with system fonts, rounded cards, and a sticky header. The base theme that all others extend. |
-| **Ink** | `@noxion/theme-ink` | Terminal-inspired minimal aesthetic — monospace typography, dashed borders, `~/` logo prefix, and lowercase navigation. |
-| **Editorial** | `@noxion/theme-editorial` | Magazine-style layout — centered masthead, bold borders, serif display font, and uppercase navigation links. |
-| **Folio** | `@noxion/theme-folio` | Portfolio-optimized design — transparent header, uppercase logo with wide letter-spacing, and gallery-friendly card grid. |
+| **Default** | `@noxion/theme-default` | Clean, modern layout with system fonts, rounded cards, and a sticky header. The base theme for most sites. |
 | **Beacon** | `@noxion/theme-beacon` | Content-first reading experience — extra-wide content area (1320px), static header, large typography. Includes custom `HomePage` and `PostPage` components. |
 
 ### Using a theme
 
-Install the theme package and import it:
+Install the theme package and pass the contract to the provider:
 
 ```bash
-bun add @noxion/theme-ink
+bun add @noxion/theme-default
 ```
 
-```ts
-// noxion.config.ts
-import { defineConfig } from "@noxion/core";
-import { inkThemePackage } from "@noxion/theme-ink";
+```tsx
+// app/providers.tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
 
-export default defineConfig({
-  theme: inkThemePackage,
-  // ...
-});
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <NoxionThemeProvider themeContract={defaultThemeContract} defaultMode="system">
+      {children}
+    </NoxionThemeProvider>
+  );
+}
 ```
 
-All built-in themes extend `@noxion/theme-default` via `extendTheme()`, so they inherit all base tokens and only override their distinctive design properties.
+To switch themes, swap the contract:
+
+```tsx
+import { beaconThemeContract } from "@noxion/theme-beacon";
+
+<NoxionThemeProvider themeContract={beaconThemeContract} defaultMode="system">
+```
 
 ---
 
@@ -201,30 +207,50 @@ export default function RootLayout({ children }) {
 
 ---
 
-## Theme inheritance with `extendTheme()`
+## Theme contracts with `defineThemeContract()`
 
-For creating reusable theme packages, `@noxion/renderer` provides `extendTheme()`. This performs a deep merge of theme overrides onto the default theme:
+A theme contract bundles all the React components, layouts, and templates that make up a theme. Use `defineThemeContract()` to create one:
 
 ```ts
-import { extendTheme, themeDefault } from "@noxion/renderer";
+import { defineThemeContract } from "@noxion/renderer";
+import type { NoxionThemeContract } from "@noxion/renderer";
 
-const myTheme = extendTheme(themeDefault, {
-  tokens: {
-    colors: {
-      primary: "#7c3aed",
-      primaryHover: "#6d28d9",
-    },
-    fonts: {
-      sans: '"Inter", system-ui, sans-serif',
-    },
-  },
+import { Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
+  TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
+  DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
+} from "./components";
+
+import { BaseLayout, BlogLayout } from "./layouts";
+import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+
+export const myThemeContract: NoxionThemeContract = defineThemeContract({
+  name: "my-theme",
+
   metadata: {
-    name: "My Custom Theme",
-    author: "Jane Doe",
+    description: "A custom theme for Noxion",
+    author: "Your Name",
     version: "1.0.0",
-    description: "A violet-accented theme",
   },
-  supports: ["blog", "docs", "portfolio"],
+
+  components: {
+    Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
+    TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
+    DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
+  },
+
+  layouts: {
+    base: BaseLayout,
+    blog: BlogLayout,
+  },
+
+  templates: {
+    home: HomePage,
+    post: PostPage,
+    archive: ArchivePage,
+    tag: TagPage,
+  },
+
+  supports: ["blog"],
 });
 ```
 
@@ -237,8 +263,8 @@ bun create noxion my-theme --theme
 ```
 
 This creates a package with:
-- `src/index.ts` — exports a `NoxionThemePackage` object
-- `styles/theme.css` — CSS variable overrides
+- `src/index.ts` — exports a `NoxionThemeContract` object
+- `styles/` — CSS variable overrides
 - `package.json` — configured for npm publishing
 
 See [Creating a Custom Theme](./creating-theme) for a full walkthrough.
@@ -249,12 +275,10 @@ Themes can declare metadata and which page types they support:
 
 ```ts
 interface NoxionThemeMetadata {
-  name: string;
+  description?: string;
   author?: string;
   version?: string;
-  description?: string;
-  previewUrl?: string;
-  repository?: string;
+  preview?: string;
 }
 ```
 
@@ -271,7 +295,7 @@ supports: ["blog", "docs"]  // This theme only has blog and docs templates
 The scaffolded app includes a `<ThemeToggle>` component in the header that lets users switch between light, dark, and system modes. The toggle:
 
 1. Reads the current mode from context (`useThemePreference()`)
-2. Cycles through `light → dark → system` on click
+2. Cycles through `light -> dark -> system` on click
 3. Persists the choice to `localStorage`
 4. Updates `data-theme` on `<html>` without a full page reload
 
@@ -293,22 +317,7 @@ Then remove the `<ThemeToggle>` from your `<Header>` component.
 
 ## Hooks
 
-For advanced customization, `@noxion/renderer` exports two React hooks:
-
-### `useNoxionTheme()`
-
-Returns the **current active theme** (resolved — no `"system"` here):
-
-```tsx
-import { useNoxionTheme } from "@noxion/renderer";
-
-function MyComponent() {
-  const theme = useNoxionTheme();
-  // theme.name: "light" | "dark"
-
-  return <div className={theme.name === "dark" ? "dark-style" : "light-style"} />;
-}
-```
+For advanced customization, `@noxion/renderer` exports these React hooks:
 
 ### `useThemePreference()`
 
@@ -330,4 +339,44 @@ function ThemeSelector() {
 }
 ```
 
-Both hooks must be used inside a component wrapped by `<NoxionThemeProvider>`.
+### `useThemeContract()`
+
+Returns the active `NoxionThemeContract`:
+
+```tsx
+import { useThemeContract } from "@noxion/renderer";
+
+function MyComponent() {
+  const contract = useThemeContract();
+  console.log(contract.name); // "default", "beacon", etc.
+}
+```
+
+### `useThemeComponent(name)`
+
+Returns a specific component from the active theme contract:
+
+```tsx
+import { useThemeComponent } from "@noxion/renderer";
+
+function MyPage() {
+  const PostList = useThemeComponent("PostList");
+  return <PostList posts={posts} />;
+}
+```
+
+### `useThemeLayout(name)` / `useThemeTemplate(name)`
+
+Returns layout or template components from the contract:
+
+```tsx
+import { useThemeLayout, useThemeTemplate } from "@noxion/renderer";
+
+function MyPage() {
+  const BlogLayout = useThemeLayout("blog");
+  const HomePage = useThemeTemplate("home");
+  // ...
+}
+```
+
+All hooks must be used inside a component wrapped by `<NoxionThemeProvider>`.

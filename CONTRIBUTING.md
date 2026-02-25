@@ -123,14 +123,19 @@ bun test --watch
 noxion/
 ├── apps/
 │   ├── web/                  # Demo blog — Next.js 16 App Router
-│   └── docs/                 # Documentation site
+│   ├── docs/                 # Documentation site (Docusaurus)
+│   └── theme-dev/            # Theme development & preview app
 ├── packages/
 │   ├── core/                 # @noxion/core
 │   │   └── src/
 │   │       ├── plugins/      # Built-in plugins (analytics, RSS, comments)
 │   │       └── __tests__/    # Unit tests (co-located with source)
-│   ├── renderer/             # @noxion/renderer — React components & themes
+│   ├── renderer/             # @noxion/renderer — theme contracts & components
+│   ├── notion-renderer/      # @noxion/notion-renderer — Notion block renderer
 │   ├── adapter-nextjs/       # @noxion/adapter-nextjs — metadata, sitemap, JSON-LD
+│   ├── theme-default/        # @noxion/theme-default — base theme contract
+│   ├── theme-beacon/         # @noxion/theme-beacon — content-first theme contract
+│   ├── plugin-utils/         # @noxion/plugin-utils — mock data, test helpers
 │   └── create-noxion/        # CLI scaffolding tool (bun create noxion)
 ├── scripts/
 │   └── release.sh            # Manual release helper
@@ -145,9 +150,12 @@ noxion/
 | Package | Responsibility |
 |---------|---------------|
 | `@noxion/core` | Notion API client, post fetcher, config schema, plugin system, frontmatter parser |
-| `@noxion/renderer` | React components for rendering Notion blocks, CSS theme system |
+| `@noxion/renderer` | Theme contract system, React components, CSS theme system |
+| `@noxion/notion-renderer` | Notion block renderer (30+ block types, KaTeX SSR, Shiki syntax highlighting) |
 | `@noxion/adapter-nextjs` | `generateMetadata`, `generateSitemap`, `generateRobotsTxt`, JSON-LD helpers |
-| `create-noxion` | `bun create noxion` CLI — scaffolds a new Next.js blog |
+| `@noxion/theme-default` | Base theme contract (`defaultThemeContract`) |
+| `@noxion/theme-beacon` | Content-first theme contract (`beaconThemeContract`) |
+| `create-noxion` | `bun create noxion` CLI — scaffolds a new Next.js site |
 
 ---
 

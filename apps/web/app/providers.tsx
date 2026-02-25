@@ -1,7 +1,7 @@
 "use client";
 
-import { NoxionThemeProvider, Header, Footer, BlogLayout } from "@noxion/renderer";
-import { themeDefault } from "@noxion/theme-default";
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract, Header, Footer, BlogLayout } from "@noxion/theme-default";
 
 interface ProvidersProps {
   siteName: string;
@@ -22,13 +22,7 @@ export function Providers({ siteName, author, children }: ProvidersProps) {
   );
 
   return (
-    <NoxionThemeProvider
-      themePackage={themeDefault}
-      slots={{
-        header: SiteHeader,
-        footer: SiteFooter,
-      }}
-    >
+    <NoxionThemeProvider themeContract={defaultThemeContract}>
       <BlogLayout
         slots={{
           header: SiteHeader,

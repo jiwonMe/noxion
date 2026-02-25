@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 title: Creating a Custom Theme
-description: Build and publish a custom Noxion theme package with CSS variables and theme inheritance.
+description: Build and publish a custom Noxion theme with the contract-based theme system.
 ---
 
 # Creating a Custom Theme
@@ -21,7 +21,10 @@ This generates:
 ```
 my-theme/
 ├── src/
-│   └── index.ts            # Theme package export
+│   ├── index.ts            # Theme contract export
+│   ├── components/         # React components (Header, Footer, PostCard, etc.)
+│   ├── layouts/            # Layout components (BaseLayout, BlogLayout)
+│   └── templates/          # Page templates (HomePage, PostPage, etc.)
 ├── styles/
 │   └── theme.css           # CSS variable overrides
 ├── package.json
@@ -30,68 +33,91 @@ my-theme/
 
 ---
 
-## Step 2: Define your theme
+## Step 2: Define your theme contract
 
-Edit `src/index.ts` to configure your theme tokens:
+Edit `src/index.ts` to define your theme contract. A theme contract bundles React components, layouts, and templates:
 
 ```ts
-import type { NoxionThemePackage } from "@noxion/renderer";
+import { defineThemeContract } from "@noxion/renderer";
+import type { NoxionThemeContract } from "@noxion/renderer";
 
-const myTheme: NoxionThemePackage = {
-  name: "noxion-theme-midnight",
-  tokens: {
-    colors: {
-      primary: "#8b5cf6",
-      primaryHover: "#7c3aed",
-      background: "#0f0f23",
-      foreground: "#e2e8f0",
-      card: "#1e1e3f",
-      cardForeground: "#e2e8f0",
-      muted: "#2a2a5e",
-      mutedForeground: "#94a3b8",
-      border: "#334155",
-    },
-    fonts: {
-      sans: '"Inter", system-ui, sans-serif',
-      mono: '"JetBrains Mono", monospace',
-    },
-  },
+import {
+  Header, Footer, PostCard, FeaturedPostCard, PostList,
+  HeroSection, TOC, Search, TagFilter, ThemeToggle,
+  EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
+  PortfolioProjectCard, PortfolioFilter,
+} from "./components";
+
+import { BaseLayout, BlogLayout } from "./layouts";
+import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+
+export const myThemeContract: NoxionThemeContract = defineThemeContract({
+  name: "my-theme",
+
   metadata: {
-    name: "Midnight",
+    description: "A custom dark theme for Noxion",
     author: "Your Name",
     version: "1.0.0",
-    description: "A dark purple theme for Noxion",
   },
-  supports: ["blog", "docs", "portfolio"],
-};
 
-export default myTheme;
+  components: {
+    Header, Footer, PostCard, FeaturedPostCard, PostList,
+    HeroSection, TOC, Search, TagFilter, ThemeToggle,
+    EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
+    PortfolioProjectCard, PortfolioFilter,
+  },
+
+  layouts: {
+    base: BaseLayout,
+    blog: BlogLayout,
+  },
+
+  templates: {
+    home: HomePage,
+    post: PostPage,
+    archive: ArchivePage,
+    tag: TagPage,
+  },
+
+  supports: ["blog", "docs"],
+});
 ```
 
-### Token reference
+### Required components
 
-| Token group | Available tokens |
-|-------------|-----------------|
-| `colors.primary` | Primary accent color (links, buttons) |
-| `colors.primaryHover` | Hover state for primary |
-| `colors.background` | Page background |
-| `colors.foreground` | Main text color |
-| `colors.card` | Card/widget background |
-| `colors.cardForeground` | Text on cards |
-| `colors.muted` | Subtle background (code blocks, etc.) |
-| `colors.mutedForeground` | Secondary/disabled text |
-| `colors.border` | Default border color |
-| `fonts.sans` | Sans-serif font stack |
-| `fonts.mono` | Monospace font stack |
+Your contract must provide all components listed in `NoxionThemeContractComponents`:
+
+| Component | Props Type | Purpose |
+|-----------|-----------|---------|
+| `Header` | `HeaderProps` | Site header with navigation |
+| `Footer` | `FooterProps` | Site footer |
+| `PostCard` | `PostCardProps` | Blog post card in lists |
+| `FeaturedPostCard` | `PostCardProps` | Featured/hero post card |
+| `PostList` | `PostListProps` | Grid of post cards |
+| `HeroSection` | `HeroSectionProps` | Hero section with featured posts |
+| `TOC` | `TOCProps` | Table of contents sidebar |
+| `Search` | `SearchProps` | Search input component |
+| `TagFilter` | `TagFilterProps` | Tag filter bar |
+| `ThemeToggle` | `ThemeToggleProps` | Light/dark/system mode toggle |
+| `EmptyState` | `EmptyStateProps` | Empty state placeholder |
+| `NotionPage` | `NotionPageProps` | Notion page renderer |
+| `DocsSidebar` | `DocsSidebarProps` | Documentation sidebar |
+| `DocsBreadcrumb` | `DocsBreadcrumbProps` | Breadcrumb navigation |
+| `PortfolioProjectCard` | `PortfolioCardProps` | Portfolio project card |
+| `PortfolioFilter` | `PortfolioFilterProps` | Portfolio filter bar |
+
+All prop types are exported from `@noxion/renderer`.
 
 ---
 
 ## Step 3: Add CSS overrides (optional)
 
-For more granular control, edit `styles/theme.css`:
+For visual customization, edit `styles/theme.css`:
 
 ```css
 :root {
+  --noxion-primary: #8b5cf6;
+  --noxion-primary-hover: #7c3aed;
   --noxion-border-radius: 0.75rem;
   --noxion-line-height-base: 1.8;
 }
@@ -102,33 +128,25 @@ For more granular control, edit `styles/theme.css`:
 }
 ```
 
+CSS variables control colors, fonts, spacing, and other visual properties. Your React components should use these variables for consistent theming.
+
 ---
 
-## Step 4: Use `extendTheme()` for inheritance
+## Step 4: Build on the default theme
 
-Instead of building from scratch, extend the default theme:
+You don't have to build every component from scratch. Import and re-export components from `@noxion/theme-default`, then override only the ones you want to customize:
 
 ```ts
-import { extendTheme, themeDefault } from "@noxion/renderer";
+// Re-use most components from the default theme
+export { Footer, TOC, Search, TagFilter, ThemeToggle, EmptyState,
+  NotionPage, DocsSidebar, DocsBreadcrumb, PortfolioProjectCard,
+  PortfolioFilter } from "@noxion/theme-default";
 
-const myTheme = extendTheme(themeDefault, {
-  tokens: {
-    colors: {
-      primary: "#8b5cf6",
-      primaryHover: "#7c3aed",
-    },
-  },
-  metadata: {
-    name: "Midnight",
-    author: "Your Name",
-    version: "1.0.0",
-  },
-});
-
-export default myTheme;
+// Create your own custom components for the ones you want to change
+export { Header } from "./Header";       // Custom header
+export { PostCard } from "./PostCard";   // Custom post card
+// ...
 ```
-
-`extendTheme()` performs a deep merge — you only need to specify the tokens you want to change.
 
 ---
 
@@ -162,15 +180,18 @@ Users install and use your theme:
 bun add noxion-theme-midnight
 ```
 
-```ts
-// noxion.config.ts
-import { defineConfig } from "@noxion/core";
-import midnightTheme from "noxion-theme-midnight";
+```tsx
+// app/providers.tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { myThemeContract } from "noxion-theme-midnight";
 
-export default defineConfig({
-  theme: midnightTheme,
-  // ...
-});
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <NoxionThemeProvider themeContract={myThemeContract} defaultMode="system">
+      {children}
+    </NoxionThemeProvider>
+  );
+}
 ```
 
 ---
@@ -181,11 +202,9 @@ Themes can include metadata for discovery and display:
 
 ```ts
 interface NoxionThemeMetadata {
-  name: string;
+  description?: string;
   author?: string;
   version?: string;
-  description?: string;
-  previewUrl?: string;
-  repository?: string;
+  preview?: string;
 }
 ```

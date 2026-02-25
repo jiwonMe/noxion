@@ -72,6 +72,10 @@ export interface NoxionPlugin<Content = unknown> {
   
   onRouteResolve?: (route: RouteInfo) => RouteInfo | null;
   
+  /**
+   * @deprecated Runtime slot injection is no longer supported in the "copy, don't import" model.
+   * Plugins should provide components that users can directly import and place in their layouts.
+   */
   extendSlots?: (slots: Record<string, unknown>) => Record<string, unknown>;
   
   extendCLI?: () => CLICommand[];

@@ -1,0 +1,22 @@
+:root {
+  --color-primary: #000000;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #15171a;
+  --color-muted: #f0f0f0;
+  --color-muted-foreground: #738a94;
+  --color-border: #e5eff5;
+  --color-accent: #1a1a2e;
+  --color-accent-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-card-foreground: #15171a;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --width-content: 1320px;
+  --width-sidebar: 300px;
+
+  --radius-default: 0;
+}

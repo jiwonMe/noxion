@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD, generateBreadcrumbLD } from "@noxion/adapter-nextjs";
 import { createNotionClient, parseFrontmatter, applyFrontmatter } from "@noxion/core";
-import { PostPage } from "@noxion/renderer";
+import { PostPage } from "@noxion/theme-default";
 import { getPostBySlug, getPageRecordMap } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
 

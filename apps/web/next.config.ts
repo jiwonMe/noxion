@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
+
+const withVanillaExtract = createVanillaExtractPlugin();
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -7,6 +10,8 @@ const nextConfig: NextConfig = {
     "@noxion/renderer",
     "@noxion/adapter-nextjs",
     "@noxion/notion-renderer",
+    "@noxion/theme-default",
+    "@noxion/theme-beacon",
     "notion-client",
     "notion-types",
     "notion-utils",
@@ -25,4 +30,4 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 300,
 };
 
-export default nextConfig;
+export default withVanillaExtract(nextConfig);

@@ -207,7 +207,17 @@ export interface NoxionPageData {
 export type PluginConfig = PluginConfigEntry;
 
 export interface NoxionThemeConfig {
+  /**
+   * Name of the theme package to use (e.g. "@noxion/theme-default").
+   * Used with the new NoxionThemeContract API.
+   */
+  themeContract?: string;
+  /** @deprecated Use `themeContract` with a NoxionThemeContract-based theme instead. */
   themePackage?: string;
+  /**
+   * @deprecated CSS token overrides. Use vanilla-extract + Tailwind CSS variables in
+   * your theme's `.css.ts` files instead.
+   */
   tokens?: {
     colors?: Record<string, string>;
     fonts?: Record<string, string>;
@@ -217,6 +227,9 @@ export interface NoxionThemeConfig {
     breakpoints?: Record<string, string>;
     borderRadius?: string;
   };
+  /**
+   * @deprecated Use the theme's layout `slots` prop or NoxionThemeContract instead.
+   */
   slots?: Record<string, unknown>;
 }
 
@@ -228,6 +241,10 @@ export interface PaginatedResponse<T> {
   hasMore: boolean;
 }
 
+/**
+ * @deprecated Use NoxionThemeContract (from @noxion/renderer) to provide components
+ * through a typed theme contract instead of loose overrides.
+ */
 export interface ComponentOverrides {
   Header?: unknown;
   Footer?: unknown;

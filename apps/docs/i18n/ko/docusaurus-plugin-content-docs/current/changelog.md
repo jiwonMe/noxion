@@ -10,6 +10,81 @@ Noxion 프로젝트의 주요 변경 사항을 기록합니다.
 
 ---
 
+## v0.3.0
+
+**릴리스: 2026-02-25**
+
+대규모 아키텍처 단순화: 레거시 토큰 기반 테마 시스템(`extendTheme`, `NoxionThemePackage`)이 완전히 제거되고 컨트랙트 기반 테마 시스템(`defineThemeContract`, `NoxionThemeContract`)으로 대체되었습니다.
+
+### 호환성 변경: 레거시 테마 시스템 제거
+
+- **`extendTheme()`** — 제거됨. 대신 `defineThemeContract()`를 사용하세요.
+- **`NoxionThemePackage`** — 제거됨. 대신 `NoxionThemeContract`를 사용하세요.
+- **`ComponentOverrides`** — 제거됨. 컴포넌트는 이제 테마 컨트랙트의 일부입니다.
+- **`useNoxionTheme()`** — 제거됨. 대신 `useThemeContract()`를 사용하세요.
+- **`NoxionThemeProvider` props 변경** — `theme`, `themePackage`, `slots`, `templates` props 제거됨. 대신 `themeContract` prop을 사용하세요.
+
+### 호환성 변경: 테마 패키지 제거
+
+다음 테마 패키지가 삭제되었습니다:
+- `@noxion/theme-ink`
+- `@noxion/theme-editorial`
+- `@noxion/theme-folio`
+- `@noxion/theme-carbon`
+
+`@noxion/theme-default`와 `@noxion/theme-beacon`만 남았습니다.
+
+### 호환성 변경: renderer에서 컴포넌트 익스포트 제거
+
+`PostList`, `PostCard`, `Header`, `Footer`, `TOC`, `Search`, `TagFilter`, `HeroSection`, `FeaturedPostCard`, `EmptyState`, `ThemeToggle` 등의 컴포넌트는 더 이상 `@noxion/renderer`에서 익스포트되지 않습니다. 이제 테마 컨트랙트 내부에 번들링됩니다.
+
+- **타입 익스포트는 유지됨** — 모든 prop 인터페이스(`PostCardProps`, `PostListProps`, `HeaderProps` 등)는 여전히 `@noxion/renderer`에서 익스포트됩니다
+- **컴포넌트에 접근하려면** — `useThemeComponent("PostList")`를 사용하거나 컨트랙트 객체에서 직접 접근하세요
+
+### 신규: 테마 컨트랙트 훅
+
+- **`useThemeContract()`** — 현재 테마 컨트랙트 반환
+- **`useThemeComponent(name)`** — 활성 테마에서 특정 컴포넌트 반환
+- **`useThemeLayout(name)`** — 레이아웃 컴포넌트 반환
+- **`useThemeTemplate(name)`** — 템플릿 컴포넌트 반환
+
+### 제거됨: 내부 모듈
+
+- `packages/renderer/src/layouts/` — 제거됨
+- `packages/renderer/src/templates/` — 제거됨
+- `packages/renderer/src/theme/define-theme.ts` — 제거됨
+- `packages/renderer/src/theme/extend-theme.ts` — 제거됨
+- `packages/renderer/src/theme/css-generator.ts` — 제거됨
+- `packages/renderer/src/theme/component-resolver.ts` — 제거됨
+- `packages/renderer/src/theme/validate-theme.ts` — 제거됨 (타입은 contract.ts로 이동)
+- `packages/renderer/src/styles/noxion.css` — 제거됨
+
+### 마이그레이션
+
+**이전 (v0.2):**
+```tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { inkThemePackage } from "@noxion/theme-ink";
+
+<NoxionThemeProvider theme={inkThemePackage}>
+```
+
+**이후 (v0.3):**
+```tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
+
+<NoxionThemeProvider themeContract={defaultThemeContract}>
+```
+
+### 개선 사항
+
+- **473개 테스트** 전체 패키지에서 통과
+- 더 깔끔하고 작은 `@noxion/renderer` API 표면
+- 테마 컨트랙트가 모든 테마 컴포넌트에 대한 완전한 타입 안전성 제공
+
+---
+
 ## v0.2.0
 
 **릴리스: 2026-02-23**
@@ -103,20 +178,19 @@ Noxion이 블로그 빌더에서 **완전한 웹사이트 빌더**로 진화합�
 | 패키지 | 스타일 | 설명 |
 |--------|--------|------|
 | `@noxion/theme-default` | 깔끔 & 모던 | 시스템 폰트, 둥근 카드, 고정 헤더의 균형 잡힌 레이아웃. 모든 테마의 기본이 되는 베이스 테마. |
-| `@noxion/theme-ink` | 미니멀 & 모노스페이스 | 점선 테두리, `~/` 로고 접두사, 모노스페이스 타이포그래피의 터미널 감성 디자인. |
-| `@noxion/theme-editorial` | 매거진 & 세리프 | 중앙 마스트헤드, 굵은 테두리, 세리프 디스플레이 폰트, 대문자 내비게이션의 신문 스타일 레이아웃. |
-| `@noxion/theme-folio` | 포트폴리오 & 갤러리 | 투명 헤더, 대문자 로고, 갤러리에 최적화된 카드 그리드의 미니멀 크롬. |
 | `@noxion/theme-beacon` | 콘텐츠 중심 | 넓은 콘텐츠 영역(1320px), 정적 헤더, 긴 글 읽기에 적합한 큰 타이포그래피. 커스텀 홈/포스트 페이지 컴포넌트. |
+
+> **참고:** `@noxion/theme-ink`, `@noxion/theme-editorial`, `@noxion/theme-folio`는 v0.3.0에서 테마 컨트랙트 마이그레이션의 일부로 제거되었습니다.
 
 테마 설치 및 적용:
 
 ```bash
-bun add @noxion/theme-ink
+bun add @noxion/theme-default
 ```
 
 ```ts
-import { inkThemePackage } from "@noxion/theme-ink";
-// noxion.config.ts에서 사용
+import { defaultThemeContract } from "@noxion/theme-default";
+// NoxionThemeProvider와 함께 사용
 ```
 
 ### 신규: 히어로 섹션 & 홈페이지 리디자인

@@ -1,6 +1,6 @@
 ---
 title: ThemeProvider
-description: "@noxion/renderer ThemeProvider, useNoxionTheme, and useThemePreference"
+description: "@noxion/renderer ThemeProvider, theme contract hooks, and useThemePreference"
 ---
 
 # `<NoxionThemeProvider />`
@@ -9,9 +9,9 @@ description: "@noxion/renderer ThemeProvider, useNoxionTheme, and useThemePrefer
 import { NoxionThemeProvider } from "@noxion/renderer";
 ```
 
-Provides the theme context to all Noxion components. Must wrap the entire app (or at minimum all components that use theme-aware features).
+Provides the theme contract and color mode context to all Noxion components. Must wrap the entire app (or at minimum all components that use theme-aware features).
 
-In the generated app, this is already set up in `app/layout.tsx`.
+In the generated app, this is already set up in `app/providers.tsx`.
 
 ---
 
@@ -19,6 +19,7 @@ In the generated app, this is already set up in `app/layout.tsx`.
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
+| `themeContract` | `NoxionThemeContract` | ✅ | — | The theme contract providing components, layouts, and templates. |
 | `defaultMode` | `ThemeMode` | — | `"system"` | The initial color mode. Should match `config.defaultTheme`. |
 | `children` | `ReactNode` | ✅ | — | Your app tree. |
 
@@ -27,22 +28,36 @@ In the generated app, this is already set up in `app/layout.tsx`.
 ## Setup
 
 ```tsx
-// app/layout.tsx
+// app/providers.tsx
 import { NoxionThemeProvider } from "@noxion/renderer";
-import { ThemeScript } from "./theme-script";
+import { defaultThemeContract } from "@noxion/theme-default";
 import { siteConfig } from "@/lib/config";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <NoxionThemeProvider
+      themeContract={defaultThemeContract}
+      defaultMode={siteConfig.defaultTheme}
+    >
+      {children}
+    </NoxionThemeProvider>
+  );
+}
+```
+
+```tsx
+// app/layout.tsx
+import { ThemeScript } from "./theme-script";
+import { Providers } from "./providers";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={siteConfig.language} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Prevents FOUC — must be in <head> */}
         <ThemeScript />
       </head>
       <body>
-        <NoxionThemeProvider defaultMode={siteConfig.defaultTheme}>
-          {children}
-        </NoxionThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
@@ -57,46 +72,123 @@ This is a well-known pattern for theme systems. See [React docs on suppressHydra
 
 ---
 
-## `useNoxionTheme()`
+## `useThemeContract()`
 
-Returns the **currently active theme** (resolved — `"system"` is never returned; it's always resolved to either `"light"` or `"dark"`).
+Returns the active **theme contract** object.
 
 ### Signature
 
 ```ts
-function useNoxionTheme(): { name: "light" | "dark" }
+function useThemeContract(): NoxionThemeContract
 ```
 
 ### Returns
 
-An object with a `name` property: `"light"` or `"dark"`.
+The full `NoxionThemeContract` including `name`, `metadata`, `components`, `layouts`, `templates`, and `supports`.
 
 ### Usage
 
 ```tsx
 "use client";
-import { useNoxionTheme } from "@noxion/renderer";
+import { useThemeContract } from "@noxion/renderer";
 
-function ThemeAwareComponent() {
-  const { name } = useNoxionTheme();
+function ThemeInfo() {
+  const contract = useThemeContract();
+  return <p>Active theme: {contract.name}</p>;
+}
+```
+
+---
+
+## `useThemeComponent(name)`
+
+Returns a specific component from the active theme contract.
+
+### Signature
+
+```ts
+function useThemeComponent<K extends keyof NoxionThemeContractComponents>(
+  name: K
+): NoxionThemeContractComponents[K]
+```
+
+### Usage
+
+```tsx
+"use client";
+import { useThemeComponent } from "@noxion/renderer";
+
+function MyPage({ posts }) {
+  const PostList = useThemeComponent("PostList");
+  const Header = useThemeComponent("Header");
 
   return (
-    <div className={name === "dark" ? "dark-variant" : "light-variant"}>
-      Current theme: {name}
-    </div>
+    <>
+      <Header siteName="My Blog" />
+      <PostList posts={posts} />
+    </>
   );
 }
 ```
 
-This hook is useful for programmatically applying theme-specific behavior — for example, setting a comment system's theme to match Noxion's active theme.
+Available component names: `Header`, `Footer`, `PostCard`, `FeaturedPostCard`, `PostList`, `HeroSection`, `TOC`, `Search`, `TagFilter`, `ThemeToggle`, `EmptyState`, `NotionPage`, `DocsSidebar`, `DocsBreadcrumb`, `PortfolioProjectCard`, `PortfolioFilter`.
 
-### Error behavior
+---
 
-Throws an error if called outside of `<NoxionThemeProvider>`:
+## `useThemeLayout(name)`
 
+Returns a layout component from the active theme contract.
+
+### Signature
+
+```ts
+function useThemeLayout<K extends keyof NoxionThemeContractLayouts>(
+  name: K
+): NoxionThemeContractLayouts[K]
 ```
-Error: useNoxionTheme must be used within a NoxionThemeProvider
+
+### Usage
+
+```tsx
+"use client";
+import { useThemeLayout } from "@noxion/renderer";
+
+function MyPage({ children }) {
+  const BlogLayout = useThemeLayout("blog");
+  return <BlogLayout slots={{}}>{children}</BlogLayout>;
+}
 ```
+
+Available layout names: `base`, `blog`, `docs` (optional), `magazine` (optional).
+
+---
+
+## `useThemeTemplate(name)`
+
+Returns a template component from the active theme contract.
+
+### Signature
+
+```ts
+function useThemeTemplate<K extends keyof NoxionThemeContractTemplates>(
+  name: K
+): NoxionThemeContractTemplates[K] | undefined
+```
+
+### Usage
+
+```tsx
+"use client";
+import { useThemeTemplate } from "@noxion/renderer";
+
+function RenderPage({ data }) {
+  const HomePage = useThemeTemplate("home");
+  if (!HomePage) return null;
+  return <HomePage data={data} />;
+}
+```
+
+Available template names: `home`, `post`, `archive` (optional), `tag` (optional), `docs` (optional), `portfolioGrid` (optional), `portfolioProject` (optional).
 
 ---
 
@@ -138,7 +230,7 @@ function ThemeToggle() {
 
   return (
     <button onClick={cycleTheme} aria-label={`Current theme: ${mode}`}>
-      {mode === "light" ? "☀️" : mode === "dark" ? "🌙" : "💻"}
+      {mode === "light" ? "sun" : mode === "dark" ? "moon" : "system"}
     </button>
   );
 }

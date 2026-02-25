@@ -1,0 +1,27 @@
+"use client";
+
+import type { HeroSectionProps } from "@noxion/renderer";
+import { FeaturedPostCard } from "./FeaturedPostCard";
+import { PostCard } from "./PostCard";
+import * as styles from "./HeroSection.css";
+
+export function HeroSection({ posts }: HeroSectionProps) {
+  if (posts.length === 0) return null;
+
+  const [primary, ...secondary] = posts;
+
+  return (
+    <section className={styles.section}>
+      <div className={styles.primary}>
+        <FeaturedPostCard {...primary} />
+      </div>
+      {secondary.length > 0 && (
+        <div className={styles.secondary}>
+          {secondary.map((post) => (
+            <PostCard key={post.slug} {...post} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}

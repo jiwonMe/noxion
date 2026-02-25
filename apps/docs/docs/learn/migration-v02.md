@@ -117,15 +117,15 @@ import { generateTechArticleLD, generateCreativeWorkLD, generatePageLD } from "@
 
 ### Theme System
 
-- `extendTheme()` for creating child themes via deep merge
+- `defineThemeContract()` for creating theme contracts that bundle components, layouts, and templates
 - Namespaced templates: `docs/page`, `portfolio/grid`, `portfolio/project`
-- `NoxionThemePackage.supports` declares which page types a theme supports
+- `NoxionThemeContract.supports` declares which page types a theme supports
 
 ### New Components
 
-From `@noxion/renderer`:
-- `DocsSidebar`, `DocsBreadcrumb`, `DocsPage`
-- `PortfolioProjectCard`, `PortfolioFilter`, `PortfolioGrid`, `PortfolioProject`
+Available via theme contracts (`NoxionThemeContractComponents`):
+- `DocsSidebar`, `DocsBreadcrumb`
+- `PortfolioProjectCard`, `PortfolioFilter`
 
 ## Migration Checklist
 

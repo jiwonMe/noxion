@@ -165,17 +165,19 @@ export interface PortfolioFilterProps {
   onToggle: (tech: string) => void;
 }
 
-export interface ComponentOverrides {
-  Header?: ComponentType<HeaderProps>;
-  Footer?: ComponentType<FooterProps>;
-  PostCard?: ComponentType<PostCardProps>;
-  FeaturedPostCard?: ComponentType<PostCardProps>;
-  PostList?: ComponentType<PostListProps>;
-  NotionPage?: ComponentType<NotionPageProps>;
-  TOC?: ComponentType<TOCProps>;
-  Search?: ComponentType<SearchProps>;
-  TagFilter?: ComponentType<TagFilterProps>;
-  NotionBlock?: Record<string, ComponentType<unknown>>;
+export interface HeroSectionProps {
+  posts: PostCardProps[];
+  className?: string;
+}
+
+export interface EmptyStateProps {
+  title?: string;
+  message?: string;
+  className?: string;
+}
+
+export interface ThemeToggleProps {
+  className?: string;
 }
 
 export type NoxionLayout = "single-column" | "sidebar-left" | "sidebar-right";
@@ -216,16 +218,4 @@ export interface NoxionThemeMetadata {
   author?: string;
   version?: string;
   preview?: string;
-}
-
-export interface NoxionThemePackage {
-  name: string;
-  tokens: NoxionThemeTokens;
-  layouts: Record<string, ComponentType<NoxionLayoutProps>>;
-  templates: Partial<NoxionTemplateMap>;
-  components: Partial<ComponentOverrides>;
-  stylesheet?: string;
-  /** Page types this theme supports (e.g. ['blog', 'docs', 'portfolio']) */
-  supports?: string[];
-  metadata?: NoxionThemeMetadata;
 }

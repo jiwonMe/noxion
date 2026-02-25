@@ -1,49 +1,55 @@
 ---
 sidebar_position: 7
 title: 테마
-description: CSS 변수, 테마 상속, 다크 모드로 Noxion 사이트의 디자인을 커스터마이징하세요.
+description: 테마 계약, CSS 변수, 다크 모드로 Noxion 사이트의 디자인을 커스터마이징하세요.
 ---
 
 # 테마
 
-Noxion은 **CSS 커스텀 속성(CSS 변수)** 시스템을 테마에 사용합니다. 변수를 오버라이드하여 모든 색상, 폰트, 간격 값을 커스터마이징할 수 있습니다 — 빌드 과정 없이, 설정 변경 없이, JavaScript 불필요.
+Noxion은 **계약 기반 테마 시스템**을 사용합니다. 각 테마는 컴포넌트, 레이아웃, 템플릿을 묶는 `NoxionThemeContract` 객체입니다. 시각적 커스터마이징은 **CSS 커스텀 속성(CSS 변수)**으로 이루어집니다 — 빌드 과정 없이, 설정 변경 없이, JavaScript 불필요.
 
-고급 사용 사례에서는 `extendTheme()`로 기본 테마에서 부분 오버라이드를 적용한 파생 테마를 만들 수 있습니다.
+고급 사용 사례에서는 `defineThemeContract()`로 커스텀 컴포넌트, 레이아웃, 템플릿을 포함한 완전한 테마 계약을 만들 수 있습니다.
 
 ---
 
 ## 내장 테마
 
-Noxion은 **5개의 공식 테마**를 독립적인 npm 패키지로 제공합니다:
+Noxion은 **2개의 공식 테마**를 독립적인 npm 패키지로 제공합니다:
 
 | 테마 | 패키지 | 스타일 |
 |------|--------|--------|
-| **Default** | `@noxion/theme-default` | 시스템 폰트, 둥근 카드, 고정 헤더의 깔끔하고 모던한 레이아웃. 다른 모든 테마의 베이스. |
-| **Ink** | `@noxion/theme-ink` | 터미널 감성의 미니멀 디자인 — 모노스페이스 타이포그래피, 점선 테두리, `~/` 로고 접두사, 소문자 내비게이션. |
-| **Editorial** | `@noxion/theme-editorial` | 매거진 스타일 레이아웃 — 중앙 마스트헤드, 굵은 테두리, 세리프 디스플레이 폰트, 대문자 내비게이션. |
-| **Folio** | `@noxion/theme-folio` | 포트폴리오에 최적화된 디자인 — 투명 헤더, 넓은 자간의 대문자 로고, 갤러리 친화적 카드 그리드. |
+| **Default** | `@noxion/theme-default` | 시스템 폰트, 둥근 카드, 고정 헤더의 깔끔하고 모던한 레이아웃. 대부분의 사이트를 위한 기본 테마. |
 | **Beacon** | `@noxion/theme-beacon` | 콘텐츠 중심 읽기 경험 — 넓은 콘텐츠 영역(1320px), 정적 헤더, 큰 타이포그래피. 커스텀 `HomePage`와 `PostPage` 컴포넌트 포함. |
 
 ### 테마 사용하기
 
-테마 패키지를 설치하고 가져오세요:
+테마 패키지를 설치하고 계약을 프로바이더에 전달하세요:
 
 ```bash
-bun add @noxion/theme-ink
+bun add @noxion/theme-default
 ```
 
-```ts
-// noxion.config.ts
-import { defineConfig } from "@noxion/core";
-import { inkThemePackage } from "@noxion/theme-ink";
+```tsx
+// app/providers.tsx
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
 
-export default defineConfig({
-  theme: inkThemePackage,
-  // ...
-});
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <NoxionThemeProvider themeContract={defaultThemeContract} defaultMode="system">
+      {children}
+    </NoxionThemeProvider>
+  );
+}
 ```
 
-모든 내장 테마는 `extendTheme()`를 통해 `@noxion/theme-default`를 확장하므로, 모든 기본 토큰을 상속받고 고유한 디자인 속성만 오버라이드합니다.
+테마를 전환하려면 계약을 교체하세요:
+
+```tsx
+import { beaconThemeContract } from "@noxion/theme-beacon";
+
+<NoxionThemeProvider themeContract={beaconThemeContract} defaultMode="system">
+```
 
 ---
 
@@ -201,30 +207,50 @@ export default function RootLayout({ children }) {
 
 ---
 
-## `extendTheme()`을 통한 테마 상속
+## `defineThemeContract()`를 통한 테마 계약
 
-재사용 가능한 테마 패키지를 만들 때, `@noxion/renderer`가 제공하는 `extendTheme()`을 사용합니다. 기본 테마 위에 테마 오버라이드를 딥 머지합니다:
+테마 계약은 테마를 구성하는 모든 React 컴포넌트, 레이아웃, 템플릿을 묶습니다. `defineThemeContract()`를 사용하여 생성합니다:
 
 ```ts
-import { extendTheme, themeDefault } from "@noxion/renderer";
+import { defineThemeContract } from "@noxion/renderer";
+import type { NoxionThemeContract } from "@noxion/renderer";
 
-const myTheme = extendTheme(themeDefault, {
-  tokens: {
-    colors: {
-      primary: "#7c3aed",
-      primaryHover: "#6d28d9",
-    },
-    fonts: {
-      sans: '"Inter", system-ui, sans-serif',
-    },
-  },
+import { Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
+  TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
+  DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
+} from "./components";
+
+import { BaseLayout, BlogLayout } from "./layouts";
+import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
+
+export const myThemeContract: NoxionThemeContract = defineThemeContract({
+  name: "my-theme",
+
   metadata: {
-    name: "My Custom Theme",
-    author: "Jane Doe",
+    description: "커스텀 Noxion 테마",
+    author: "Your Name",
     version: "1.0.0",
-    description: "A violet-accented theme",
   },
-  supports: ["blog", "docs", "portfolio"],
+
+  components: {
+    Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
+    TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
+    DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
+  },
+
+  layouts: {
+    base: BaseLayout,
+    blog: BlogLayout,
+  },
+
+  templates: {
+    home: HomePage,
+    post: PostPage,
+    archive: ArchivePage,
+    tag: TagPage,
+  },
+
+  supports: ["blog"],
 });
 ```
 
@@ -237,24 +263,22 @@ bun create noxion my-theme --theme
 ```
 
 다음이 포함된 패키지가 생성됩니다:
-- `src/index.ts` — `NoxionThemePackage` 객체를 내보냄
-- `styles/theme.css` — CSS 변수 오버라이드
+- `src/index.ts` — `NoxionThemeContract` 객체를 내보냄
+- `styles/` — CSS 변수 오버라이드
 - `package.json` — npm 퍼블리싱을 위한 설정
 
 전체 안내는 [커스텀 테마 만들기](./creating-theme)를 참조하세요.
 
 ### 테마 메타데이터
 
-테마는 메타데이터와 지원하는 페이지 타입을 선언할 수 있습니다:
+테마에 메타데이터와 지원하는 페이지 타입을 선언할 수 있습니다:
 
 ```ts
 interface NoxionThemeMetadata {
-  name: string;
+  description?: string;
   author?: string;
   version?: string;
-  description?: string;
-  previewUrl?: string;
-  repository?: string;
+  preview?: string;
 }
 ```
 
@@ -271,7 +295,7 @@ supports: ["blog", "docs"]  // 이 테마는 블로그와 문서 템플릿만 �
 스캐폴딩된 앱에는 헤더에 `<ThemeToggle>` 컴포넌트가 포함되어 사용자가 라이트, 다크, 시스템 모드 사이를 전환할 수 있습니다. 토글은:
 
 1. 컨텍스트에서 현재 모드를 읽습니다 (`useThemePreference()`)
-2. 클릭 시 `light → dark → system` 순으로 순환합니다
+2. 클릭 시 `light -> dark -> system` 순으로 순환합니다
 3. 선택을 `localStorage`에 저장합니다
 4. 전체 페이지 리로드 없이 `<html>`의 `data-theme`을 업데이트합니다
 
@@ -293,22 +317,7 @@ export default defineConfig({
 
 ## 훅
 
-고급 커스터마이징을 위해 `@noxion/renderer`는 두 가지 React 훅을 내보냅니다:
-
-### `useNoxionTheme()`
-
-**현재 활성 테마**(해결됨 — 여기서는 `"system"` 없음)를 반환합니다:
-
-```tsx
-import { useNoxionTheme } from "@noxion/renderer";
-
-function MyComponent() {
-  const theme = useNoxionTheme();
-  // theme.name: "light" | "dark"
-
-  return <div className={theme.name === "dark" ? "dark-style" : "light-style"} />;
-}
-```
+고급 커스터마이징을 위해 `@noxion/renderer`는 다음 React 훅을 내보냅니다:
 
 ### `useThemePreference()`
 
@@ -330,4 +339,44 @@ function ThemeSelector() {
 }
 ```
 
-두 훅 모두 `<NoxionThemeProvider>`로 감싸진 컴포넌트 안에서 사용해야 합니다.
+### `useThemeContract()`
+
+활성 `NoxionThemeContract`를 반환합니다:
+
+```tsx
+import { useThemeContract } from "@noxion/renderer";
+
+function MyComponent() {
+  const contract = useThemeContract();
+  console.log(contract.name); // "default", "beacon" 등
+}
+```
+
+### `useThemeComponent(name)`
+
+활성 테마 계약에서 특정 컴포넌트를 반환합니다:
+
+```tsx
+import { useThemeComponent } from "@noxion/renderer";
+
+function MyPage() {
+  const PostList = useThemeComponent("PostList");
+  return <PostList posts={posts} />;
+}
+```
+
+### `useThemeLayout(name)` / `useThemeTemplate(name)`
+
+계약에서 레이아웃 또는 템플릿 컴포넌트를 반환합니다:
+
+```tsx
+import { useThemeLayout, useThemeTemplate } from "@noxion/renderer";
+
+function MyPage() {
+  const BlogLayout = useThemeLayout("blog");
+  const HomePage = useThemeTemplate("home");
+  // ...
+}
+```
+
+모든 훅은 `<NoxionThemeProvider>`로 감싸진 컴포넌트 안에서 사용해야 합니다.

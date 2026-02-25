@@ -51,7 +51,7 @@ Notion의 공식 API는 ~1시간 후 만료되는 presigned S3 URL을 반환합�
 | **완전한 SEO 스택** | Open Graph, Twitter Cards, JSON-LD (BlogPosting, TechArticle, CreativeWork, BreadcrumbList, WebSite + SearchAction), RSS 2.0, XML 사이트맵, robots.txt — 전부 자동 생성 |
 | **이미지 최적화** | `next/image`를 통한 AVIF/WebP 자동 변환, 만료되지 않는 안정적 프록시 URL. 선택적 빌드 시 이미지 다운로드로 완전한 오프라인 독립 |
 | **플러그인 시스템** | 애널리틱스, RSS, 댓글, 읽기 시간 — 플러그인 SDK(`@noxion/plugin-utils`)로 직접 제작도 가능 |
-| **테마 시스템** | `extendTheme()`을 통한 상속이 가능한 CSS 변수 테마. 라이트/다크/시스템 모드 기본 제공 |
+| **테마 시스템** | `defineThemeContract()`를 통한 컨트랙트 기반 테마와 CSS 변수 커스터마이징. 라이트/다크/시스템 모드 기본 제공 |
 | **구문 강조** | [Shiki](https://shiki.style) 기반 VS Code 수준의 코드 블록, 듀얼 테마 지원 — 클라이언트 사이드 JS 불필요 |
 | **수식 렌더링** | KaTeX SSR — 서버 사이드 수식 렌더링, 클라이언트 사이드 수학 런타임 불필요 |
 | **어디서나 배포** | Vercel (원클릭), Docker, 정적 내보내기 |
@@ -177,7 +177,7 @@ Noxion은 Notion 페이지 상단의 특별한 **코드 블록**을 읽어 페�
 
 ### 테마
 
-테마는 `extendTheme()`을 통해 확장할 수 있는 CSS 변수 패키지입니다. 기본 테마는 블로그, 문서, 포트폴리오 페이지 타입을 지원합니다. 커뮤니티 테마는 지원하는 페이지 타입을 선언할 수 있습니다. [테마](./themes)를 참조하세요.
+테마는 `defineThemeContract()`를 통해 정의되는 컨트랙트 기반 패키지로, 컴포넌트, 레이아웃, 템플릿을 번들링합니다. 기본 테마는 블로그와 문서 페이지 타입을 지원합니다. 커뮤니티 테마는 지원하는 페이지 타입을 선언할 수 있습니다. [테마](./themes)를 참조하세요.
 
 ---
 

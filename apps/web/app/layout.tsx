@@ -3,8 +3,7 @@ import { generateNoxionListMetadata, generateWebSiteLD } from "@noxion/adapter-n
 import { siteConfig } from "../lib/config";
 import { ThemeScript } from "./theme-script";
 import { Providers } from "./providers";
-import "@noxion/renderer/styles";
-import "@noxion/theme-default/styles";
+import "@noxion/theme-default/styles/tailwind";
 import "./globals.css";
 
 export function generateMetadata(): Metadata {

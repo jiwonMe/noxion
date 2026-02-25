@@ -195,16 +195,36 @@ bun add @noxion/renderer react react-dom
 | Export | Description |
 |--------|-------------|
 | [`<NotionPage />`](./renderer/notion-page) | Render a full Notion page — wraps `<NotionRenderer />` with Shiki, dark mode, image URL mapping |
-| [`<PostList />`](./renderer/post-list) | Responsive grid of `<PostCard>` components |
-| [`<PostCard />`](./renderer/post-card) | Single post card with cover, title, date, tags |
-| [`<NoxionThemeProvider />`](./renderer/theme-provider) | Theme context provider (required wrapper) |
+| `<NoxionLogo />` | Noxion logo component |
+| [`<NoxionThemeProvider />`](./renderer/theme-provider) | Theme contract provider (required wrapper) |
+
+### Theme Contract
+
+| Export | Description |
+|--------|-------------|
+| `defineThemeContract(contract)` | Create a validated theme contract |
+| `validateThemeContract(contract)` | Validate a theme contract at runtime |
 
 ### Hooks
 
 | Export | Description |
 |--------|-------------|
-| [`useNoxionTheme()`](./renderer/theme-provider#usenoxiontheme) | Returns the currently active theme (`"light" \| "dark"`) |
+| [`useThemeContract()`](./renderer/theme-provider#usethemecontract) | Returns the active theme contract |
+| [`useThemeComponent(name)`](./renderer/theme-provider#usethemecomponentname) | Returns a specific component from the active theme |
+| [`useThemeLayout(name)`](./renderer/theme-provider#usethemelayoutname) | Returns a layout component from the active theme |
+| [`useThemeTemplate(name)`](./renderer/theme-provider#usethemetemplatename) | Returns a template component from the active theme |
 | [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | Returns and controls the user's theme preference |
+| `useSearch()` | Search hook |
+
+### Types
+
+| Export | Description |
+|--------|-------------|
+| `NoxionThemeContract` | Full theme contract interface |
+| `NoxionThemeContractComponents` | Required components in a theme contract |
+| `NoxionThemeContractLayouts` | Required layouts in a theme contract |
+| `NoxionThemeContractTemplates` | Required templates in a theme contract |
+| `PostCardProps`, `PostListProps`, `HeaderProps`, `FooterProps`, etc. | Component prop types (still exported for theme authors) |
 
 ---
 

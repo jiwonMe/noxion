@@ -1,22 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   NoxionThemeProvider,
-  Header,
-  Footer,
   NoxionLogo,
+} from "@noxion/renderer";
+import type { NoxionThemeContract } from "@noxion/renderer";
+import {
   BlogLayout,
   DocsLayout,
+  Header,
+  Footer,
   DocsSidebar,
-  HomePage as DefaultHomePage,
-  ArchivePage as DefaultArchivePage,
-  TagPage as DefaultTagPage,
-  PortfolioGrid as DefaultPortfolioGrid,
-  PostPage as DefaultPostPage,
-  NotionPage,
-} from "@noxion/renderer";
-import type { NoxionThemePackage, NoxionThemeTokens } from "@noxion/renderer";
+} from "@noxion/theme-default";
 import type { ExtendedRecordMap } from "notion-types";
 import { getPageTitle, defaultMapImageUrl } from "notion-utils";
 import { themeRegistry } from "@/lib/themes";
@@ -30,54 +26,6 @@ type PreviewState = {
   isDark: boolean;
   notionPageId?: string;
 };
-
-function tokensToStyleVars(tokens: NoxionThemeTokens, isDark: boolean): Record<string, string> {
-  const source = isDark && tokens.dark
-    ? { ...tokens, ...tokens.dark } as NoxionThemeTokens
-    : tokens;
-
-  const vars: Record<string, string> = {};
-
-  for (const [key, value] of Object.entries(source.colors)) {
-    vars[`--noxion-${key}`] = value;
-  }
-
-  if (source.fonts) {
-    for (const [key, value] of Object.entries(source.fonts)) {
-      if (value) vars[`--noxion-font-${key}`] = value;
-    }
-  }
-
-  if (source.spacing) {
-    for (const [key, value] of Object.entries(source.spacing)) {
-      vars[`--noxion-spacing-${key}`] = value;
-    }
-  }
-
-  if (source.borderRadius) {
-    vars["--noxion-border-radius"] = source.borderRadius;
-  }
-
-  if (source.shadows) {
-    for (const [key, value] of Object.entries(source.shadows)) {
-      if (value) vars[`--noxion-shadow-${key}`] = value;
-    }
-  }
-
-  if (source.transitions) {
-    for (const [key, value] of Object.entries(source.transitions)) {
-      if (value) vars[`--noxion-transition-${key}`] = value;
-    }
-  }
-
-  if (source.breakpoints) {
-    for (const [key, value] of Object.entries(source.breakpoints)) {
-      if (value) vars[`--noxion-breakpoint-${key}`] = value;
-    }
-  }
-
-  return vars;
-}
 
 export default function PreviewPage() {
   const [state, setState] = useState<PreviewState | null>(null);
@@ -114,9 +62,8 @@ export default function PreviewPage() {
 
   if (!state) return null;
 
-  const themeEntry = themeRegistry.find((t) => t.id === state.themeId) ?? themeRegistry[0];
-  const pkg = themeEntry.pkg;
-  const scopedVars = tokensToStyleVars(pkg.tokens, state.isDark);
+  const themeEntry = themeRegistry.find((t) => t.id === state.themeId) ?? themeRegistry[0]!;
+  const contract = themeEntry.contract;
 
   const SiteHeader = () => (
     <Header siteName="Noxion" logo={<NoxionLogo />} navigation={mockNavigation} />
@@ -128,8 +75,6 @@ export default function PreviewPage() {
     <DocsSidebar items={mockSidebarItems} currentSlug="docs/theme-system" />
   );
 
-  const notionPageId = state.notionPageId ?? "";
-
   const isDocsView = state.pageView === "docs-sidebar";
   const Layout = isDocsView ? DocsLayout : BlogLayout;
   const slots = isDocsView
@@ -137,19 +82,17 @@ export default function PreviewPage() {
     : { header: SiteHeader, footer: SiteFooter };
 
   return (
-    <div style={scopedVars as React.CSSProperties}>
-      <NoxionThemeProvider themePackage={pkg} slots={slots}>
-        <Layout slots={slots}>
-          <PageContent
-            pageView={state.pageView}
-            notionPageId={notionPageId}
-            notionRecordMap={notionRecordMap}
-            onNotionLoad={setNotionRecordMap}
-            pkg={pkg}
-          />
-        </Layout>
-      </NoxionThemeProvider>
-    </div>
+    <NoxionThemeProvider themeContract={contract}>
+      <Layout slots={slots}>
+        <PageContent
+          pageView={state.pageView}
+          notionPageId={state.notionPageId ?? ""}
+          notionRecordMap={notionRecordMap}
+          onNotionLoad={setNotionRecordMap}
+          contract={contract}
+        />
+      </Layout>
+    </NoxionThemeProvider>
   );
 }
 
@@ -158,32 +101,43 @@ function PageContent({
   notionPageId,
   notionRecordMap,
   onNotionLoad,
-  pkg,
+  contract,
 }: {
   pageView: PageView;
   notionPageId: string;
   notionRecordMap: ExtendedRecordMap | null;
   onNotionLoad: (recordMap: ExtendedRecordMap | null) => void;
-  pkg: NoxionThemePackage;
+  contract: NoxionThemeContract;
 }) {
-  const HomePage = pkg.templates.home ?? DefaultHomePage;
-  const ArchivePage = pkg.templates.archive ?? DefaultArchivePage;
-  const TagPage = pkg.templates.tag ?? DefaultTagPage;
-  const PortfolioGridTemplate = pkg.templates["portfolio-grid"] ?? DefaultPortfolioGrid;
+  const { home: HomePageTemplate, archive: ArchivePageTemplate, tag: TagPageTemplate } = contract.templates;
+  const PortfolioGridTemplate = contract.templates.portfolioGrid;
 
   switch (pageView) {
     case "home":
-      return <HomePage data={{ posts: mockPosts, recentCount: 3 }} />;
+      return <HomePageTemplate data={{ posts: mockPosts, recentCount: 3 }} />;
     case "archive":
-      return <ArchivePage data={{ posts: mockPosts, title: "Archive" }} />;
+      return ArchivePageTemplate
+        ? <ArchivePageTemplate data={{ posts: mockPosts, title: "Archive" }} />
+        : <HomePageTemplate data={{ posts: mockPosts }} />;
     case "tag":
-      return <TagPage data={{ posts: mockPosts.slice(0, 3), tag: "React" }} />;
+      return TagPageTemplate
+        ? <TagPageTemplate data={{ posts: mockPosts.slice(0, 3), tag: "React" }} />
+        : <HomePageTemplate data={{ posts: mockPosts.slice(0, 3) }} />;
     case "portfolio":
-      return <PortfolioGridTemplate data={{ projects: mockProjects }} />;
+      return PortfolioGridTemplate
+        ? <PortfolioGridTemplate data={{ projects: mockProjects }} />
+        : <HomePageTemplate data={{ posts: mockPosts }} />;
     case "docs-sidebar":
       return <DocsContent />;
     case "notion":
-      return <NotionContentView notionPageId={notionPageId} recordMap={notionRecordMap} onLoad={onNotionLoad} pkg={pkg} />;
+      return (
+        <NotionContentView
+          notionPageId={notionPageId}
+          recordMap={notionRecordMap}
+          onLoad={onNotionLoad}
+          contract={contract}
+        />
+      );
   }
 }
 
@@ -191,16 +145,16 @@ function NotionContentView({
   notionPageId,
   recordMap,
   onLoad,
-  pkg,
+  contract,
 }: {
   notionPageId: string;
   recordMap: ExtendedRecordMap | null;
   onLoad: (recordMap: ExtendedRecordMap | null) => void;
-  pkg: NoxionThemePackage;
+  contract: NoxionThemeContract;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const lastFetchedRef = useRef("");
+  const lastFetchedRef = { current: "" };
 
   useEffect(() => {
     const id = notionPageId.trim();
@@ -237,7 +191,7 @@ function NotionContentView({
   if (loading) {
     return (
       <div className="dev-notion-view">
-        <div className="dev-notion-empty">Loading Notion page\u2026</div>
+        <div className="dev-notion-empty">Loading Notion page…</div>
       </div>
     );
   }
@@ -251,8 +205,7 @@ function NotionContentView({
   }
 
   if (recordMap) {
-    const PostPageTemplate = pkg.templates.post ?? DefaultPostPage;
-
+    const PostPageTemplate = contract.templates.post;
     const title = getPageTitle(recordMap) || undefined;
     const blockIds = Object.keys(recordMap.block);
     const rootEntry = blockIds.length > 0 ? recordMap.block[blockIds[0]] : undefined;
@@ -315,49 +268,38 @@ function DocsContent() {
     <article className="dev-docs-content">
       <h1>Theme System</h1>
       <p>
-        Noxion uses a CSS variable-based theme system with full dark mode support.
-        Themes are defined as <code>NoxionThemePackage</code> objects containing
-        design tokens, layouts, templates, and component overrides.
+        Noxion uses a contract-based theme system where each theme is an independent package
+        that implements the <code>NoxionThemeContract</code> interface — owning all its UI
+        components, layouts, and templates.
       </p>
 
-      <h2>Design Tokens</h2>
+      <h2>Theme Contract</h2>
       <p>
-        Tokens define the visual language of your theme: colors, fonts, spacing,
-        shadows, transitions, and breakpoints. At runtime, tokens are injected as
-        CSS custom properties with the <code>--noxion-</code> prefix.
+        A theme contract defines every component, layout, and template the theme provides.
+        Use <code>defineThemeContract()</code> to create a validated contract:
       </p>
-      <pre><code>{`const myTheme = defineTheme({
+      <pre><code>{`import { defineThemeContract } from "@noxion/renderer";
+
+export const myThemeContract = defineThemeContract({
   name: "my-theme",
-  colors: {
-    primary: "#2563eb",
-    background: "#ffffff",
-    foreground: "#171717",
-    // ...
-  },
-  fonts: {
-    sans: '"Inter", system-ui, sans-serif',
-  },
+  components: { Header, Footer, PostCard, ... },
+  layouts: { base: BaseLayout, blog: BlogLayout },
+  templates: { home: HomePage, post: PostPage },
+  supports: ["blog"],
 });`}</code></pre>
 
-      <h2>Extending Themes</h2>
+      <h2>Using a Theme</h2>
       <p>
-        Use <code>extendTheme()</code> to create a new theme based on an existing
-        one. Only specify the tokens and components you want to override —
-        everything else is inherited from the parent.
+        Pass the contract to <code>NoxionThemeProvider</code> and import the theme&apos;s
+        CSS for design tokens:
       </p>
-      <pre><code>{`const customTheme = extendTheme(defaultThemePackage, {
-  name: "custom",
-  tokens: {
-    colors: { primary: "#e11d48" },
-  },
-});`}</code></pre>
+      <pre><code>{`import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract } from "@noxion/theme-default";
+import "@noxion/theme-default/styles/tailwind";
 
-      <h2>Dark Mode</h2>
-      <p>
-        Each theme can include a <code>dark</code> property with overridden tokens.
-        The <code>NoxionThemeProvider</code> automatically generates CSS variables
-        scoped to <code>[data-theme=&quot;dark&quot;]</code>.
-      </p>
+<NoxionThemeProvider themeContract={defaultThemeContract}>
+  {children}
+</NoxionThemeProvider>`}</code></pre>
     </article>
   );
 }

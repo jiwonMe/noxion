@@ -1,13 +1,20 @@
 ---
 title: PostCard
-description: "@noxion/renderer PostCard component — individual blog post card"
+description: "PostCard component — individual blog post card"
 ---
 
 # `<PostCard />`
 
+:::info Theme contract component
+`PostCard` is no longer exported directly from `@noxion/renderer`. It is now part of theme contracts. The type `PostCardProps` is still exported from `@noxion/renderer`.
+
+To use the component, access it from the theme contract:
 ```tsx
-import { PostCard } from "@noxion/renderer";
+import { useThemeComponent } from "@noxion/renderer";
+
+const PostCard = useThemeComponent("PostCard");
 ```
+:::
 
 Renders a single blog post card, typically used inside `<PostList>`. Displays the post cover image, title, publication date, category, tags, and description excerpt.
 
@@ -32,19 +39,25 @@ Renders a single blog post card, typically used inside `<PostList>`. Displays th
 ## Usage
 
 ```tsx
-// Used directly (without PostList)
-import { PostCard } from "@noxion/renderer";
+"use client";
+import { useThemeComponent } from "@noxion/renderer";
 
-<PostCard
-  id={post.id}
-  title={post.title}
-  slug={post.slug}
-  date={post.date}
-  tags={post.tags}
-  coverImage={post.coverImage}
-  category={post.category}
-  description={post.description}
-/>
+function MyPostCard({ post }) {
+  const PostCard = useThemeComponent("PostCard");
+
+  return (
+    <PostCard
+      id={post.id}
+      title={post.title}
+      slug={post.slug}
+      date={post.date}
+      tags={post.tags}
+      coverImage={post.coverImage}
+      category={post.category}
+      description={post.description}
+    />
+  );
+}
 ```
 
 ---
@@ -52,19 +65,19 @@ import { PostCard } from "@noxion/renderer";
 ## Card anatomy
 
 ```
-┌──────────────────────────────────────┐
-│ [Cover Image]                         │
-│                                       │
-│ [Category Badge]                      │
-│ Post Title                            │
-│ Description excerpt text...           │
-│                                       │
-│ Feb 1, 2025  ·  Jane Doe             │
-│ [react] [typescript] [tutorial]       │
-└──────────────────────────────────────┘
++--------------------------------------+
+| [Cover Image]                         |
+|                                       |
+| [Category Badge]                      |
+| Post Title                            |
+| Description excerpt text...           |
+|                                       |
+| Feb 1, 2025  .  Jane Doe             |
+| [react] [typescript] [tutorial]       |
++--------------------------------------+
 ```
 
-- **Cover image** — rendered as `<img loading="lazy" decoding="async">`. Pass `next/image`-proxied URLs for optimized loading. The image is contained within a fixed aspect-ratio container (16:9 by default) to prevent layout shift.
+- **Cover image** — rendered with lazy loading. Pass `next/image`-proxied URLs for optimized loading. The image is contained within a fixed aspect-ratio container (16:9 by default) to prevent layout shift.
 - **Category badge** — shown as a small pill above the title, links to `/tag/[category]`
 - **Tags** — each tag is a link to `/tag/[tag]`
 
@@ -85,6 +98,8 @@ For post detail pages, cover images **are** optimized via `next/image` in the `<
 The `date` prop is displayed as-is. If you want localized date formatting, format it before passing:
 
 ```tsx
+const PostList = useThemeComponent("PostList");
+
 <PostList
   posts={posts.map((p) => ({
     ...p,
@@ -117,20 +132,4 @@ To customize `<PostCard>` styling, use CSS variable overrides:
 }
 ```
 
-For structural changes (different layout, additional metadata fields), create your own card component and use it alongside or instead of `<PostList>`:
-
-```tsx
-// components/CustomPostCard.tsx
-import type { BlogPost } from "@noxion/core";
-import Link from "next/link";
-
-export function CustomPostCard({ post }: { post: BlogPost }) {
-  return (
-    <Link href={`/${post.slug}`} className="custom-card">
-      <time>{post.date}</time>
-      <h2>{post.title}</h2>
-      <p>{post.description}</p>
-    </Link>
-  );
-}
-```
+For structural changes (different layout, additional metadata fields), create your own card component and include it in your theme contract.

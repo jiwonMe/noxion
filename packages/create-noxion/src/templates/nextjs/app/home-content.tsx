@@ -1,6 +1,7 @@
 "use client";
 
-import { PostList, TagFilter, Search, ThemeToggle, useSearch } from "@noxion/renderer";
+import { PostList, TagFilter, Search, ThemeToggle } from "@noxion/theme-default";
+import { useSearch } from "@noxion/renderer";
 import type { PostCardProps } from "@noxion/renderer";
 import { useState, useCallback } from "react";
 

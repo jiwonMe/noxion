@@ -1,6 +1,7 @@
 "use client";
 
-import { NoxionThemeProvider, defaultTheme, Header, Footer } from "@noxion/renderer";
+import { NoxionThemeProvider } from "@noxion/renderer";
+import { defaultThemeContract, Header, Footer } from "@noxion/theme-default";
 
 interface ProvidersProps {
   siteName: string;
@@ -10,7 +11,7 @@ interface ProvidersProps {
 
 export function Providers({ siteName, author, children }: ProvidersProps) {
   return (
-    <NoxionThemeProvider theme={defaultTheme}>
+    <NoxionThemeProvider themeContract={defaultThemeContract}>
       <div
         style={{
           display: "flex",
@@ -28,7 +29,7 @@ export function Providers({ siteName, author, children }: ProvidersProps) {
           style={{
             flex: 1,
             width: "100%",
-            maxWidth: "var(--noxion-content-width, 720px)",
+            maxWidth: "var(--color-content, 720px)",
             margin: "0 auto",
             padding: "2rem 1.5rem",
           }}
