@@ -7,7 +7,6 @@ PACKAGES=(
   "packages/renderer"
   "packages/adapter-nextjs"
   "packages/plugin-utils"
-  "packages/plugin-reading-time"
   "packages/theme-default"
   "packages/theme-beacon"
   "packages/create-noxion"
