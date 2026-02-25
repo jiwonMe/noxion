@@ -1,11 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import {
-  validateThemeContract,
-  useThemePreference,
-} from "@noxion/renderer";
-import type { NoxionThemeContract, ValidationResult, ValidationIssue } from "@noxion/renderer";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useThemePreference } from "@noxion/renderer";
 import {
   Sun,
   Moon,
@@ -13,16 +9,10 @@ import {
   Tablet,
   Smartphone,
   Columns2,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Check,
-  X,
 } from "lucide-react";
 import { themeRegistry, type ThemeEntry } from "@/lib/themes";
 
 type PageView = "home" | "archive" | "tag" | "portfolio" | "docs-sidebar" | "notion";
-type DevPanel = "none" | "validator";
 type Viewport = "desktop" | "tablet" | "mobile";
 type ViewMode = "single" | "compare";
 
@@ -45,7 +35,6 @@ export default function ThemeDevPage() {
   const [themeId, setThemeId] = useState("default");
   const [compareThemeId, setCompareThemeId] = useState("beacon");
   const [pageView, setPageView] = useState<PageView>("home");
-  const [devPanel, setDevPanel] = useState<DevPanel>("none");
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [viewMode, setViewMode] = useState<ViewMode>("single");
   const [notionPageId, setNotionPageId] = useState("");
@@ -54,29 +43,14 @@ export default function ThemeDevPage() {
 
   const currentTheme = themeRegistry.find((t) => t.id === themeId) ?? themeRegistry[0]!;
   const compareTheme = themeRegistry.find((t) => t.id === compareThemeId) ?? themeRegistry[1]!;
-  const contract = currentTheme.contract;
-
-  const validation = useMemo(() => validateThemeContract(contract), [contract]);
-  const compareValidation = useMemo(
-    () => (viewMode === "compare" ? validateThemeContract(compareTheme.contract) : null),
-    [viewMode, compareTheme.contract]
-  );
 
   const toggleColorMode = useCallback(() => {
     setThemePreference(resolvedMode === "light" ? "dark" : "light");
   }, [resolvedMode, setThemePreference]);
 
-  const togglePanel = useCallback(
-    (panel: DevPanel) => setDevPanel((p) => (p === panel ? "none" : panel)),
-    []
-  );
-
   const toggleViewMode = useCallback(() => {
     setViewMode((m) => (m === "single" ? "compare" : "single"));
   }, []);
-
-  const errorCount = validation.issues.filter((i) => i.severity === "error").length;
-  const warnCount = validation.issues.filter((i) => i.severity === "warning").length;
 
   return (
     <div className="dev-shell">
@@ -163,24 +137,6 @@ export default function ThemeDevPage() {
           >
             <Columns2 size={14} />
           </button>
-
-          <button
-            className={`dev-header__icon-btn ${devPanel === "validator" ? "dev-header__icon-btn--active" : ""}`}
-            onClick={() => togglePanel("validator")}
-            title="Validation"
-          >
-            <Check size={14} />
-          </button>
-
-          {errorCount > 0 ? (
-            <span className="dev-header__badge dev-header__badge--error">{errorCount}</span>
-          ) : warnCount > 0 ? (
-            <span className="dev-header__badge dev-header__badge--warn">{warnCount}</span>
-          ) : (
-            <span className="dev-header__badge dev-header__badge--valid">
-              <CheckCircle size={10} />
-            </span>
-          )}
         </div>
       </header>
 
@@ -208,20 +164,6 @@ export default function ThemeDevPage() {
             </div>
           )}
         </div>
-
-        {devPanel !== "none" && (
-          <aside className="dev-drawer">
-            <div className="dev-drawer__header">
-              <span className="dev-drawer__title">Validation</span>
-              <button className="dev-drawer__close" onClick={() => setDevPanel("none")}>
-                <X size={14} />
-              </button>
-            </div>
-            <div className="dev-drawer__body">
-              <ValidationContent validation={validation} compareValidation={compareValidation} />
-            </div>
-          </aside>
-        )}
       </div>
     </div>
   );
@@ -256,53 +198,6 @@ function NotionPageIdInput({ value, onSubmit }: { value: string; onSubmit: (id: 
       >
         Fetch
       </button>
-    </div>
-  );
-}
-
-function ValidationContent({
-  validation,
-  compareValidation,
-}: {
-  validation: ValidationResult;
-  compareValidation: ValidationResult | null;
-}) {
-  return (
-    <>
-      <ValidationList validation={validation} />
-      {compareValidation && (
-        <>
-          <div className="dev-drawer__divider" />
-          <ValidationList validation={compareValidation} />
-        </>
-      )}
-    </>
-  );
-}
-
-function ValidationList({ validation }: { validation: ValidationResult }) {
-  if (validation.issues.length === 0) {
-    return (
-      <div className="dev-validation__success">
-        <CheckCircle size={12} /> No issues found.
-      </div>
-    );
-  }
-
-  return (
-    <div className="dev-validation__issues">
-      {validation.issues.map((issue: ValidationIssue, i: number) => (
-        <div
-          key={i}
-          className={`dev-validation__issue dev-validation__issue--${issue.severity}`}
-        >
-          <span className="dev-validation__icon">
-            {issue.severity === "error" ? <XCircle size={12} /> : <AlertTriangle size={12} />}
-          </span>
-          <span className="dev-validation__path">{issue.path}</span>
-          <span className="dev-validation__msg">{issue.message}</span>
-        </div>
-      ))}
     </div>
   );
 }

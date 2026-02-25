@@ -166,11 +166,11 @@ export function HomeContent({
     : state.posts;
 
   return (
-    <div className="">
+    <div className="space-y-12">
       {heroPosts.length > 0 && <HeroSection posts={heroPosts} />}
 
-      <section className="">
-        <div className="">
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <Search onSearch={handleSearch} placeholder="Search posts..." />
           {allTags.length > 0 && (
             <TagFilter
@@ -187,8 +187,8 @@ export function HomeContent({
         <div ref={sentinelRef} style={{ height: 1 }} />
 
         {state.loading && (
-          <div className="noxion-loading-spinner">
-            <div className="noxion-loading-spinner__ring" />
+          <div className="flex justify-center py-8">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900 dark:border-gray-700 dark:border-t-gray-100" />
           </div>
         )}
       </section>

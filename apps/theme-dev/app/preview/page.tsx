@@ -1,18 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  NoxionThemeProvider,
-  NoxionLogo,
-} from "@noxion/renderer";
-import type { NoxionThemeContract } from "@noxion/renderer";
-import {
-  BlogLayout,
-  DocsLayout,
-  Header,
-  Footer,
-  DocsSidebar,
-} from "@noxion/theme-default";
+import { NoxionLogo } from "@noxion/renderer";
 import type { ExtendedRecordMap } from "notion-types";
 import { getPageTitle, defaultMapImageUrl } from "notion-utils";
 import { themeRegistry } from "@/lib/themes";
@@ -63,36 +52,34 @@ export default function PreviewPage() {
   if (!state) return null;
 
   const themeEntry = themeRegistry.find((t) => t.id === state.themeId) ?? themeRegistry[0]!;
-  const contract = themeEntry.contract;
+  const { components, layouts, templates } = themeEntry;
 
   const SiteHeader = () => (
-    <Header siteName="Noxion" logo={<NoxionLogo />} navigation={mockNavigation} />
+    <components.Header siteName="Noxion" navigation={mockNavigation} />
   );
   const SiteFooter = () => (
-    <Footer siteName="Noxion Preview" author="Theme Author" />
+    <components.Footer siteName="Noxion Preview" author="Theme Author" />
   );
   const SidebarSlot = () => (
-    <DocsSidebar items={mockSidebarItems} currentSlug="docs/theme-system" />
+    <components.DocsSidebar items={mockSidebarItems} currentSlug="docs/theme-system" />
   );
 
   const isDocsView = state.pageView === "docs-sidebar";
-  const Layout = isDocsView ? DocsLayout : BlogLayout;
+  const Layout = isDocsView ? layouts.DocsLayout : layouts.BlogLayout;
   const slots = isDocsView
     ? { header: SiteHeader, footer: SiteFooter, sidebar: SidebarSlot }
     : { header: SiteHeader, footer: SiteFooter };
 
   return (
-    <NoxionThemeProvider themeContract={contract}>
-      <Layout slots={slots}>
-        <PageContent
-          pageView={state.pageView}
-          notionPageId={state.notionPageId ?? ""}
-          notionRecordMap={notionRecordMap}
-          onNotionLoad={setNotionRecordMap}
-          contract={contract}
-        />
-      </Layout>
-    </NoxionThemeProvider>
+    <Layout slots={slots}>
+      <PageContent
+        pageView={state.pageView}
+        notionPageId={state.notionPageId ?? ""}
+        notionRecordMap={notionRecordMap}
+        onNotionLoad={setNotionRecordMap}
+        templates={templates}
+      />
+    </Layout>
   );
 }
 
@@ -101,32 +88,27 @@ function PageContent({
   notionPageId,
   notionRecordMap,
   onNotionLoad,
-  contract,
+  templates,
 }: {
   pageView: PageView;
   notionPageId: string;
   notionRecordMap: ExtendedRecordMap | null;
   onNotionLoad: (recordMap: ExtendedRecordMap | null) => void;
-  contract: NoxionThemeContract;
+  templates: typeof themeRegistry[0]["templates"];
 }) {
-  const { home: HomePageTemplate, archive: ArchivePageTemplate, tag: TagPageTemplate } = contract.templates;
-  const PortfolioGridTemplate = contract.templates.portfolioGrid;
-
   switch (pageView) {
     case "home":
-      return <HomePageTemplate data={{ posts: mockPosts, recentCount: 3 }} />;
+      return <templates.home data={{ posts: mockPosts, recentCount: 3 }} />;
     case "archive":
-      return ArchivePageTemplate
-        ? <ArchivePageTemplate data={{ posts: mockPosts, title: "Archive" }} />
-        : <HomePageTemplate data={{ posts: mockPosts }} />;
+      return templates.archive
+        ? <templates.archive data={{ posts: mockPosts, title: "Archive" }} />
+        : <templates.home data={{ posts: mockPosts }} />;
     case "tag":
-      return TagPageTemplate
-        ? <TagPageTemplate data={{ posts: mockPosts.slice(0, 3), tag: "React" }} />
-        : <HomePageTemplate data={{ posts: mockPosts.slice(0, 3) }} />;
+      return templates.tag
+        ? <templates.tag data={{ posts: mockPosts.slice(0, 3), tag: "React" }} />
+        : <templates.home data={{ posts: mockPosts.slice(0, 3) }} />;
     case "portfolio":
-      return PortfolioGridTemplate
-        ? <PortfolioGridTemplate data={{ projects: mockProjects }} />
-        : <HomePageTemplate data={{ posts: mockPosts }} />;
+      return <templates.home data={{ posts: mockPosts }} />;
     case "docs-sidebar":
       return <DocsContent />;
     case "notion":
@@ -135,7 +117,7 @@ function PageContent({
           notionPageId={notionPageId}
           recordMap={notionRecordMap}
           onLoad={onNotionLoad}
-          contract={contract}
+          PostPageTemplate={templates.post}
         />
       );
   }
@@ -145,12 +127,13 @@ function NotionContentView({
   notionPageId,
   recordMap,
   onLoad,
-  contract,
+  PostPageTemplate,
 }: {
   notionPageId: string;
   recordMap: ExtendedRecordMap | null;
   onLoad: (recordMap: ExtendedRecordMap | null) => void;
-  contract: NoxionThemeContract;
+  PostPageTemplate: typeof themeRegistry[0]["templates"]["post"];
+
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -205,7 +188,6 @@ function NotionContentView({
   }
 
   if (recordMap) {
-    const PostPageTemplate = contract.templates.post;
     const title = getPageTitle(recordMap) || undefined;
     const blockIds = Object.keys(recordMap.block);
     const rootEntry = blockIds.length > 0 ? recordMap.block[blockIds[0]] : undefined;
@@ -266,40 +248,25 @@ function NotionContentView({
 function DocsContent() {
   return (
     <article className="dev-docs-content">
-      <h1>Theme System</h1>
+      <h1>Copy, Don&apos;t Import</h1>
       <p>
-        Noxion uses a contract-based theme system where each theme is an independent package
-        that implements the <code>NoxionThemeContract</code> interface — owning all its UI
-        components, layouts, and templates.
+        Noxion uses a component ownership model where theme components are copied into your project.
+        This means you own the source code and can customize it freely.
       </p>
 
-      <h2>Theme Contract</h2>
+      <h2>Adding Components</h2>
       <p>
-        A theme contract defines every component, layout, and template the theme provides.
-        Use <code>defineThemeContract()</code> to create a validated contract:
+        Use the <code>noxion add</code> command to copy components from a theme registry into your project:
       </p>
-      <pre><code>{`import { defineThemeContract } from "@noxion/renderer";
+      <pre><code>{`bunx noxion add post-card
+bunx noxion add post-list  # auto-includes post-card dependency
+bunx noxion list           # see all available components`}</code></pre>
 
-export const myThemeContract = defineThemeContract({
-  name: "my-theme",
-  components: { Header, Footer, PostCard, ... },
-  layouts: { base: BaseLayout, blog: BlogLayout },
-  templates: { home: HomePage, post: PostPage },
-  supports: ["blog"],
-});`}</code></pre>
-
-      <h2>Using a Theme</h2>
+      <h2>Customizing</h2>
       <p>
-        Pass the contract to <code>NoxionThemeProvider</code> and import the theme&apos;s
-        CSS for design tokens:
+        Once copied to <code>src/components/noxion/</code>, components are yours to modify.
+        They use Tailwind utility classes and import types from <code>@noxion/renderer</code>.
       </p>
-      <pre><code>{`import { NoxionThemeProvider } from "@noxion/renderer";
-import { defaultThemeContract } from "@noxion/theme-default";
-import "@noxion/theme-default/styles/tailwind";
-
-<NoxionThemeProvider themeContract={defaultThemeContract}>
-  {children}
-</NoxionThemeProvider>`}</code></pre>
     </article>
   );
 }

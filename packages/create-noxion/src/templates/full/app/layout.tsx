@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { generateNoxionListMetadata, generateWebSiteLD } from "@noxion/adapter-nextjs";
+import { BlogLayout, Header, Footer } from "@noxion/theme-default";
 import { siteConfig } from "../lib/config";
 import { ThemeScript } from "./theme-script";
-import { Providers } from "./providers";
+import "@noxion/theme-default/styles/tailwind";
 import "./globals.css";
 
 export function generateMetadata(): Metadata {
@@ -16,6 +17,21 @@ export default function RootLayout({
 }) {
   const jsonLd = generateWebSiteLD(siteConfig);
 
+  const SiteHeader = () => (
+    <Header
+      siteName={siteConfig.name}
+      navigation={[
+        { label: "Home", href: "/" },
+        { label: "Docs", href: "/docs" },
+        { label: "Portfolio", href: "/portfolio" },
+      ]}
+    />
+  );
+
+  const SiteFooter = () => (
+    <Footer siteName={siteConfig.name} author={siteConfig.author} />
+  );
+
   return (
     <html lang={siteConfig.language} suppressHydrationWarning>
       <head>
@@ -26,9 +42,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers siteName={siteConfig.name} author={siteConfig.author}>
+        <BlogLayout slots={{ header: SiteHeader, footer: SiteFooter }}>
           {children}
-        </Providers>
+        </BlogLayout>
       </body>
     </html>
   );

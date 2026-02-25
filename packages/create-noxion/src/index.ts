@@ -2,9 +2,50 @@ import * as p from "@clack/prompts";
 import { join } from "node:path";
 import { scaffoldProject, getTemplateDir, resolveTemplateForType } from "./scaffold.js";
 import type { ScaffoldOptions, TemplateType } from "./scaffold.js";
+import { addComponent as _addComponent, listComponents as _listComponents, diffComponent as _diffComponent } from "./add.js";
 
 export { scaffoldProject, resolveTemplateVariables, getTemplateDir, resolveTemplateForType } from "./scaffold.js";
 export type { ScaffoldOptions, ScaffoldResult, TemplateType } from "./scaffold.js";
+export { addComponent, listComponents, diffComponent } from "./add.js";
+
+export async function runNoxionCLI(args: string[] = process.argv.slice(2)): Promise<void> {
+  const [command, ...rest] = args;
+
+  if (command === "add") {
+    const names = rest.filter((a) => !a.startsWith("--"));
+    const flags = parseFlags(rest);
+    if (names.length === 0) {
+      console.error("Usage: noxion add <component> [--from=<theme>] [--overwrite]");
+      process.exit(1);
+    }
+    await _addComponent(names, {
+      theme: flags["from"] as string | undefined,
+      overwrite: flags["overwrite"] === true,
+    });
+    return;
+  }
+
+  if (command === "list") {
+    const flags = parseFlags(rest);
+    await _listComponents({ theme: flags["from"] as string | undefined });
+    return;
+  }
+
+  if (command === "diff") {
+    const name = rest.find((a) => !a.startsWith("--"));
+    const flags = parseFlags(rest);
+    if (!name) {
+      console.error("Usage: noxion diff <component> [--from=<theme>]");
+      process.exit(1);
+    }
+    await _diffComponent(name, { theme: flags["from"] as string | undefined });
+    return;
+  }
+
+  console.error(`Unknown command: ${command}`);
+  console.error("Available commands: add, list, diff");
+  process.exit(1);
+}
 
 const TEMPLATE_TYPES = ["blog", "docs", "portfolio", "full"] as const;
 
