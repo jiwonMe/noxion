@@ -1,0 +1,30 @@
+{
+  "components": {
+    "ThemeToggle": { "file": "src/components/ThemeToggle.tsx", "dependencies": [] },
+    "Header": { "file": "src/components/Header.tsx", "dependencies": ["ThemeToggle"] },
+    "Footer": { "file": "src/components/Footer.tsx", "dependencies": [] },
+    "EmptyState": { "file": "src/components/EmptyState.tsx", "dependencies": [] },
+    "PostCard": { "file": "src/components/PostCard.tsx", "dependencies": [] },
+    "FeaturedPostCard": { "file": "src/components/FeaturedPostCard.tsx", "dependencies": [] },
+    "PostList": { "file": "src/components/PostList.tsx", "dependencies": ["PostCard"] },
+    "HeroSection": { "file": "src/components/HeroSection.tsx", "dependencies": ["FeaturedPostCard", "PostCard"] },
+    "Search": { "file": "src/components/Search.tsx", "dependencies": [] },
+    "TagFilter": { "file": "src/components/TagFilter.tsx", "dependencies": [] },
+    "TOC": { "file": "src/components/TOC.tsx", "dependencies": [] },
+    "DocsBreadcrumb": { "file": "src/components/DocsBreadcrumb.tsx", "dependencies": [] },
+    "DocsSidebar": { "file": "src/components/DocsSidebar.tsx", "dependencies": [] },
+    "PortfolioProjectCard": { "file": "src/components/PortfolioProjectCard.tsx", "dependencies": [] },
+    "PortfolioFilter": { "file": "src/components/PortfolioFilter.tsx", "dependencies": [] },
+    "NotionPage": { "file": "src/components/NotionPage.tsx", "dependencies": [] }
+  },
+  "layouts": {
+    "BaseLayout": { "file": "src/layouts/BaseLayout.tsx", "dependencies": [] },
+    "BlogLayout": { "file": "src/layouts/BlogLayout.tsx", "dependencies": [] }
+  },
+  "templates": {
+    "ArchivePage": { "file": "src/templates/ArchivePage.tsx", "dependencies": ["PostList"] },
+    "HomePage": { "file": "src/templates/HomePage.tsx", "dependencies": ["FeaturedPostCard", "PostCard", "PostList"] },
+    "PostPage": { "file": "src/templates/PostPage.tsx", "dependencies": ["NotionPage"] },
+    "TagPage": { "file": "src/templates/TagPage.tsx", "dependencies": ["PostList"] }
+  }
+}

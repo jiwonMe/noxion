@@ -14,7 +14,7 @@ export interface BeaconNotionPageProps {
 
 export function NotionPage(props: BeaconNotionPageProps) {
   return (
-    <div className="">
+    <div className="notion-beacon">
       <RendererNotionPage {...(props as RendererNotionPageProps)} />
     </div>
   );

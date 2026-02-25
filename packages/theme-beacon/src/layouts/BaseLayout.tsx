@@ -8,20 +8,26 @@ function renderSlot(slot: ComponentType<Record<string, never>> | null | undefine
 }
 
 export function BaseLayout({ slots, children, className }: NoxionLayoutProps) {
-  const layoutClass = className ? "" : "";
+  const layoutClass = className || "min-h-screen flex flex-col bg-white dark:bg-neutral-950";
 
   return (
     <div className={layoutClass}>
       {slots.header !== null && (
-        <div className="">{renderSlot(slots.header)}</div>
+        <div>{renderSlot(slots.header)}</div>
       )}
 
-      <main className="">
+      {slots.hero && (
+        <div className="max-w-7xl mx-auto w-full px-6 py-10">
+          {renderSlot(slots.hero)}
+        </div>
+      )}
+
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
         {children}
       </main>
 
       {slots.footer !== null && (
-        <div className="">{renderSlot(slots.footer)}</div>
+        <div>{renderSlot(slots.footer)}</div>
       )}
     </div>
   );

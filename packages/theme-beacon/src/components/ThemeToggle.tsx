@@ -52,7 +52,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       aria-label={`Theme: ${LABELS[preference]}. Click to change.`}
       title={LABELS[preference]}
-      className={className ? "" : ""}
+      className={className || "inline-flex items-center justify-center w-8 h-8 rounded text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors dark:text-neutral-400 dark:hover:text-neutral-100 dark:hover:bg-neutral-800"}
     >
       {preference === "light" && <SunIcon />}
       {preference === "dark" && <MoonIcon />}

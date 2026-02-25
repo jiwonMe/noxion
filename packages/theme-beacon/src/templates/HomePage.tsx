@@ -9,7 +9,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
 
   if (posts.length === 0) {
     return (
-      <div className="">
+      <div>
         <PostList posts={posts} />
       </div>
     );
@@ -29,10 +29,10 @@ export function HomePage({ data }: NoxionTemplateProps) {
   const sidebarPosts = heroPosts.slice(LEFT_COUNT + MIDDLE_COUNT);
 
   return (
-    <div className="">
-      <section className="">
+    <div className="space-y-16">
+      <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-8 lg:gap-6">
         {leftPosts.length > 0 && (
-          <div className="">
+          <div className="lg:col-span-1">
             {leftPosts.map((post) => (
               <FeaturedPostCard key={post.slug} {...post} />
             ))}
@@ -40,7 +40,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
         )}
 
         {middlePosts.length > 0 && (
-          <div className="">
+          <div className="lg:col-span-1 divide-y divide-neutral-200 dark:divide-neutral-800">
             {middlePosts.map((post) => (
               <PostCard key={post.slug} {...post} />
             ))}
@@ -48,8 +48,8 @@ export function HomePage({ data }: NoxionTemplateProps) {
         )}
 
         {sidebarPosts.length > 0 && (
-          <div className="">
-            <div className="">
+          <div className="lg:col-span-1 border-l border-neutral-200 dark:border-neutral-800 pl-6">
+            <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
               {sidebarPosts.map((post) => (
                 <PostCard key={post.slug} {...post} />
               ))}
@@ -59,13 +59,9 @@ export function HomePage({ data }: NoxionTemplateProps) {
       </section>
 
       {feedPosts.length > 0 && (
-        <section className="">
-          <h2 className="">{feedTitle}</h2>
-          <div className="">
-            {feedPosts.map((post) => (
-              <PostCard key={post.slug} {...post} />
-            ))}
-          </div>
+        <section className="space-y-6">
+          <h2 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 border-b border-neutral-200 dark:border-neutral-800 pb-3">{feedTitle}</h2>
+          <PostList posts={feedPosts} />
         </section>
       )}
     </div>

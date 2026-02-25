@@ -5,9 +5,9 @@ export function ArchivePage({ data }: NoxionTemplateProps) {
   const posts = (data.posts ?? []) as PostCardProps[];
 
   return (
-    <div className="">
-      <h1 className="">Archive</h1>
-      <div className="">
+    <div className="space-y-8">
+      <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">Archive</h1>
+      <div>
         <PostList posts={posts} />
       </div>
     </div>
