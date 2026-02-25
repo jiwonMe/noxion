@@ -25,7 +25,8 @@ App Router의 `generateMetadata()` 내보내기에서 사용할 [Next.js Metadat
 ```ts
 function generateNoxionMetadata(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: PageTypeRegistry
 ): Metadata
 ```
 
@@ -41,16 +42,16 @@ function generateNoxionMetadata(
 | 메타데이터 필드 | 소스 |
 |---------------|------|
 | `title` | `page.title` |
-| `description` | `page.description ?? page.title` (최대 160자) |
+| `description` | `page.description` 또는 폴백 `"<page title> - <site name>"` (최대 160자) |
 | `authors` | `page.metadata.author ?? config.author` |
-| `openGraph.type` | `"article"` |
+| `openGraph.type` | 블로그 페이지는 `"article"`, 그 외는 `"website"` |
 | `openGraph.publishedTime` | `page.metadata.date` (블로그 페이지) |
 | `openGraph.modifiedTime` | `page.lastEditedTime` |
 | `openGraph.tags` | `page.metadata.tags` (블로그 페이지) |
-| `openGraph.section` | `page.metadata.category` (blog) 또는 `page.metadata.section` (docs) |
+| `openGraph.section` | `page.metadata.category` (존재하는 경우) |
 | `openGraph.images` | `page.coverImage` (1200×630) |
 | `twitter.card` | `"summary_large_image"` |
-| `alternates.canonical` | `https://{domain}/{prefix}/{slug}` |
+| `alternates.canonical` | `https://{domain}/{slug}` |
 
 메타데이터 필드는 내부 헬퍼 함수 `getMetaString()`과 `getMetaStringArray()`를 사용하여 `page.metadata`에서 접근됩니다.
 
@@ -86,7 +87,7 @@ function generateNoxionListMetadata(config: NoxionConfig): Metadata
 | `title.default` | `config.name` |
 | `title.template` | `"%s \| config.name"` |
 | `description` | `config.description` |
-| `metadataBase` | `new URL("https://${config.domain}")` |
+| `metadataBase` | `new URL("https://<site-domain>")` |
 | `openGraph.type` | `"website"` |
 | `robots.index` / `robots.follow` | `true` |
 | `alternates.types["application/rss+xml"]` | RSS 피드 디스커버리 (RSS 플러그인이 설정된 경우) |

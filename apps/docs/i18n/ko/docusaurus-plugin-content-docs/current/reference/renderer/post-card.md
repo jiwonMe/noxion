@@ -5,18 +5,16 @@ description: "PostCard 컴포넌트 — 개별 블로그 포스트 카드"
 
 # `<PostCard />`
 
-:::info 테마 컨트랙트 컴포넌트
-`PostCard`는 더 이상 `@noxion/renderer`에서 직접 익스포트되지 않습니다. 이제 테마 컨트랙트의 일부입니다. `PostCardProps` 타입은 여전히 `@noxion/renderer`에서 익스포트됩니다.
+:::info 테마 컴포넌트
+`PostCard`는 테마 패키지에서 직접 익스포트됩니다. `PostCardProps` 타입은 `@noxion/renderer`에서 익스포트됩니다.
 
-컴포넌트를 사용하려면 테마 컨트랙트에서 접근하세요:
 ```tsx
-import { useThemeComponent } from "@noxion/renderer";
-
-const PostCard = useThemeComponent("PostCard");
+import { PostCard } from "@noxion/theme-default";
+import type { PostCardProps } from "@noxion/renderer";
 ```
 :::
 
-단일 블로그 포스트 카드를 렌더링하며, 일반적으로 `<PostList>` 내부에서 사용됩니다. 포스트 커버 이미지, 제목, 발행일, 카테고리, 태그, 설명 발췌문을 표시합니다.
+단일 포스트 카드를 렌더링하며, 일반적으로 `<PostList>` 내부에서 사용됩니다. 실제 마크업/스타일은 테마 구현에 따라 달라집니다.
 
 ---
 
@@ -26,13 +24,13 @@ const PostCard = useThemeComponent("PostCard");
 |------|------|------|------|
 | `id` | `string` | ✅ | Notion 페이지 ID. 리스트에서 렌더링될 때 React `key`로 사용. |
 | `title` | `string` | ✅ | 포스트 제목. |
-| `slug` | `string` | ✅ | URL slug. 카드가 `/${slug}`로 링크됩니다. |
-| `date` | `string` | ✅ | 발행일 문자열. 그대로 표시 (예: `"2025-02-01"`). |
-| `tags` | `string[]` | ✅ | 포스트 태그. `/tag/[tag]`로 연결되는 클릭 가능한 링크로 렌더링. |
-| `coverImage` | `string` | — | 커버 이미지 URL (`post.coverImage`). 없으면 이미지를 표시하지 않음. |
-| `category` | `string` | — | 포스트 카테고리. 제목 위에 배지로 표시. |
-| `description` | `string` | — | 포스트 설명/발췌문. 제목 아래에 표시. |
-| `author` | `string` | — | 저자 이름. 설명 아래에 표시. |
+| `slug` | `string` | ✅ | URL slug. 일반적으로 포스트 링크 경로에 사용됩니다. |
+| `date` | `string` | ✅ | 발행일 값 (예: `"2025-02-01"`). 포맷팅은 테마 구현에 따릅니다. |
+| `tags` | `string[]` | ✅ | 태그 값 배열. 테마가 렌더링할 수도, 무시할 수도 있습니다. |
+| `coverImage` | `string` | — | 선택적 커버 이미지 URL |
+| `category` | `string` | — | 선택적 카테고리 라벨 |
+| `description` | `string` | — | 선택적 설명/발췌문 |
+| `author` | `string` | — | 선택적 작성자 이름 |
 
 ---
 
@@ -40,10 +38,9 @@ const PostCard = useThemeComponent("PostCard");
 
 ```tsx
 "use client";
-import { useThemeComponent } from "@noxion/renderer";
+import { PostCard } from "@noxion/theme-default";
 
 function MyPostCard({ post }) {
-  const PostCard = useThemeComponent("PostCard");
 
   return (
     <PostCard
@@ -64,41 +61,24 @@ function MyPostCard({ post }) {
 
 ## 카드 구조
 
-```
-+--------------------------------------+
-| [커버 이미지]                          |
-|                                       |
-| [카테고리 배지]                        |
-| 포스트 제목                            |
-| 설명 발췌문 텍스트...                   |
-|                                       |
-| 2025. 2. 1.  .  홍길동                |
-| [react] [typescript] [tutorial]       |
-+--------------------------------------+
-```
-
-- **커버 이미지** — 지연 로딩으로 렌더링. 최적화된 로딩을 위해 `next/image` 프록시 URL을 전달하세요. 이미지는 레이아웃 이동을 방지하기 위해 고정 종횡비 컨테이너(기본 16:9) 안에 포함됩니다.
-- **카테고리 배지** — 제목 위에 작은 필 형태로 표시, `/tag/[category]`로 링크
-- **태그** — 각 태그는 `/tag/[tag]`로 연결되는 링크
+`PostCard` 출력은 테마 패키지에 따라 달라집니다. 예를 들어 현재 `@noxion/theme-default`는 텍스트 중심 카드(제목/설명/날짜) 형태이며, `tags`나 `coverImage` 같은 선택 필드를 렌더링하지 않을 수 있습니다.
 
 ---
 
 ## 커버 이미지 동작
 
-커버 이미지는 `<PostCard>`에서 `<img>` 태그로 렌더링됩니다 (`next/image`가 아님). 이는 의도적인 것입니다 — 포스트 리스트의 커버 이미지는 일반적으로 작은 썸네일이며, 리스트 페이지에서 `next/image` 최적화의 오버헤드는 가치가 없습니다.
-
-그러나 [빌드 시 이미지 다운로드](../../learn/image-optimization#option-build-time-image-download) (`NOXION_DOWNLOAD_IMAGES=true`)를 사용하는 경우, `coverImage` URL은 이미 로컬 경로(`/images/[hash].webp`)이며 정적 에셋으로 제공됩니다.
-
-포스트 상세 페이지에서 커버 이미지는 `<NotionPage>` 렌더러에서 `next/image`를 통해 **최적화됩니다**.
+`coverImage`는 `PostCardProps`에 포함되어 있지만, 테마는 이를 `<img>`, `next/image`, 숨김 등 어떤 방식으로든 렌더링(또는 미렌더링)할 수 있습니다. 정확한 동작은 사용하는 테마의 `PostCard` 구현을 확인하세요.
 
 ---
 
 ## 날짜 포맷팅
 
-`date` prop은 그대로 표시됩니다. 로컬라이즈된 날짜 포맷이 필요하면 전달하기 전에 포맷하세요:
+날짜 포맷팅은 테마 구현이 결정합니다. 현재 `@noxion/theme-default`는 내부에서 로컬 포맷으로 날짜를 변환합니다.
+
+완전히 제어하려면 값을 미리 포맷해서 전달하거나, 자체 `PostCard` 구현을 사용하세요:
 
 ```tsx
-const PostList = useThemeComponent("PostList");
+import { PostList } from "@noxion/theme-default";
 
 <PostList
   posts={posts.map((p) => ({
@@ -117,7 +97,12 @@ const PostList = useThemeComponent("PostList");
 
 ## 카드 커스터마이징
 
-`<PostCard>` 스타일을 커스터마이즈하려면 CSS 변수 오버라이드를 사용하세요:
+`<PostCard>`를 커스터마이즈하려면:
+
+- 현재 테마 구현이 노출하는 클래스를 스타일링하거나,
+- 앱/테마 패키지에서 자체 `PostCard`를 구현해 사용하세요.
+
+예시 스타일링:
 
 ```css
 /* globals.css */
@@ -132,4 +117,4 @@ const PostList = useThemeComponent("PostList");
 }
 ```
 
-구조적 변경(다른 레이아웃, 추가 메타데이터 필드)이 필요하면 자체 카드 컴포넌트를 만들어 테마 컨트랙트에 포함하세요.
+구조적 변경(레이아웃, 추가 메타데이터 필드)은 앱/테마 패키지에 자체 카드 컴포넌트를 만들어 레이아웃/템플릿에서 직접 렌더링하세요.

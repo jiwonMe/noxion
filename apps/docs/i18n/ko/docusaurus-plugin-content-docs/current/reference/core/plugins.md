@@ -20,14 +20,14 @@ import type { NoxionPlugin, PluginFactory, PluginConfig } from "@noxion/core";
 
 ## `definePlugin()`
 
-타입 안전한 `NoxionPlugin` 객체를 생성합니다. 선택사항 — `NoxionPlugin` 인터페이스에 맞는 일반 객체를 전달할 수 있지만 — 모든 훅 파라미터에 대한 TypeScript 타입 추론을 제공합니다.
+타입 안전한 플러그인 **팩토리**를 생성합니다. TypeScript 타입 추론을 위한 identity 헬퍼입니다.
 
 ### 시그니처
 
 ```ts
-function definePlugin<Content = unknown>(
-  plugin: NoxionPlugin<Content>
-): NoxionPlugin<Content>
+function definePlugin<Options = unknown, Content = unknown>(
+  factory: PluginFactory<Options, Content>
+): PluginFactory<Options, Content>
 ```
 
 ### 예시
@@ -35,20 +35,15 @@ function definePlugin<Content = unknown>(
 ```ts
 import { definePlugin } from "@noxion/core";
 
-const myPlugin = definePlugin({
-  name: "my-plugin",
+const createMyPlugin = definePlugin<{ hideTag?: string }>((options) => {
+  return {
+    name: "my-plugin",
 
-  transformPosts({ posts }) {
-    return posts.filter(post => !post.metadata.tags?.includes("private"));
-  },
-
-  injectHead({ post, config }) {
-    if (!post) return [];
-    return [{
-      tagName: "meta",
-      attributes: { name: "author", content: post.metadata.author ?? config.author },
-    }];
-  },
+    transformPosts({ posts }) {
+      const hideTag = options.hideTag ?? "private";
+      return posts.filter((post) => !post.metadata.tags?.includes(hideTag));
+    },
+  };
 });
 ```
 
@@ -75,21 +70,23 @@ interface NoxionPlugin<Content = unknown> {
   postBuild?: (args: { config: NoxionConfig; routes: RouteInfo[] }) => Promise<void> | void;
 
   // 콘텐츠 변환
-  transformContent?: (args: { recordMap: ExtendedRecordMap; post: NoxionPage }) => ExtendedRecordMap;
+  transformContent?: (args: { recordMap: ExtendedRecordMap; post: BlogPost }) => ExtendedRecordMap;
   transformPosts?: (args: { posts: BlogPost[] }) => BlogPost[];
 
   // SEO / 메타데이터
-  extendMetadata?: (args: { metadata: NoxionMetadata; post?: NoxionPage; config: NoxionConfig }) => NoxionMetadata;
-  injectHead?: (args: { post?: NoxionPage; config: NoxionConfig }) => HeadTag[];
+  extendMetadata?: (args: { metadata: NoxionMetadata; post?: BlogPost; config: NoxionConfig }) => NoxionMetadata;
+  injectHead?: (args: { post?: BlogPost; config: NoxionConfig }) => HeadTag[];
   extendSitemap?: (args: { entries: SitemapEntry[]; config: NoxionConfig }) => SitemapEntry[];
 
   // 라우팅
   extendRoutes?: (args: { routes: RouteInfo[]; config: NoxionConfig }) => RouteInfo[];
 
   // v0.2 훅
-  registerPageTypes?: (args: { registry: PageTypeRegistry }) => void;
-  onRouteResolve?: (args: { page: NoxionPage; defaultUrl: string }) => string;
-  extendSlots?: (slots: Record<string, string>) => Record<string, string>;
+  registerPageTypes?: () => PageTypeDefinition[];
+  onRouteResolve?: (route: RouteInfo) => RouteInfo | null;
+
+  /** @deprecated */
+  extendSlots?: (slots: Record<string, unknown>) => Record<string, unknown>;
 }
 ```
 
@@ -120,16 +117,15 @@ transformPosts({ posts }) {
 **용도**: 내장 blog, docs, portfolio 외의 커스텀 페이지 타입 등록.
 
 ```ts
-registerPageTypes({ registry }) {
-  registry.register({
+registerPageTypes() {
+  return [{
     name: "recipe",
-    label: "Recipe",
     defaultTemplate: "recipe/page",
     schemaConventions: {
-      ingredients: "Ingredients",
-      prepTime: "Prep Time",
+      ingredients: { names: ["Ingredients"] },
+      prepTime: { names: ["Prep Time"] },
     },
-  });
+  }];
 }
 ```
 
@@ -140,19 +136,19 @@ registerPageTypes({ registry }) {
 **용도**: 페이지 타입별 URL 패턴 커스터마이징.
 
 ```ts
-onRouteResolve({ page, defaultUrl }) {
-  if (page.pageType === "recipe") {
-    return `/recipes/${page.slug}`;
+onRouteResolve(route) {
+  if (route.path.startsWith("/recipe/")) {
+    return { ...route, path: route.path.replace("/recipe/", "/recipes/") };
   }
-  return defaultUrl;
+  return route;
 }
 ```
 
 #### `extendSlots`
 
-**호출 시점**: 페이지 템플릿 렌더링 시.
+**호출 시점**: pre-v0.3 테마 슬롯 모델의 레거시 훅.
 
-**용도**: 이름이 지정된 템플릿 슬롯에 콘텐츠 주입.
+**용도**: 하위 호환성 전용. 신규 테마는 컴포넌트를 직접 노출하고 앱 코드에서 조합하는 방식을 권장합니다.
 
 ```ts
 extendSlots(slots) {
@@ -200,7 +196,9 @@ configSchema: {
 ## `PluginFactory` 타입
 
 ```ts
-type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
+type PluginFactory<Options = unknown, Content = unknown> = (
+  options: Options
+) => NoxionPlugin<Content>;
 ```
 
 설정 가능한 플러그인에 권장되는 패턴:

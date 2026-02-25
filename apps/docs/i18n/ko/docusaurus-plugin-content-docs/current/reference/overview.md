@@ -49,6 +49,8 @@ bun add @noxion/core
 |---------|------|
 | [`createNotionClient(options)`](./core/fetcher#createnotionclient) | 인증된 Notion API 클라이언트 생성 |
 | [`fetchBlogPosts(client, pageId)`](./core/fetcher#fetchblogposts) | 데이터베이스에서 공개된 모든 포스트 페치 |
+| [`fetchCollection(client, collection)`](./core/fetcher#fetchcollection) | 컬렉션 설정에 맞는 공개 페이지 페치 |
+| [`fetchAllCollections(client, config)`](./core/fetcher#fetchallcollections) | 모든 컬렉션 페이지를 페치해 단일 배열로 평탄화 |
 | [`fetchPostBySlug(client, pageId, slug)`](./core/fetcher#fetchpostbyslug) | slug로 단일 포스트 페치 |
 | [`fetchPage(client, pageId)`](./core/fetcher#fetchpage) | Notion 페이지의 전체 `ExtendedRecordMap` 페치 |
 | [`fetchAllSlugs(client, pageId)`](./core/fetcher#fetchallslugs) | 공개된 모든 포스트 slug 페치 |
@@ -59,15 +61,16 @@ bun add @noxion/core
 |---------|------|
 | [`parseFrontmatter(recordMap, pageId)`](./core/frontmatter#parsefrontmatter) | 첫 번째 코드 블록에서 프론트매터 추출 |
 | [`parseKeyValuePairs(text)`](./core/frontmatter#parsekeyvaluepairs) | 문자열에서 `key: value` 쌍 파싱 |
-| [`applyFrontmatter(post, frontmatter)`](./core/frontmatter#applyfrontmatter) | `BlogPost`에 프론트매터 오버라이드 적용 |
+| [`applyFrontmatter(page, frontmatter)`](./core/frontmatter#applyfrontmatter) | `NoxionPage`에 프론트매터 오버라이드 적용 |
 
 #### 플러그인 시스템
 
 | 익스포트 | 설명 |
 |---------|------|
-| [`definePlugin(plugin)`](./core/plugins#defineplugin) | 타입 안전 플러그인 객체 생성 |
+| [`definePlugin(factory)`](./core/plugins#defineplugin) | 타입 안전 플러그인 팩토리 생성 |
 | [`createAnalyticsPlugin(options)`](./core/plugins#createanalyticsplugin) | 내장 분석 플러그인 팩토리 |
 | [`createRSSPlugin(options)`](./core/plugins#createrssplugin) | 내장 RSS 플러그인 팩토리 |
+| `generateRSSXml(posts, config, options?)` | 블로그 페이지로 RSS 2.0 XML 생성 |
 | [`createCommentsPlugin(options)`](./core/plugins#createcommentsplugin) | 내장 댓글 플러그인 팩토리 |
 
 #### 타입 (재익스포트)
@@ -196,34 +199,20 @@ bun add @noxion/renderer react react-dom
 |---------|------|
 | [`<NotionPage />`](./renderer/notion-page) | 전체 Notion 페이지 렌더링 — Shiki, 다크 모드, 이미지 URL 매핑이 포함된 `<NotionRenderer />` 래퍼 |
 | `<NoxionLogo />` | Noxion 로고 컴포넌트 |
-| [`<NoxionThemeProvider />`](./renderer/theme-provider) | 테마 컨트랙트 프로바이더 (필수 래퍼) |
-
-### 테마 컨트랙트
-
-| 익스포트 | 설명 |
-|---------|------|
-| `defineThemeContract(contract)` | 검증된 테마 컨트랙트 생성 |
-| `validateThemeContract(contract)` | 런타임에 테마 컨트랙트 검증 |
-
 ### 훅
 
 | 익스포트 | 설명 |
 |---------|------|
-| [`useThemeContract()`](./renderer/theme-provider#usethemecontract) | 활성 테마 컨트랙트 반환 |
-| [`useThemeComponent(name)`](./renderer/theme-provider#usethemecomponentname) | 활성 테마에서 특정 컴포넌트 반환 |
-| [`useThemeLayout(name)`](./renderer/theme-provider#usethemelayoutname) | 활성 테마에서 레이아웃 컴포넌트 반환 |
-| [`useThemeTemplate(name)`](./renderer/theme-provider#usethemetemplatename) | 활성 테마에서 템플릿 컴포넌트 반환 |
-| [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | 사용자의 테마 설정 반환 및 제어 |
+| [`useThemePreference()`](./renderer/theme-provider#usethemepreference) | 사용자의 테마 설정 반환 및 제어 (라이트/다크/시스템) |
 | `useSearch()` | 검색 훅 |
 
 ### 타입
 
 | 익스포트 | 설명 |
 |---------|------|
-| `NoxionThemeContract` | 전체 테마 컨트랙트 인터페이스 |
-| `NoxionThemeContractComponents` | 테마 컨트랙트의 필수 컴포넌트 |
-| `NoxionThemeContractLayouts` | 테마 컨트랙트의 필수 레이아웃 |
-| `NoxionThemeContractTemplates` | 테마 컨트랙트의 필수 템플릿 |
+| `NoxionTheme`, `NoxionThemeTokens` | 테마 토큰/타입 정의 |
+| `NoxionSlotMap`, `NoxionTemplateMap`, `NoxionTemplateProps`, `NoxionLayoutProps` | 레이아웃/템플릿 조합 타입 |
+| `NoxionThemeMetadata` | 테마 패키지 메타데이터 형태 |
 | `PostCardProps`, `PostListProps`, `HeaderProps`, `FooterProps` 등 | 컴포넌트 prop 타입 (테마 저작자를 위해 여전히 익스포트됨) |
 
 ---

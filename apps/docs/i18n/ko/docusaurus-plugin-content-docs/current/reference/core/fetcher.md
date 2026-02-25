@@ -113,7 +113,7 @@ async function fetchCollection(
 
 ### 반환값
 
-`Promise<NoxionPage[]>` — 컬렉션의 `pageType`에 따라 타입이 지정된 페이지 배열. 블로그 페이지는 날짜 내림차순, 문서 페이지는 섹션 후 순서로 정렬됩니다.
+`Promise<NoxionPage[]>` — 컬렉션 `pageType`에 맞춰 추출된 페이지 배열. 블로그 페이지는 날짜 내림차순으로 정렬됩니다.
 
 ### 스키마 매핑
 
@@ -160,14 +160,14 @@ const docsPages = await fetchCollection(notion, {
 
 ## `fetchAllCollections()`
 
-설정된 모든 컬렉션에서 페이지를 병렬로 페치합니다.
+설정된 모든 컬렉션에서 페이지를 페치해 단일 배열로 평탄화합니다.
 
 ### 시그니처
 
 ```ts
 async function fetchAllCollections(
   client: NotionAPI,
-  collections: NoxionCollection[]
+  config: NoxionConfig
 ): Promise<NoxionPage[]>
 ```
 
@@ -178,7 +178,7 @@ async function fetchAllCollections(
 ### 예시
 
 ```ts
-const allPages = await fetchAllCollections(notion, siteConfig.collections!);
+const allPages = await fetchAllCollections(notion, siteConfig);
 const blogPages = allPages.filter(isBlogPage);
 const docsPages = allPages.filter(isDocsPage);
 ```

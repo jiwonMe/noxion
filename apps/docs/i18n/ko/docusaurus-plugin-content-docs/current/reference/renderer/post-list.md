@@ -1,22 +1,20 @@
 ---
 title: PostList
-description: "PostList 컴포넌트 — 포스트 카드의 반응형 그리드"
+description: "PostList 컴포넌트 — 테마 제공 리스트 렌더러"
 ---
 
 # `<PostList />`
 
-:::info 테마 컨트랙트 컴포넌트
-`PostList`는 더 이상 `@noxion/renderer`에서 직접 익스포트되지 않습니다. 이제 테마 컨트랙트의 일부입니다. `PostListProps` 타입은 여전히 `@noxion/renderer`에서 익스포트됩니다.
+:::info 테마 컴포넌트
+`PostList`는 테마 패키지에서 직접 익스포트됩니다. `PostListProps` 타입은 `@noxion/renderer`에서 익스포트됩니다.
 
-컴포넌트를 사용하려면 테마 컨트랙트에서 접근하세요:
 ```tsx
-import { useThemeComponent } from "@noxion/renderer";
-
-const PostList = useThemeComponent("PostList");
+import { PostList } from "@noxion/theme-default";
+import type { PostListProps } from "@noxion/renderer";
 ```
 :::
 
-[`<PostCard>`](./post-card) 컴포넌트의 반응형 그리드를 렌더링합니다. 클라이언트 컴포넌트.
+[`<PostCard>`](./post-card) 컴포넌트 목록을 렌더링합니다. 클라이언트 컴포넌트이며, 레이아웃/빈 상태 동작은 테마 구현에 따라 달라집니다.
 
 ---
 
@@ -66,11 +64,10 @@ export default async function HomePage() {
 ```tsx
 // app/home-content.tsx (클라이언트 컴포넌트)
 "use client";
-import { useThemeComponent } from "@noxion/renderer";
+import { PostList } from "@noxion/theme-default";
 import type { PostCardProps } from "@noxion/renderer";
 
 export function HomeContent({ posts }: { posts: PostCardProps[] }) {
-  const PostList = useThemeComponent("PostList");
   return <PostList posts={posts} />;
 }
 ```
@@ -79,26 +76,22 @@ export function HomeContent({ posts }: { posts: PostCardProps[] }) {
 
 ## 태그 필터링
 
-`PostList`는 각 카드의 태그를 `/tag/[tag]`로 연결되는 클릭 가능한 링크로 렌더링합니다. `app/tag/[tag]/page.tsx`의 태그 필터 페이지는 `create-noxion`에 의해 생성되며 태그별로 `getAllPosts()`를 필터링합니다.
+태그 필터 UX는 `PostListProps` 자체가 아니라 앱/테마 구현이 담당합니다. 기본 스캐폴드에는 `app/tag/[tag]/page.tsx`가 포함되며, 태그별로 포스트를 필터링한 뒤 `PostList`를 렌더링합니다.
 
 ---
 
-## 그리드 레이아웃
+## 레이아웃 동작
 
-`PostList`는 반응형 CSS 그리드를 렌더링합니다. 기본 레이아웃:
+`PostList`의 레이아웃은 선택한 테마 패키지 구현이 결정합니다.
 
-| 뷰포트 | 컬럼 |
-|---------|------|
-| 모바일 (`< 640px`) | 1 컬럼 |
-| 태블릿 (`640px - 1024px`) | 2 컬럼 |
-| 데스크톱 (`> 1024px`) | 3 컬럼 |
+예를 들어 현재 `@noxion/theme-default`는 카드 그리드가 아니라 세로 분할 리스트 형태를 렌더링합니다.
 
-그리드는 CSS 변수로 스타일링되므로 간격을 오버라이드할 수 있습니다:
+간격/레이아웃을 커스터마이즈하려면 자체 테마 컴포넌트에서 조정하세요:
 
 ```css
 /* globals.css */
-.notion-post-list {
-  gap: 2rem;       /* 카드 간격 오버라이드 */
+.post-list {
+  gap: 2rem;
 }
 ```
 
@@ -106,7 +99,11 @@ export function HomeContent({ posts }: { posts: PostCardProps[] }) {
 
 ## 빈 상태
 
-`posts`가 빈 배열이면 `PostList`는 아무것도 렌더링하지 않습니다 (카드도, 빈 상태 메시지도 없음). 필요하다면 부모 컴포넌트에서 자체 빈 상태를 추가하세요:
+빈 상태 렌더링은 테마 구현에 따라 달라집니다.
+
+현재 `@noxion/theme-default`는 `posts`가 비어 있으면 기본 메시지("No posts found.")를 렌더링합니다.
+
+커스텀 빈 상태 UI가 필요하면 부모 컴포넌트에서 분기하세요:
 
 ```tsx
 {posts.length === 0 ? (

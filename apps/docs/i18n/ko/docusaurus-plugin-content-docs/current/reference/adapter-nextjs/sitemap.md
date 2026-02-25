@@ -28,7 +28,8 @@ import {
 ```ts
 function generateNoxionSitemap(
   pages: NoxionPage[],
-  config: NoxionConfig
+  config: NoxionConfig,
+  routePrefix?: Record<string, string>
 ): MetadataRoute.Sitemap
 ```
 
@@ -73,8 +74,8 @@ function generateNoxionRoutes(
 ```ts
 interface NoxionRouteConfig {
   pageType: string;
-  pathPrefix?: string;
-  databaseId: string;
+  pathPrefix: string;
+  paramName: string;
 }
 ```
 
@@ -89,16 +90,17 @@ interface NoxionRouteConfig {
 ```ts
 function resolvePageType(
   path: string,
-  config: NoxionConfig
-): string
+  routes: NoxionRouteConfig[]
+): NoxionRouteConfig | undefined
 ```
 
 ### 예시
 
 ```ts
-resolvePageType("/docs/getting-started", config);  // "docs"
-resolvePageType("/portfolio/noxion", config);       // "portfolio"
-resolvePageType("/my-post", config);                // "blog"
+const routes = generateNoxionRoutes(config);
+
+resolvePageType("/docs/getting-started", routes);
+// => { pageType: "docs", pathPrefix: "/docs", paramName: "slug" }
 ```
 
 ---
@@ -112,16 +114,17 @@ resolvePageType("/my-post", config);                // "blog"
 ```ts
 function buildPageUrl(
   page: NoxionPage,
-  config: NoxionConfig
+  routes: NoxionRouteConfig[]
 ): string
 ```
 
 ### 예시
 
 ```ts
-buildPageUrl(docsPage, config);      // "/docs/getting-started"
-buildPageUrl(blogPage, config);      // "/my-post"
-buildPageUrl(portfolioPage, config); // "/portfolio/noxion"
+const routes = generateNoxionRoutes(config);
+buildPageUrl(docsPage, routes);      // "/docs/getting-started"
+buildPageUrl(blogPage, routes);      // "/my-post"
+buildPageUrl(portfolioPage, routes); // "/portfolio/noxion" (pathPrefix를 /portfolio로 설정한 경우)
 ```
 
 ---
@@ -133,10 +136,10 @@ buildPageUrl(portfolioPage, config); // "/portfolio/noxion"
 ### 시그니처
 
 ```ts
-async function generateStaticParamsForRoute(
-  client: NotionAPI,
+function generateStaticParamsForRoute(
+  pages: NoxionPage[],
   route: NoxionRouteConfig
-): Promise<{ slug: string }[]>
+): { slug: string }[]
 ```
 
 ---

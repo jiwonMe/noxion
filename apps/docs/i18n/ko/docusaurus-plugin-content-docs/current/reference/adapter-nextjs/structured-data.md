@@ -30,7 +30,8 @@ import {
 ```ts
 function generatePageLD(
   page: NoxionPage,
-  config: NoxionConfig
+  config: NoxionConfig,
+  registry?: PageTypeRegistry
 ): Record<string, unknown>
 ```
 
@@ -41,7 +42,7 @@ function generatePageLD(
 | `"blog"` | `BlogPosting` | `generateBlogPostingLD()` |
 | `"docs"` | `TechArticle` | `generateTechArticleLD()` |
 | `"portfolio"` | `CreativeWork` | `generateCreativeWorkLD()` |
-| 기타 | `Article` | 제네릭 아티클 스키마 |
+| 기타 | `BlogPosting` (기본 폴백) | `generateBlogPostingLD()` |
 
 ### 사용법
 
@@ -102,7 +103,7 @@ function generateBlogPostingLD(
 
 ## `generateTechArticleLD()`
 
-문서 페이지용 [`TechArticle`](https://schema.org/TechArticle) 스키마를 생성합니다. `proficiencyLevel`과 `dependencies` 필드를 포함합니다.
+문서 페이지용 [`TechArticle`](https://schema.org/TechArticle) 스키마를 생성합니다.
 
 ### 시그니처
 
@@ -133,7 +134,7 @@ function generateTechArticleLD(
 
 ## `generateCreativeWorkLD()`
 
-포트폴리오 프로젝트용 [`CreativeWork`](https://schema.org/CreativeWork) 스키마를 생성합니다. `technology`, `url`, `dateCreated` 필드를 포함합니다.
+포트폴리오 프로젝트용 [`CreativeWork`](https://schema.org/CreativeWork) 스키마를 생성합니다. `technologies`, `projectUrl`, `year` 같은 메타데이터를 사용할 수 있습니다.
 
 ### 시그니처
 
@@ -163,7 +164,7 @@ function generateCreativeWorkLD(
 
 ## `generateBreadcrumbLD()`
 
-[`BreadcrumbList`](https://schema.org/BreadcrumbList) 스키마를 생성합니다. 페이지 타입에 맞게 조정됩니다 — 블로그 페이지는 카테고리를 중간 크럼으로, 문서 페이지는 섹션을, 포트폴리오는 "Portfolio"를 사용합니다.
+[`BreadcrumbList`](https://schema.org/BreadcrumbList) 스키마를 생성합니다. `page.metadata.category`가 있으면 중간 크럼으로 사용하고, 없으면 `Home -> Page` 구조를 생성합니다.
 
 ### 시그니처
 

@@ -13,12 +13,12 @@ import { defineConfig, loadConfig } from "@noxion/core";
 
 ## `defineConfig()`
 
-기본값이 모두 적용된 `NoxionConfig` 객체를 생성하고 필수 필드를 검증합니다.
+`noxion.config.ts` 작성을 위한 타입 헬퍼입니다. 입력을 그대로 반환하므로 에디터 타입 추론을 제공합니다.
 
 ### 시그니처
 
 ```ts
-function defineConfig(input: NoxionConfigInput): NoxionConfig
+function defineConfig(input: NoxionConfigInput): NoxionConfigInput
 ```
 
 ### 파라미터
@@ -37,24 +37,15 @@ function defineConfig(input: NoxionConfigInput): NoxionConfig
 | `defaultTheme` | `ThemeMode` | — | `"system"` | 초기 색상 모드 |
 | `revalidate` | `number` | — | `3600` | ISR 재검증 간격 (초) |
 | `revalidateSecret` | `string` | — | `undefined` | 온디맨드 재검증 시크릿 |
-| `plugins` | `PluginConfig[]` | — | `[]` | 활성화할 플러그인 |
+| `plugins` | `PluginConfig[]` | — | `undefined` | 활성화할 플러그인 |
 
 ### `defineConfig`이 하는 일
 
-1. 입력을 기본값과 병합:
-   ```ts
-   const defaults = {
-     language: "en",
-     defaultTheme: "system",
-     defaultPageType: "blog",
-     revalidate: 3600,
-     plugins: [],
-   };
-   ```
-2. `rootNotionPageId`가 `collections` 없이 설정된 경우, 지정된 `defaultPageType`으로 기본 컬렉션을 생성
-3. `collections` 항목에 `databaseId`와 `pageType`이 있는지 검증
-4. 환경 변수 오버라이드 확인
-5. 병합된 `NoxionConfig` 반환
+- 설정 필드에 대한 컴파일 타임 타입 체크를 제공합니다.
+- 입력 객체를 그대로 반환합니다.
+- 런타임 기본값 적용/검증은 수행하지 않습니다.
+
+런타임 기본값 적용/검증은 `loadConfig(input)`에서 수행됩니다.
 
 ### 단일 데이터베이스 모드
 
@@ -89,23 +80,20 @@ export default defineConfig({
 
 ## `loadConfig()`
 
-런타임에 `noxion.config.ts`에서 설정을 로드하며, 환경 변수 오버라이드가 적용됩니다.
+`NoxionConfigInput`을 검증하고 기본값이 적용된 `NoxionConfig`를 반환합니다.
 
 ### 시그니처
 
 ```ts
-function loadConfig(): NoxionConfig
+function loadConfig(input: NoxionConfigInput): NoxionConfig
 ```
 
-### 환경 변수 오버라이드
+### 런타임 동작
 
-| 환경 변수 | 오버라이드 대상 |
-|-----------|---------------|
-| `SITE_NAME` | `name` |
-| `SITE_DOMAIN` | `domain` |
-| `SITE_AUTHOR` | `author` |
-| `SITE_DESCRIPTION` | `description` |
-| `REVALIDATE_SECRET` | `revalidateSecret` |
+- `rootNotionPageId`와 `collections`가 모두 없으면 에러를 던집니다.
+- `name`, `domain` 등 필수 필드가 없으면 에러를 던집니다.
+- `language`, `defaultTheme`, `defaultPageType`, `revalidate` 기본값을 적용합니다.
+- `rootNotionPageId`만 제공되면 기본 `collections` 항목을 생성합니다.
 
 ### 사용법
 
@@ -114,8 +102,9 @@ function loadConfig(): NoxionConfig
 ```ts
 // lib/config.ts (create-noxion이 생성)
 import { loadConfig } from "@noxion/core";
+import noxionConfigInput from "../noxion.config";
 
-export const siteConfig = loadConfig();
+export const siteConfig = loadConfig(noxionConfigInput);
 ```
 
 ---

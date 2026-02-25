@@ -52,23 +52,21 @@ floatFirstTOC: right
 ## `applyFrontmatter()`
 
 ```ts
-function applyFrontmatter(
-  post: BlogPost,
+function applyFrontmatter<T extends NoxionPage>(
+  page: T,
   frontmatter: Record<string, string>
-): BlogPost
+): T
 ```
 
-프론트매터 값을 `BlogPost`에 적용합니다. 알려진 키는 특정 필드에 매핑됩니다:
+프론트매터 값을 `NoxionPage`(또는 하위 타입)에 적용합니다. 알려진 키는 상위 필드/metadata에 매핑됩니다:
 
-| 프론트매터 키 | `BlogPost` 필드 |
-|--------------|----------------|
+| 프론트매터 키 | 대상 필드 |
+|--------------|----------|
 | `cleanUrl` | `slug` (앞의 `/` 제거) |
-| `slug` | `slug` |
+| `slug` | `slug` (앞의 `/` 제거) |
 | `title` | `title` |
 | `description` | `description` |
-| `date` | `date` |
-| `category` | `category` |
-| `tags` | `tags` (쉼표 구분) |
+| `tags` | `metadata.tags` (쉼표 구분) |
 | `coverImage` / `cover` | `coverImage` |
 
-알 수 없는 키를 포함한 모든 키가 `post.frontmatter`에 보존됩니다.
+알 수 없는 키를 포함한 모든 키는 `page.frontmatter`에 보존되며, 알 수 없는 키는 `page.metadata`에도 복사됩니다.

@@ -49,6 +49,9 @@ interface NoxionPage {
   lastEditedTime: string;
   frontmatter?: Record<string, string>;
   metadata: Record<string, unknown>;
+  parent?: string;
+  children?: string[];
+  order?: number;
 }
 ```
 
@@ -104,8 +107,8 @@ interface DocsPage extends NoxionPage {
   pageType: "docs";
   metadata: {
     section?: string;
-    order?: number;
     version?: string;
+    editUrl?: string;
   };
 }
 ```
@@ -115,8 +118,8 @@ interface DocsPage extends NoxionPage {
 ```ts
 const page: DocsPage = /* ... */;
 page.metadata.section;  // "Getting Started"
-page.metadata.order;    // 1
 page.metadata.version;  // "latest"
+page.metadata.editUrl;  // "https://github.com/..."
 ```
 
 ---
@@ -194,9 +197,14 @@ interface NoxionCollection {
 ```ts
 interface PageTypeDefinition {
   name: string;
-  label: string;
-  defaultTemplate: string;
-  schemaConventions: SchemaConventions;
+  schemaConventions?: SchemaConventions;
+  defaultTemplate?: string;
+  defaultLayout?: string;
+  routes?: (page: NoxionPage) => string;
+  sortBy?: { field: string; order: "asc" | "desc" };
+  sitemapConfig?: { priority: number; changefreq: "daily" | "weekly" | "monthly" };
+  structuredDataType?: string;
+  metadataConfig?: { openGraphType: "article" | "website" };
 }
 ```
 
@@ -207,7 +215,12 @@ interface PageTypeDefinition {
 페이지 타입의 메타데이터 필드 이름을 기본 Notion 속성 이름에 매핑합니다.
 
 ```ts
-type SchemaConventions = Record<string, string>;
+interface SchemaConventions {
+  [fieldName: string]: {
+    names: string[];
+    type?: string;
+  };
+}
 ```
 
 내장 규칙:
@@ -226,7 +239,7 @@ type SchemaConventions = Record<string, string>;
 
 ```ts
 interface NoxionConfig {
-  rootNotionPageId: string;
+  rootNotionPageId?: string;
   rootNotionSpaceId?: string;
   name: string;
   domain: string;
@@ -308,7 +321,9 @@ interface NoxionPageData {
 설정 옵션을 받는 플러그인 팩토리 함수 타입.
 
 ```ts
-type PluginFactory<T = unknown> = (options?: T) => NoxionPlugin;
+type PluginFactory<Options = unknown, Content = unknown> = (
+  options: Options
+) => NoxionPlugin<Content>;
 ```
 
 ---
@@ -327,10 +342,12 @@ import type { ExtendedRecordMap } from "@noxion/core";
 
 ```ts
 type PluginConfig =
-  | NoxionPlugin
-  | [NoxionPlugin, unknown]
+  | PluginModule
+  | [PluginModule, unknown]
   | false;
 ```
+
+여기서 `PluginModule = NoxionPlugin | PluginFactory` 입니다.
 
 `false` 변형은 조건부로 플러그인을 비활성화할 수 있게 합니다:
 
