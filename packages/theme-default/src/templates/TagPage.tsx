@@ -9,10 +9,10 @@ export function TagPage({ data }: NoxionTemplateProps) {
   const count = posts.length;
 
   return (
-    <div className="">
-      <div className="">
-        <h1 className="">#{tag}</h1>
-        <p className="">
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">#{tag}</h1>
+        <p className="text-gray-600 dark:text-gray-400">
           {count} {count === 1 ? "post" : "posts"}
         </p>
       </div>

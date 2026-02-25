@@ -17,39 +17,49 @@ export function PostPage({ data }: NoxionTemplateProps) {
   const formattedDate = data.formattedDate as string | undefined;
 
   if (!recordMap) {
-    return <div className="">Post not found.</div>;
+    return <div className="py-12 text-center text-gray-600 dark:text-gray-400">Post not found.</div>;
   }
 
   const hasHeader = Boolean(title);
 
   return (
-    <article className="">
+    <article className="space-y-8">
       {coverImage && (
-        <div className="">
-          <img src={coverImage} alt="" className="" />
+        <div className="aspect-video w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800 -mx-4 sm:-mx-6 lg:-mx-8">
+          <img src={coverImage} alt="" className="h-full w-full object-cover" />
         </div>
       )}
 
       {hasHeader && (
-        <header className="">
+        <header className="space-y-6">
           {(category || tags.length > 0) && (
-            <div className="">
-              {category && <span className="">{category}</span>}
+            <div className="flex flex-wrap items-center gap-2">
+              {category && (
+                <span className="inline-block px-3 py-1 text-sm font-medium rounded-md bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                  {category}
+                </span>
+              )}
               {tags.map((tag) => (
-                <a key={tag} href={`/tag/${encodeURIComponent(tag)}`} className="">
+                <a 
+                  key={tag} 
+                  href={`/tag/${encodeURIComponent(tag)}`} 
+                  className="inline-block px-3 py-1 text-sm font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                >
                   {tag}
                 </a>
               ))}
             </div>
           )}
 
-          <h1 className="">{title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100">{title}</h1>
 
-          {description && <p className="">{description}</p>}
+          {description && (
+            <p className="text-xl text-gray-600 dark:text-gray-400">{description}</p>
+          )}
 
-          <div className="">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500">
             {author && <span>{author}</span>}
-            {author && date && <span className="" aria-hidden="true" />}
+            {author && date && <span aria-hidden="true">·</span>}
             {date && (
               <time dateTime={date}>{formattedDate ?? date}</time>
             )}
@@ -57,7 +67,7 @@ export function PostPage({ data }: NoxionTemplateProps) {
         </header>
       )}
 
-      <div className="">
+      <div className="prose prose-gray dark:prose-invert max-w-none">
         <NotionPage recordMap={recordMap} rootPageId={rootPageId} fullPage={!hasHeader} />
       </div>
     </article>

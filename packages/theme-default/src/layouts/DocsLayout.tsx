@@ -10,26 +10,30 @@ function renderSlot(slot: ComponentType<Record<string, never>> | null | undefine
 }
 
 export function DocsLayout({ slots, children, className }: NoxionLayoutProps) {
-  const layoutClass = className ? "" : "";
+  const layoutClass = className || "min-h-screen flex flex-col bg-white dark:bg-gray-950";
 
   return (
     <div className={layoutClass}>
       {slots.header !== null && (
-        <div className="">{renderSlot(slots.header)}</div>
+        <div>{renderSlot(slots.header)}</div>
       )}
 
-      <div className="">
-        {slots.sidebar && (
-          <aside className="">{renderSlot(slots.sidebar)}</aside>
-        )}
+      <div className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex gap-12">
+          {slots.sidebar && (
+            <aside className="w-64 flex-shrink-0">
+              {renderSlot(slots.sidebar)}
+            </aside>
+          )}
 
-        <main className="">
-          {children}
-        </main>
+          <main className="flex-1 min-w-0 max-w-3xl">
+            {children}
+          </main>
+        </div>
       </div>
 
       {slots.footer !== null && (
-        <div className="">{renderSlot(slots.footer)}</div>
+        <div>{renderSlot(slots.footer)}</div>
       )}
     </div>
   );

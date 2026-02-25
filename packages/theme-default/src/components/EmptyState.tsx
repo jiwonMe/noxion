@@ -19,12 +19,12 @@ export function EmptyState({
   message = "Check back later for new content.",
 }: EmptyStateProps) {
   return (
-    <div className="">
-      <div className="">
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div className="mb-4 text-gray-400 dark:text-gray-600">
         <FileIcon />
       </div>
-      <h2 className="">{title}</h2>
-      <p className="">{message}</p>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h2>
+      <p className="text-gray-600 dark:text-gray-400 max-w-md">{message}</p>
     </div>
   );
 }

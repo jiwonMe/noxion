@@ -14,7 +14,7 @@ export interface DefaultNotionPageProps {
 
 export function NotionPage(props: DefaultNotionPageProps) {
   return (
-    <div className="">
+    <div className="notion-page-wrapper">
       <RendererNotionPage {...(props as RendererNotionPageProps)} />
     </div>
   );

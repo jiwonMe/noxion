@@ -36,8 +36,8 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
   }, []);
 
   return (
-    <div className="">
-      <span className="">
+    <div className="relative flex items-center w-full max-w-md">
+      <span className="absolute left-3 text-gray-400 dark:text-gray-600">
         <SearchIcon />
       </span>
       <input
@@ -45,9 +45,11 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
         type="text"
         placeholder={placeholder}
         onChange={(e) => handleInput(e.target.value)}
-        className=""
+        className="w-full pl-10 pr-16 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
       />
-      <kbd className="">⌘K</kbd>
+      <kbd className="absolute right-3 px-2 py-0.5 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+        ⌘K
+      </kbd>
     </div>
   );
 }

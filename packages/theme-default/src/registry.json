@@ -1,0 +1,129 @@
+{
+  "name": "default",
+  "components": {
+    "header": {
+      "file": "components/Header.tsx",
+      "dependencies": ["theme-toggle"],
+      "category": "layout"
+    },
+    "footer": {
+      "file": "components/Footer.tsx",
+      "dependencies": [],
+      "category": "layout"
+    },
+    "theme-toggle": {
+      "file": "components/ThemeToggle.tsx",
+      "dependencies": [],
+      "category": "ui"
+    },
+    "empty-state": {
+      "file": "components/EmptyState.tsx",
+      "dependencies": [],
+      "category": "ui"
+    },
+    "post-card": {
+      "file": "components/PostCard.tsx",
+      "dependencies": [],
+      "category": "content"
+    },
+    "featured-post-card": {
+      "file": "components/FeaturedPostCard.tsx",
+      "dependencies": [],
+      "category": "content"
+    },
+    "post-list": {
+      "file": "components/PostList.tsx",
+      "dependencies": ["post-card"],
+      "category": "content"
+    },
+    "hero-section": {
+      "file": "components/HeroSection.tsx",
+      "dependencies": ["featured-post-card", "post-card"],
+      "category": "content"
+    },
+    "search": {
+      "file": "components/Search.tsx",
+      "dependencies": [],
+      "category": "ui"
+    },
+    "tag-filter": {
+      "file": "components/TagFilter.tsx",
+      "dependencies": [],
+      "category": "ui"
+    },
+    "toc": {
+      "file": "components/TOC.tsx",
+      "dependencies": [],
+      "category": "ui"
+    },
+    "docs-breadcrumb": {
+      "file": "components/DocsBreadcrumb.tsx",
+      "dependencies": [],
+      "category": "docs"
+    },
+    "docs-sidebar": {
+      "file": "components/DocsSidebar.tsx",
+      "dependencies": [],
+      "category": "docs"
+    },
+    "portfolio-project-card": {
+      "file": "components/PortfolioProjectCard.tsx",
+      "dependencies": [],
+      "category": "portfolio"
+    },
+    "portfolio-filter": {
+      "file": "components/PortfolioFilter.tsx",
+      "dependencies": [],
+      "category": "portfolio"
+    },
+    "notion-page": {
+      "file": "components/NotionPage.tsx",
+      "dependencies": [],
+      "category": "content"
+    }
+  },
+  "layouts": {
+    "base-layout": {
+      "file": "layouts/BaseLayout.tsx",
+      "dependencies": []
+    },
+    "blog-layout": {
+      "file": "layouts/BlogLayout.tsx",
+      "dependencies": []
+    },
+    "docs-layout": {
+      "file": "layouts/DocsLayout.tsx",
+      "dependencies": []
+    }
+  },
+  "templates": {
+    "home-page": {
+      "file": "templates/HomePage.tsx",
+      "dependencies": ["hero-section", "post-list"]
+    },
+    "post-page": {
+      "file": "templates/PostPage.tsx",
+      "dependencies": ["notion-page"]
+    },
+    "archive-page": {
+      "file": "templates/ArchivePage.tsx",
+      "dependencies": ["post-list"]
+    },
+    "tag-page": {
+      "file": "templates/TagPage.tsx",
+      "dependencies": ["post-list"]
+    },
+    "docs-page": {
+      "file": "templates/DocsPage.tsx",
+      "dependencies": ["notion-page"]
+    },
+    "portfolio-grid": {
+      "file": "templates/PortfolioGrid.tsx",
+      "dependencies": ["portfolio-project-card"]
+    },
+    "portfolio-project": {
+      "file": "templates/PortfolioProject.tsx",
+      "dependencies": ["notion-page"]
+    }
+  }
+}

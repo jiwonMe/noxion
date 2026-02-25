@@ -63,3 +63,40 @@
 ### Remaining Hardcoded References
 - `fetchBlogPosts()` uses "blog" string - INTENTIONAL for backward compat API
 - Blog sorting in extractPagesFromRecordMap - ACCEPTABLE fallback behavior
+
+## [2026-02-25] Task 4: theme-default Tailwind Rewrite
+
+### Completed
+- ✅ Rewrote all 16 components with Tailwind utility classes
+- ✅ Rewrote all 3 layouts (BaseLayout, BlogLayout, DocsLayout)
+- ✅ Rewrote all 7 templates (HomePage, PostPage, ArchivePage, TagPage, DocsPage, PortfolioGrid, PortfolioProject)
+- ✅ Created registry.json with component dependencies
+- ✅ Build successful
+
+### Design System Applied
+**Colors:**
+- Primary: blue-600/blue-400 (dark mode)
+- Background: white/gray-950
+- Text: gray-900/gray-100
+- Muted: gray-600/gray-400
+- Borders: gray-200/gray-800
+
+**Components:**
+- Cards: rounded-lg, border, hover:shadow-lg transitions
+- Buttons: rounded-md, px-3 py-1.5, hover states
+- Typography: text-4xl for h1, text-xl for h3, prose for content
+- Spacing: space-y-8 for sections, gap-6 for grids
+- Dark mode: All components use dark: variants
+
+**Layouts:**
+- Container: mx-auto px-4 sm:px-6 lg:px-8
+- Header: sticky top-0, backdrop-blur
+- Grids: grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+- Docs: sidebar w-64, main flex-1 max-w-3xl
+
+### Key Patterns
+- All className props accept custom classes or use defaults
+- Hover states with group/group-hover for nested elements
+- Responsive breakpoints: sm:, md:, lg:
+- Accessibility: aria-labels, aria-current for active states
+- Image optimization: aspect-video, object-cover, loading="lazy"

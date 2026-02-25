@@ -11,7 +11,7 @@ export function HomePage({ data }: NoxionTemplateProps) {
 
   if (recentCount <= 0) {
     return (
-      <div className="">
+      <div>
         <PostList posts={posts} />
       </div>
     );
@@ -21,12 +21,12 @@ export function HomePage({ data }: NoxionTemplateProps) {
   const feedPosts = posts.slice(recentCount);
 
   return (
-    <div className="">
+    <div className="space-y-16">
       <HeroSection posts={heroPosts} />
 
       {feedPosts.length > 0 && (
-        <section className="">
-          <h2 className="">{feedTitle}</h2>
+        <section className="space-y-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{feedTitle}</h2>
           <PostList posts={feedPosts} />
         </section>
       )}
