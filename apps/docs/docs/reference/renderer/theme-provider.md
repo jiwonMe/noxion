@@ -1,54 +1,40 @@
 ---
-title: ThemeProvider
-description: "@noxion/renderer ThemeProvider, theme contract hooks, and useThemePreference"
+title: Theme Hooks
+description: "@noxion/renderer theme hooks — useThemePreference for color mode management"
 ---
 
-# `<NoxionThemeProvider />`
+# Theme Hooks
 
 ```tsx
-import { NoxionThemeProvider } from "@noxion/renderer";
+import { useThemePreference } from "@noxion/renderer";
 ```
 
-Provides the theme contract and color mode context to all Noxion components. Must wrap the entire app (or at minimum all components that use theme-aware features).
-
-In the generated app, this is already set up in `app/providers.tsx`.
-
----
-
-## Props
-
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `themeContract` | `NoxionThemeContract` | ✅ | — | The theme contract providing components, layouts, and templates. |
-| `defaultMode` | `ThemeMode` | — | `"system"` | The initial color mode. Should match `config.defaultTheme`. |
-| `children` | `ReactNode` | ✅ | — | Your app tree. |
+`@noxion/renderer` provides the `useThemePreference()` hook for managing color mode (light/dark/system). Theme components, layouts, and templates are imported directly from theme packages — no provider required.
 
 ---
 
 ## Setup
 
 ```tsx
-// app/providers.tsx
-import { NoxionThemeProvider } from "@noxion/renderer";
-import { defaultThemeContract } from "@noxion/theme-default";
-import { siteConfig } from "@/lib/config";
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <NoxionThemeProvider
-      themeContract={defaultThemeContract}
-      defaultMode={siteConfig.defaultTheme}
-    >
-      {children}
-    </NoxionThemeProvider>
-  );
-}
-```
-
-```tsx
 // app/layout.tsx
-import { ThemeScript } from "./theme-script";
-import { Providers } from "./providers";
+import "@noxion/theme-default/styles/tailwind";
+import "./globals.css";
+
+function ThemeScript() {
+  const script = `
+    (function() {
+      try {
+        var stored = localStorage.getItem('noxion-theme');
+        var theme = stored || 'system';
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+    })();
+  `;
+  return <script dangerouslySetInnerHTML={{ __html: script }} />;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -56,10 +42,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <ThemeScript />
       </head>
-      <body>
-        <Providers>{children}</Providers>
-      </body>
+      <body>{children}</body>
     </html>
+  );
+}
+```
+
+```tsx
+// app/site-layout.tsx
+"use client";
+import { BlogLayout, Header, Footer } from "@noxion/theme-default";
+
+export function SiteLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <BlogLayout
+      slots={{
+        header: () => <Header siteName="My Blog" navigation={[{ label: "Home", href: "/" }]} />,
+        footer: () => <Footer siteName="My Blog" author="Author" />,
+      }}
+    >
+      {children}
+    </BlogLayout>
   );
 }
 ```
@@ -72,136 +75,17 @@ This is a well-known pattern for theme systems. See [React docs on suppressHydra
 
 ---
 
-## `useThemeContract()`
-
-Returns the active **theme contract** object.
-
-### Signature
-
-```ts
-function useThemeContract(): NoxionThemeContract
-```
-
-### Returns
-
-The full `NoxionThemeContract` including `name`, `metadata`, `components`, `layouts`, `templates`, and `supports`.
-
-### Usage
-
-```tsx
-"use client";
-import { useThemeContract } from "@noxion/renderer";
-
-function ThemeInfo() {
-  const contract = useThemeContract();
-  return <p>Active theme: {contract.name}</p>;
-}
-```
-
----
-
-## `useThemeComponent(name)`
-
-Returns a specific component from the active theme contract.
-
-### Signature
-
-```ts
-function useThemeComponent<K extends keyof NoxionThemeContractComponents>(
-  name: K
-): NoxionThemeContractComponents[K]
-```
-
-### Usage
-
-```tsx
-"use client";
-import { useThemeComponent } from "@noxion/renderer";
-
-function MyPage({ posts }) {
-  const PostList = useThemeComponent("PostList");
-  const Header = useThemeComponent("Header");
-
-  return (
-    <>
-      <Header siteName="My Blog" />
-      <PostList posts={posts} />
-    </>
-  );
-}
-```
-
-Available component names: `Header`, `Footer`, `PostCard`, `FeaturedPostCard`, `PostList`, `HeroSection`, `TOC`, `Search`, `TagFilter`, `ThemeToggle`, `EmptyState`, `NotionPage`, `DocsSidebar`, `DocsBreadcrumb`, `PortfolioProjectCard`, `PortfolioFilter`.
-
----
-
-## `useThemeLayout(name)`
-
-Returns a layout component from the active theme contract.
-
-### Signature
-
-```ts
-function useThemeLayout<K extends keyof NoxionThemeContractLayouts>(
-  name: K
-): NoxionThemeContractLayouts[K]
-```
-
-### Usage
-
-```tsx
-"use client";
-import { useThemeLayout } from "@noxion/renderer";
-
-function MyPage({ children }) {
-  const BlogLayout = useThemeLayout("blog");
-  return <BlogLayout slots={{}}>{children}</BlogLayout>;
-}
-```
-
-Available layout names: `base`, `blog`, `docs` (optional), `magazine` (optional).
-
----
-
-## `useThemeTemplate(name)`
-
-Returns a template component from the active theme contract.
-
-### Signature
-
-```ts
-function useThemeTemplate<K extends keyof NoxionThemeContractTemplates>(
-  name: K
-): NoxionThemeContractTemplates[K] | undefined
-```
-
-### Usage
-
-```tsx
-"use client";
-import { useThemeTemplate } from "@noxion/renderer";
-
-function RenderPage({ data }) {
-  const HomePage = useThemeTemplate("home");
-  if (!HomePage) return null;
-  return <HomePage data={data} />;
-}
-```
-
-Available template names: `home`, `post`, `archive` (optional), `tag` (optional), `docs` (optional), `portfolioGrid` (optional), `portfolioProject` (optional).
-
----
-
 ## `useThemePreference()`
 
-Returns the user's **preference setting** (including `"system"`) and a function to change it.
+Returns the user's **preference setting** (including `"system"`), the resolved mode, and a function to change it.
 
 ### Signature
 
 ```ts
 function useThemePreference(): {
-  mode: ThemeMode;         // "light" | "dark" | "system"
-  setMode: (mode: ThemeMode) => void;
+  preference: ThemePreference;   // "light" | "dark" | "system"
+  resolved: "light" | "dark";   // actual applied mode
+  setPreference: (pref: ThemePreference) => void;
 }
 ```
 
@@ -209,28 +93,29 @@ function useThemePreference(): {
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `mode` | `ThemeMode` | The user's current preference. `"system"` if following OS setting. |
-| `setMode` | `(mode: ThemeMode) => void` | Update the preference. Persisted to `localStorage` and immediately applied. |
+| `preference` | `ThemePreference` | The user's stored preference. `"system"` if following OS setting. |
+| `resolved` | `"light" \| "dark"` | The actual applied mode after resolving `"system"` against the OS preference. |
+| `setPreference` | `(pref: ThemePreference) => void` | Update the preference. Persisted to `localStorage` and immediately applied. |
 
 ### Usage
 
 ```tsx
 "use client";
 import { useThemePreference } from "@noxion/renderer";
-import type { ThemeMode } from "@noxion/core";
+import type { ThemePreference } from "@noxion/renderer";
 
 function ThemeToggle() {
-  const { mode, setMode } = useThemePreference();
+  const { preference, setPreference } = useThemePreference();
 
   const cycleTheme = () => {
-    const order: ThemeMode[] = ["light", "dark", "system"];
-    const currentIndex = order.indexOf(mode);
-    setMode(order[(currentIndex + 1) % order.length]);
+    const order: ThemePreference[] = ["system", "light", "dark"];
+    const currentIndex = order.indexOf(preference);
+    setPreference(order[(currentIndex + 1) % order.length]);
   };
 
   return (
-    <button onClick={cycleTheme} aria-label={`Current theme: ${mode}`}>
-      {mode === "light" ? "sun" : mode === "dark" ? "moon" : "system"}
+    <button onClick={cycleTheme} aria-label={`Current theme: ${preference}`}>
+      {preference === "light" ? "☀️" : preference === "dark" ? "🌙" : "💻"}
     </button>
   );
 }
@@ -238,7 +123,7 @@ function ThemeToggle() {
 
 ### Persistence
 
-`setMode()` writes the preference to `localStorage` under the key `"noxion-theme"`. On subsequent page loads, `<ThemeScript>` reads this key and applies the preference before React hydrates.
+`setPreference()` writes the preference to `localStorage` under the key `"noxion-theme"`. On subsequent page loads, `<ThemeScript>` reads this key and applies the preference before React hydrates.
 
 ---
 
@@ -253,25 +138,26 @@ The full theme resolution flow:
    b. If set: use that value ("light" or "dark")
    c. If "system" or not set: check window.matchMedia("(prefers-color-scheme: dark)")
    d. Set <html data-theme="light|dark">
-3. React hydrates — <NoxionThemeProvider> reads data-theme from <html>
-4. User clicks toggle → setMode() updates localStorage AND data-theme
+3. React hydrates — useThemePreference() reads data-theme from <html>
+4. User clicks toggle → setPreference() updates localStorage AND data-theme
 5. CSS responds to [data-theme="dark"] selector
+6. Tailwind dark: utilities activate via @custom-variant
 ```
 
 This architecture ensures zero FOUC (Flash of Unstyled Content) regardless of the user's preference or network speed.
 
 ### Media query responsiveness
 
-When `mode === "system"`, the theme responds to real-time OS preference changes:
+When `preference === "system"`, the theme responds to real-time OS preference changes:
 
 ```ts
-// Inside NoxionThemeProvider
+// Inside useThemePreference()
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 mediaQuery.addEventListener("change", (e) => {
-  if (mode === "system") {
+  if (preference === "system") {
     applyTheme(e.matches ? "dark" : "light");
   }
 });
 ```
 
-This means if the user switches their OS from light to dark mode while on your blog (with `mode === "system"`), the blog updates automatically without a page reload.
+This means if the user switches their OS from light to dark mode while on your blog (with `preference === "system"`), the blog updates automatically without a page reload.

@@ -10,7 +10,7 @@ function renderSlot(slot: ComponentType<Record<string, never>> | null | undefine
 }
 
 export function BlogLayout({ slots, children, className }: NoxionLayoutProps) {
-  const layoutClass = className || "min-h-screen flex flex-col bg-white dark:bg-gray-950";
+  const layoutClass = className || "min-h-screen flex flex-col bg-white dark:bg-[#0a0a0a]";
 
   return (
     <div className={layoutClass}>
@@ -18,7 +18,7 @@ export function BlogLayout({ slots, children, className }: NoxionLayoutProps) {
         <div>{renderSlot(slots.header)}</div>
       )}
 
-      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-4xl">
+      <main className="flex-1 mx-auto w-full px-9 py-20 max-w-[1200px]">
         {children}
       </main>
 

@@ -14,7 +14,10 @@ type PreviewState = {
   pageView: PageView;
   isDark: boolean;
   notionPageId?: string;
+  fetchNonce?: number;
 };
+
+let lastNotionFetchNonce = 0;
 
 export default function PreviewPage() {
   const [state, setState] = useState<PreviewState | null>(null);
@@ -35,6 +38,7 @@ export default function PreviewPage() {
           pageView: (e.data.pageView ?? "home") as PageView,
           isDark: e.data.isDark ?? false,
           notionPageId: e.data.notionPageId ?? "",
+          fetchNonce: e.data.fetchNonce ?? 0,
         });
       }
     };
@@ -47,7 +51,8 @@ export default function PreviewPage() {
   useEffect(() => {
     if (!state) return;
     document.documentElement.setAttribute("data-theme", state.isDark ? "dark" : "light");
-  }, [state?.isDark]);
+    document.documentElement.setAttribute("data-noxion-theme", state.themeId);
+  }, [state?.isDark, state?.themeId]);
 
   if (!state) return null;
 
@@ -75,6 +80,7 @@ export default function PreviewPage() {
       <PageContent
         pageView={state.pageView}
         notionPageId={state.notionPageId ?? ""}
+        fetchNonce={state.fetchNonce ?? 0}
         notionRecordMap={notionRecordMap}
         onNotionLoad={setNotionRecordMap}
         templates={templates}
@@ -86,19 +92,21 @@ export default function PreviewPage() {
 function PageContent({
   pageView,
   notionPageId,
+  fetchNonce,
   notionRecordMap,
   onNotionLoad,
   templates,
 }: {
   pageView: PageView;
   notionPageId: string;
+  fetchNonce: number;
   notionRecordMap: ExtendedRecordMap | null;
   onNotionLoad: (recordMap: ExtendedRecordMap | null) => void;
   templates: typeof themeRegistry[0]["templates"];
 }) {
   switch (pageView) {
     case "home":
-      return <templates.home data={{ posts: mockPosts, recentCount: 3 }} />;
+      return <templates.home data={{ posts: mockPosts, recentCount: 1 }} />;
     case "archive":
       return templates.archive
         ? <templates.archive data={{ posts: mockPosts, title: "Archive" }} />
@@ -115,6 +123,7 @@ function PageContent({
       return (
         <NotionContentView
           notionPageId={notionPageId}
+          fetchNonce={fetchNonce}
           recordMap={notionRecordMap}
           onLoad={onNotionLoad}
           PostPageTemplate={templates.post}
@@ -125,26 +134,27 @@ function PageContent({
 
 function NotionContentView({
   notionPageId,
+  fetchNonce,
   recordMap,
   onLoad,
   PostPageTemplate,
 }: {
   notionPageId: string;
+  fetchNonce: number;
   recordMap: ExtendedRecordMap | null;
   onLoad: (recordMap: ExtendedRecordMap | null) => void;
   PostPageTemplate: typeof themeRegistry[0]["templates"]["post"];
-
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const lastFetchedRef = { current: "" };
 
   useEffect(() => {
+    if (fetchNonce === 0 || fetchNonce === lastNotionFetchNonce) return;
     const id = notionPageId.trim();
-    if (!id || id === lastFetchedRef.current) return;
+    if (!id) return;
 
+    lastNotionFetchNonce = fetchNonce;
     let cancelled = false;
-    lastFetchedRef.current = id;
     setLoading(true);
     setError(null);
 
@@ -169,7 +179,7 @@ function NotionContentView({
     })();
 
     return () => { cancelled = true; };
-  }, [notionPageId, onLoad]);
+  }, [fetchNonce, notionPageId, onLoad]);
 
   if (loading) {
     return (
@@ -230,6 +240,9 @@ function NotionContentView({
             ...(author ? { author } : {}),
             ...(date ? { date } : {}),
             ...(cover ? { coverImage: cover } : {}),
+            prevPost: { title: "Previous Post Title", slug: "previous-post" },
+            nextPost: { title: "Next Post Title", slug: "next-post" },
+            siteName: "Noxion",
           }} />
         </div>
       </div>

@@ -319,6 +319,114 @@ body {
 
 .dev-header__notion-input {
   flex: 0 1 auto;
+  position: relative;
+}
+
+.dev-recent-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid rgba(55, 53, 47, 0.09);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  z-index: 100;
+  overflow: hidden;
+  min-width: 220px;
+}
+
+[data-theme="dark"] .dev-recent-dropdown {
+  background: #252525;
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.dev-recent-dropdown__header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(55, 53, 47, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.06);
+}
+
+[data-theme="dark"] .dev-recent-dropdown__header {
+  color: rgba(255, 255, 255, 0.35);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.dev-recent-dropdown__item {
+  display: flex;
+  align-items: center;
+}
+
+.dev-recent-dropdown__item--active .dev-recent-dropdown__select {
+  color: rgb(35, 131, 226);
+}
+
+.dev-recent-dropdown__select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  color: rgb(55, 53, 47);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 80ms;
+}
+
+.dev-recent-dropdown__select:hover {
+  background: rgba(55, 53, 47, 0.04);
+}
+
+[data-theme="dark"] .dev-recent-dropdown__select {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .dev-recent-dropdown__select:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dev-recent-dropdown__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: rgba(55, 53, 47, 0.35);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 80ms, color 80ms;
+}
+
+.dev-recent-dropdown__remove:hover {
+  background: rgba(55, 53, 47, 0.08);
+  color: rgb(235, 87, 87);
+}
+
+[data-theme="dark"] .dev-recent-dropdown__remove {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .dev-recent-dropdown__remove:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgb(255, 115, 105);
 }
 
 .dev-header__text-btn {

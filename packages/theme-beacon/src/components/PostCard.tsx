@@ -9,39 +9,26 @@ function formatDate(dateStr: string): string {
   }
 }
 
-export function PostCard({ title, slug, date, tags, coverImage, category, description, author }: PostCardProps) {
+export function PostCard({ title, slug, date, coverImage, category, description, author }: PostCardProps) {
   return (
-    <a href={`/${slug}`} className="group block py-6 border-b border-neutral-200 dark:border-neutral-800 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900/40 -mx-4 px-4">
+    <a href={`/${slug}`} className="group block py-5 first:pt-0">
       {coverImage && (
-        <div className="aspect-video w-full overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800 mb-4">
-          <img src={coverImage} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        <div className="aspect-video w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800 mb-3">
+          <img src={coverImage} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
         </div>
       )}
 
-      <div className="space-y-2">
-        {category && <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{category}</span>}
+      <div className="space-y-1.5">
+        {category && <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{category}</p>}
 
-        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 line-clamp-2 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">{title}</h3>
+        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">{title}</h3>
 
         {description && <p className="text-sm text-neutral-500 dark:text-neutral-400 line-clamp-2">{description}</p>}
 
-        <div className="flex items-center gap-2 text-sm text-neutral-400 dark:text-neutral-500">
-          {author && <span className="text-neutral-600 dark:text-neutral-400">{author}</span>}
-          {author && date && <span aria-hidden="true">·</span>}
-          {date && (
-            <time dateTime={date} className="">
-              {formatDate(date)}
-            </time>
-          )}
+        <div className="text-sm text-neutral-400 dark:text-neutral-500">
+          {author && <span>By {author}</span>}
+          {date && <span className="ml-1">&mdash;{formatDate(date)}</span>}
         </div>
-
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {tags.map((t) => (
-              <span key={t} className="inline-block px-2 py-0.5 text-xs rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">{t}</span>
-            ))}
-          </div>
-        )}
       </div>
     </a>
   );

@@ -1,0 +1,31 @@
+{
+  "name": "@noxion/example-default",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Example app using @noxion/theme-default — minimal Notion-powered blog",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build --webpack",
+    "start": "next start",
+    "test": "echo 'example-default test placeholder'",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf .next out"
+  },
+  "dependencies": {
+    "@noxion/adapter-nextjs": "workspace:*",
+    "@noxion/core": "workspace:*",
+    "@noxion/notion-renderer": "workspace:*",
+    "@noxion/renderer": "workspace:*",
+    "@noxion/theme-default": "workspace:*",
+    "next": "^16.1.6",
+    "notion-client": "^7.8.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.7.0"
+  }
+}

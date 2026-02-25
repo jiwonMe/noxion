@@ -1,0 +1,18 @@
+@import "@noxion/theme-default/styles/tailwind";
+
+@source "../../../packages/renderer/src/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+:root {
+  --color-primary: #007aff;
+  --color-primary-foreground: #ffffff;
+  --color-foreground: #000000;
+  --color-muted-foreground: #757575;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, "system-ui", "Segoe UI", Helvetica, Arial, sans-serif;
+  --width-content: 1200px;
+  --width-sidebar: 280px;
+}
+
+[data-theme="dark"] {
+  --color-primary: #007aff;
+}

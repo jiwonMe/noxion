@@ -7,13 +7,13 @@ export function PostList({ posts }: PostListProps) {
   if (posts.length === 0) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-600 dark:text-gray-400">No posts found.</p>
+        <p className="text-[#757575] dark:text-gray-500">No posts found.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="divide-y divide-gray-100 dark:divide-gray-800/50">
       {posts.map((post) => (
         <PostCard key={post.slug} {...post} />
       ))}

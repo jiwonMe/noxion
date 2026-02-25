@@ -1,18 +1,22 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { generateNoxionMetadata, generateNoxionStaticParams, generateBlogPostingLD, generateBreadcrumbLD } from "@noxion/adapter-nextjs";
-import { createNotionClient, parseFrontmatter, applyFrontmatter } from "@noxion/core";
+import {
+  generateNoxionMetadata,
+  generateNoxionStaticParams,
+  generateBlogPostingLD,
+  generateBreadcrumbLD,
+} from "@noxion/adapter-nextjs";
+import { createNotionClient } from "@noxion/core";
 import { PostPage } from "@noxion/theme-default";
-import { getPostBySlug, getPageRecordMap } from "../../lib/notion";
+import { resolvePostWithFrontmatter } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
 
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
   return new Intl.DateTimeFormat(siteConfig.language || "en", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  }).format(date);
+  }).format(new Date(dateStr));
 }
 
 export const revalidate = 3600;
@@ -30,24 +34,13 @@ export async function generateStaticParams() {
   }
 }
 
-async function getPostWithFrontmatter(slug: string) {
-  const post = await getPostBySlug(slug);
-  if (!post) return null;
-
-  const recordMap = await getPageRecordMap(post.id);
-  const frontmatter = parseFrontmatter(recordMap, post.id);
-  const resolvedPost = frontmatter ? applyFrontmatter(post, frontmatter) : post;
-
-  return { post: resolvedPost, recordMap };
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const data = await getPostWithFrontmatter(slug);
+  const data = await resolvePostWithFrontmatter(slug);
   if (!data) return { title: "Not Found" };
   return generateNoxionMetadata(data.post, siteConfig);
 }
@@ -58,7 +51,7 @@ export default async function PostPageRoute({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getPostWithFrontmatter(slug);
+  const data = await resolvePostWithFrontmatter(slug);
   if (!data) notFound();
 
   const { post, recordMap } = data;

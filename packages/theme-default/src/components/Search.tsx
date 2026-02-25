@@ -37,7 +37,7 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
 
   return (
     <div className="relative flex items-center w-full max-w-md">
-      <span className="absolute left-3 text-gray-400 dark:text-gray-600">
+      <span className="absolute left-3 text-[#757575] dark:text-gray-500">
         <SearchIcon />
       </span>
       <input
@@ -45,9 +45,9 @@ export function Search({ onSearch, placeholder = "Search posts..." }: SearchProp
         type="text"
         placeholder={placeholder}
         onChange={(e) => handleInput(e.target.value)}
-        className="w-full pl-10 pr-16 py-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+        className="w-full pl-10 pr-16 py-2.5 text-sm border border-gray-200 rounded-lg bg-white text-black placeholder-[#757575] focus:outline-none focus:ring-1 focus:ring-black/20 focus:border-black/30 dark:bg-[#111] dark:border-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:ring-gray-600"
       />
-      <kbd className="absolute right-3 px-2 py-0.5 text-xs font-semibold text-gray-500 bg-gray-100 border border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+      <kbd className="absolute right-3 px-2 py-0.5 text-[10px] font-semibold text-[#757575] bg-gray-50 border border-gray-200 rounded dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500">
         ⌘K
       </kbd>
     </div>

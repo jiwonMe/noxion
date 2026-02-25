@@ -1,21 +1,32 @@
-import { defineConfig, createAnalyticsPlugin, createRSSPlugin, createCommentsPlugin } from "@noxion/core";
+import {
+  defineConfig,
+  createRSSPlugin,
+  createAnalyticsPlugin,
+  createCommentsPlugin,
+} from "@noxion/core";
+import { createReadingTimePlugin } from "noxion-plugin-reading-time";
 
 const config = defineConfig({
   rootNotionPageId: process.env.NOTION_PAGE_ID!,
   rootNotionSpaceId: process.env.NOTION_SPACE_ID,
-  name: process.env.SITE_NAME ?? "Noxion Blog",
+
+  name: process.env.SITE_NAME ?? "Noxion Demo",
   domain: process.env.SITE_DOMAIN ?? "localhost:3000",
   author: process.env.SITE_AUTHOR ?? "Noxion",
-  description: process.env.SITE_DESCRIPTION ?? "A blog powered by Notion and Noxion",
+  description:
+    process.env.SITE_DESCRIPTION ??
+    "A showcase blog demonstrating every Noxion feature — themes, plugins, SEO, and more.",
   language: "en",
+
   defaultTheme: "system",
   revalidate: 3600,
   revalidateSecret: process.env.REVALIDATE_SECRET,
+
   plugins: [
-    createRSSPlugin({
-      feedPath: "/feed.xml",
-      limit: 20,
-    }),
+    createRSSPlugin({ feedPath: "/feed.xml", limit: 30 }),
+
+    createReadingTimePlugin({ wordsPerMinute: 200, showIcon: true }),
+
     ...(process.env.NEXT_PUBLIC_GA_ID
       ? [
           createAnalyticsPlugin({
@@ -24,6 +35,7 @@ const config = defineConfig({
           }),
         ]
       : []),
+
     ...(process.env.NEXT_PUBLIC_GISCUS_REPO
       ? [
           createCommentsPlugin({

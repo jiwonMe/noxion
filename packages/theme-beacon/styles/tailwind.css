@@ -1,3 +1,9 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@source "../src/**/*.{ts,tsx}";
+
 :root {
   --color-primary: #000000;
   --color-primary-foreground: #ffffff;
@@ -19,4 +25,16 @@
   --width-sidebar: 300px;
 
   --radius-default: 0;
+
+  /* Notion renderer variable aliases */
+  --noxion-primary: var(--color-primary);
+  --noxion-primaryForeground: var(--color-primary-foreground);
+  --noxion-background: var(--color-background);
+  --noxion-foreground: var(--color-foreground);
+  --noxion-muted: var(--color-muted);
+  --noxion-mutedForeground: var(--color-muted-foreground);
+  --noxion-border: var(--color-border);
+  --noxion-font-sans: var(--font-sans);
+  --noxion-font-mono: var(--font-mono);
+  --noxion-border-radius: var(--radius-default);
 }

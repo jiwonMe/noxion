@@ -23,8 +23,8 @@ export function TagFilter({ tags, selectedTags, onToggle, maxVisible }: TagFilte
             type="button"
             className={
               isSelected
-                ? "px-3 py-1.5 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                : "px-3 py-1.5 text-sm font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                ? "px-3 py-1.5 text-xs font-medium rounded-md bg-black text-white transition-colors dark:bg-white dark:text-black"
+                : "px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-[#757575] hover:bg-gray-200 transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }
           >
             {tag}
@@ -33,20 +33,20 @@ export function TagFilter({ tags, selectedTags, onToggle, maxVisible }: TagFilte
       })}
 
       {shouldCollapse && !expanded && hiddenCount > 0 && (
-        <button 
-          type="button" 
-          onClick={() => setExpanded(true)} 
-          className="px-3 py-1.5 text-sm font-medium rounded-md text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950 transition-colors"
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="px-3 py-1.5 text-xs font-medium rounded-md text-[#007AFF] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
         >
           +{hiddenCount} more
         </button>
       )}
 
       {shouldCollapse && expanded && (
-        <button 
-          type="button" 
-          onClick={() => setExpanded(false)} 
-          className="px-3 py-1.5 text-sm font-medium rounded-md text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950 transition-colors"
+        <button
+          type="button"
+          onClick={() => setExpanded(false)}
+          className="px-3 py-1.5 text-xs font-medium rounded-md text-[#007AFF] hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
         >
           Show less
         </button>

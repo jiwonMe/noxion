@@ -53,7 +53,7 @@ export function HomeContent({
   initialTag,
 }: HomeContentProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>(
-    initialTag ? [initialTag] : []
+    initialTag ? [initialTag] : [],
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -136,11 +136,9 @@ export function HomeContent({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
+        if (entries[0]?.isIntersecting) loadMore();
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
 
     observer.observe(sentinel);
@@ -149,7 +147,7 @@ export function HomeContent({
 
   const handleToggleTag = useCallback((tag: string) => {
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   }, []);
 
@@ -158,12 +156,12 @@ export function HomeContent({
   }, []);
 
   const isFiltering = selectedTags.length > 0 || Boolean(searchQuery.trim());
-  const heroPosts = !isFiltering && state.posts.length >= HERO_COUNT
-    ? state.posts.slice(0, HERO_COUNT)
-    : [];
-  const feedPosts = heroPosts.length > 0
-    ? state.posts.slice(HERO_COUNT)
-    : state.posts;
+  const heroPosts =
+    !isFiltering && state.posts.length >= HERO_COUNT
+      ? state.posts.slice(0, HERO_COUNT)
+      : [];
+  const feedPosts =
+    heroPosts.length > 0 ? state.posts.slice(HERO_COUNT) : state.posts;
 
   return (
     <div className="space-y-12">

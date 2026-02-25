@@ -1,14 +1,14 @@
 ---
 sidebar_position: 7
 title: 테마
-description: 테마 계약, CSS 변수, 다크 모드로 Noxion 사이트의 디자인을 커스터마이징하세요.
+description: Tailwind CSS, CSS 변수, 다크 모드로 Noxion 사이트의 디자인을 커스터마이징하세요.
 ---
 
 # 테마
 
-Noxion은 **계약 기반 테마 시스템**을 사용합니다. 각 테마는 컴포넌트, 레이아웃, 템플릿을 묶는 `NoxionThemeContract` 객체입니다. 시각적 커스터마이징은 **CSS 커스텀 속성(CSS 변수)**으로 이루어집니다 — 빌드 과정 없이, 설정 변경 없이, JavaScript 불필요.
+Noxion은 **직접 임포트** 테마 시스템을 사용합니다. 각 테마는 React 컴포넌트, 레이아웃, 템플릿을 내보내는 npm 패키지입니다. 필요한 것을 임포트하여 앱을 직접 구성합니다 — 프로바이더 없이, 컨트랙트 없이, 런타임 간접 참조 없이.
 
-고급 사용 사례에서는 `defineThemeContract()`로 커스텀 컴포넌트, 레이아웃, 템플릿을 포함한 완전한 테마 계약을 만들 수 있습니다.
+시각적 커스터마이징은 **Tailwind CSS 유틸리티 클래스**와 **CSS 커스텀 속성(CSS 변수)**으로 이루어집니다.
 
 ---
 
@@ -19,37 +19,105 @@ Noxion은 **2개의 공식 테마**를 독립적인 npm 패키지로 제공합�
 | 테마 | 패키지 | 스타일 |
 |------|--------|--------|
 | **Default** | `@noxion/theme-default` | 시스템 폰트, 둥근 카드, 고정 헤더의 깔끔하고 모던한 레이아웃. 대부분의 사이트를 위한 기본 테마. |
-| **Beacon** | `@noxion/theme-beacon` | 콘텐츠 중심 읽기 경험 — 넓은 콘텐츠 영역(1320px), 정적 헤더, 큰 타이포그래피. 커스텀 `HomePage`와 `PostPage` 컴포넌트 포함. |
+| **Beacon** | `@noxion/theme-beacon` | 콘텐츠 중심 읽기 경험 — 넓은 콘텐츠 영역(1320px), 정적 헤더, 큰 타이포그래피. |
 
 ### 테마 사용하기
 
-테마 패키지를 설치하고 계약을 프로바이더에 전달하세요:
+테마 패키지를 설치하고 필요한 컴포넌트를 임포트하세요:
 
 ```bash
 bun add @noxion/theme-default
 ```
 
 ```tsx
-// app/providers.tsx
-import { NoxionThemeProvider } from "@noxion/renderer";
-import { defaultThemeContract } from "@noxion/theme-default";
+// app/layout.tsx
+import "@noxion/theme-default/styles/tailwind";
+import "./globals.css";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <NoxionThemeProvider themeContract={defaultThemeContract} defaultMode="system">
-      {children}
-    </NoxionThemeProvider>
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body>
+        <SiteLayout>{children}</SiteLayout>
+      </body>
+    </html>
   );
 }
 ```
 
-테마를 전환하려면 계약을 교체하세요:
+```tsx
+// app/site-layout.tsx
+"use client";
+import { BlogLayout, Header, Footer } from "@noxion/theme-default";
+
+export function SiteLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <BlogLayout
+      slots={{
+        header: () => <Header siteName="내 블로그" navigation={[{ label: "홈", href: "/" }]} />,
+        footer: () => <Footer siteName="내 블로그" author="작성자" />,
+      }}
+    >
+      {children}
+    </BlogLayout>
+  );
+}
+```
+
+테마를 전환하려면 임포트를 교체하세요:
 
 ```tsx
-import { beaconThemeContract } from "@noxion/theme-beacon";
-
-<NoxionThemeProvider themeContract={beaconThemeContract} defaultMode="system">
+import { BlogLayout, Header, Footer } from "@noxion/theme-beacon";
 ```
+
+### 테마 내보내기
+
+각 테마 패키지는 다음을 내보냅니다:
+
+| 카테고리 | 내보내기 |
+|----------|----------|
+| **컴포넌트** | `Header`, `Footer`, `PostCard`, `FeaturedPostCard`, `PostList`, `HeroSection`, `TOC`, `Search`, `TagFilter`, `ThemeToggle`, `EmptyState`, `NotionPage`, `DocsSidebar`, `DocsBreadcrumb`, `PortfolioProjectCard`, `PortfolioFilter` |
+| **레이아웃** | `BaseLayout`, `BlogLayout`, `DocsLayout` |
+| **템플릿** | `HomePage`, `PostPage`, `ArchivePage`, `TagPage`, `DocsPage`, `PortfolioGrid`, `PortfolioProject` |
+| **스타일** | `@noxion/theme-default/styles/tailwind` (Tailwind CSS 진입점), `@noxion/theme-default/styles` (CSS 변수만) |
+
+---
+
+## Tailwind CSS 설정
+
+Noxion 테마는 **Tailwind CSS v4**를 PostCSS와 함께 사용합니다. 각 테마의 `styles/tailwind.css`에는 다음이 포함됩니다:
+
+1. `@import "tailwindcss"` — Tailwind 베이스 로드
+2. `@custom-variant dark` — `dark:` 유틸리티를 `@media (prefers-color-scheme: dark)` 대신 `[data-theme="dark"]`에 매핑
+3. `@source` — Tailwind에게 클래스 이름을 스캔할 파일 지정
+4. `:root`와 `[data-theme="dark"]`의 CSS 변수
+
+### PostCSS 설정 필수
+
+앱에 `postcss.config.mjs`가 필요합니다:
+
+```js
+// postcss.config.mjs
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+### 앱 레벨 클래스 스캔
+
+앱에서 Tailwind 클래스를 사용한다면(테마뿐만 아니라), `globals.css`에 `@source`를 추가하여 자체 파일과 워크스페이스 패키지를 포함하세요:
+
+```css
+/* app/globals.css */
+@source "../../../packages/*/src/**/*.{ts,tsx}";
+```
+
+이렇게 하면 모노레포 전체의 모든 컴포넌트에 대해 Tailwind가 유틸리티 클래스를 생성합니다.
 
 ---
 
@@ -74,17 +142,16 @@ export default defineConfig({
 
 사용자가 테마 토글을 클릭하여 명시적으로 선택하면 `localStorage`에 저장되어 `defaultTheme`보다 우선합니다.
 
-### `"system"` 작동 방식
+### 다크 모드 작동 방식
 
-`defaultTheme: "system"`일 때, Noxion은 [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) 미디어 쿼리를 사용하여 사용자의 OS 설정을 감지합니다:
+Noxion은 `<html>`의 `data-theme="dark"`으로 다크 모드를 활성화합니다. Tailwind `dark:` 변형은 `@custom-variant`를 통해 이 속성에 매핑됩니다:
 
 ```css
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* 다크 테마 변수가 자동 적용 */
-  }
-}
+/* 테마 tailwind.css 내 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 ```
+
+이는 모든 Tailwind `dark:` 유틸리티(예: `dark:bg-gray-950`, `dark:text-gray-100`)가 OS 미디어 쿼리가 아닌 `data-theme` 속성에 반응한다는 의미입니다.
 
 ---
 
@@ -100,7 +167,7 @@ import { ThemeScript } from "./theme-script";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <ThemeScript />
       </head>
@@ -116,47 +183,45 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## CSS 변수
 
-모든 시각적 속성은 `:root`(라이트 모드)와 `[data-theme="dark"]`에 CSS 커스텀 속성으로 노출됩니다.
+각 테마는 `:root`(라이트 모드)와 `[data-theme="dark"]`에 CSS 커스텀 속성을 정의합니다. 이는 테마의 `styles/tailwind.css`에 설정됩니다.
 
-### 색상 토큰
+### Default 테마 토큰
 
 ```css
 :root {
-  --noxion-primary: #2563eb;          /* 기본 강조 색상 (링크, 버튼) */
-  --noxion-primary-hover: #1d4ed8;    /* 기본 색상의 호버 상태 */
-  --noxion-background: #ffffff;       /* 페이지 배경 */
-  --noxion-card: #ffffff;             /* 카드/위젯 배경 */
-  --noxion-muted: #f5f5f5;            /* 미묘한 배경 (코드 블록 등) */
-  --noxion-foreground: #0a0a0a;       /* 메인 텍스트 색상 */
-  --noxion-card-foreground: #0a0a0a;  /* 카드 위의 텍스트 */
-  --noxion-muted-foreground: #737373; /* 보조/비활성 텍스트 */
-  --noxion-border: #e5e5e5;           /* 기본 테두리 색상 */
-  --noxion-border-radius: 0.5rem;     /* 기본 테두리 반경 */
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+  --color-accent: #f5f5f5;
+  --color-accent-foreground: #171717;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  --width-content: 1080px;
+  --width-sidebar: 260px;
+  --radius-default: 0.5rem;
 }
 
 [data-theme="dark"] {
-  --noxion-background: #0a0a0a;
-  --noxion-foreground: #fafafa;
-  --noxion-card: #1a1a1a;
-  --noxion-card-foreground: #fafafa;
-  --noxion-muted: #262626;
-  --noxion-muted-foreground: #a3a3a3;
-  --noxion-border: #2a2a2a;
-}
-```
-
-### 타이포그래피 토큰
-
-```css
-:root {
-  --noxion-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, sans-serif;
-  --noxion-font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco,
-    "Cascadia Code", "Courier New", monospace;
-  --noxion-font-size-base: 1rem;
-  --noxion-line-height-base: 1.75;
-  --noxion-font-size-sm: 0.875rem;
-  --noxion-font-size-lg: 1.125rem;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-background: #0a0a0a;
+  --color-foreground: #ededed;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #888888;
+  --color-border: #1f1f1f;
+  --color-accent: #1a1a1a;
+  --color-accent-foreground: #ededed;
+  --color-card: #111111;
+  --color-card-foreground: #ededed;
 }
 ```
 
@@ -164,27 +229,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## 테마 커스터마이징
 
-`globals.css` (또는 동등한 전역 스타일시트)에서 변수를 오버라이드하세요:
+`globals.css`에서 변수를 오버라이드하세요:
 
 ```css
 /* app/globals.css */
 
 :root {
-  --noxion-primary: #7c3aed;       /* 파란색 대신 보라색 */
-  --noxion-primary-hover: #6d28d9;
-  --noxion-border-radius: 0.25rem; /* 더 각진 카드 */
+  --color-primary: #7c3aed;       /* 파란색 대신 보라색 */
+  --radius-default: 0.25rem;      /* 더 각진 카드 */
 }
 
-/* 커스텀 폰트 (next/font 또는 @font-face로 로드 후) */
-:root {
-  --noxion-font-sans: "Inter", system-ui, sans-serif;
-}
-
-/* 커스텀 다크 모드 색상 */
 [data-theme="dark"] {
-  --noxion-background: #0f0f23;
-  --noxion-card: #16213e;
-  --noxion-border: #1a1a2e;
+  --color-background: #0f0f23;
+  --color-card: #16213e;
+  --color-border: #1a1a2e;
 }
 ```
 
@@ -198,7 +256,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   return (
-    <html style={{ "--noxion-font-sans": inter.style.fontFamily } as React.CSSProperties}>
+    <html style={{ "--font-sans": inter.style.fontFamily } as React.CSSProperties}>
       <body className={inter.className}>{children}</body>
     </html>
   );
@@ -207,95 +265,12 @@ export default function RootLayout({ children }) {
 
 ---
 
-## `defineThemeContract()`를 통한 테마 계약
-
-테마 계약은 테마를 구성하는 모든 React 컴포넌트, 레이아웃, 템플릿을 묶습니다. `defineThemeContract()`를 사용하여 생성합니다:
-
-```ts
-import { defineThemeContract } from "@noxion/renderer";
-import type { NoxionThemeContract } from "@noxion/renderer";
-
-import { Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
-  TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
-  DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
-} from "./components";
-
-import { BaseLayout, BlogLayout } from "./layouts";
-import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
-
-export const myThemeContract: NoxionThemeContract = defineThemeContract({
-  name: "my-theme",
-
-  metadata: {
-    description: "커스텀 Noxion 테마",
-    author: "Your Name",
-    version: "1.0.0",
-  },
-
-  components: {
-    Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
-    TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
-    DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
-  },
-
-  layouts: {
-    base: BaseLayout,
-    blog: BlogLayout,
-  },
-
-  templates: {
-    home: HomePage,
-    post: PostPage,
-    archive: ArchivePage,
-    tag: TagPage,
-  },
-
-  supports: ["blog"],
-});
-```
-
-### 테마 패키지 만들기
-
-CLI를 사용하여 테마 스타터를 스캐폴딩하세요:
-
-```bash
-bun create noxion my-theme --theme
-```
-
-다음이 포함된 패키지가 생성됩니다:
-- `src/index.ts` — `NoxionThemeContract` 객체를 내보냄
-- `styles/` — CSS 변수 오버라이드
-- `package.json` — npm 퍼블리싱을 위한 설정
-
-전체 안내는 [커스텀 테마 만들기](./creating-theme)를 참조하세요.
-
-### 테마 메타데이터
-
-테마에 메타데이터와 지원하는 페이지 타입을 선언할 수 있습니다:
-
-```ts
-interface NoxionThemeMetadata {
-  description?: string;
-  author?: string;
-  version?: string;
-  preview?: string;
-}
-```
-
-`supports` 필드는 테마가 어떤 페이지 타입의 템플릿을 가지고 있는지 선언합니다:
-
-```ts
-supports: ["blog", "docs"]  // 이 테마는 블로그와 문서 템플릿만 있음
-```
-
----
-
 ## 테마 토글 컴포넌트
 
-스캐폴딩된 앱에는 헤더에 `<ThemeToggle>` 컴포넌트가 포함되어 사용자가 라이트, 다크, 시스템 모드 사이를 전환할 수 있습니다. 토글은:
+각 테마에는 `<ThemeToggle>` 컴포넌트가 포함되어 사용자가 라이트, 다크, 시스템 모드 사이를 전환할 수 있습니다. 토글은:
 
-1. 컨텍스트에서 현재 모드를 읽습니다 (`useThemePreference()`)
-2. 클릭 시 `light -> dark -> system` 순으로 순환합니다
+1. `@noxion/renderer`의 `useThemePreference()`로 현재 설정을 읽습니다
+2. 클릭 시 `system -> light -> dark` 순으로 순환합니다
 3. 선택을 `localStorage`에 저장합니다
 4. 전체 페이지 리로드 없이 `<html>`의 `data-theme`을 업데이트합니다
 
@@ -321,62 +296,31 @@ export default defineConfig({
 
 ### `useThemePreference()`
 
-사용자의 **설정 값** (`"system"` 포함)과 세터를 반환합니다:
+사용자의 **설정 값** (`"system"` 포함), **해석된** 값, 그리고 세터를 반환합니다:
 
 ```tsx
+"use client";
 import { useThemePreference } from "@noxion/renderer";
+import type { ThemePreference } from "@noxion/renderer";
 
 function ThemeSelector() {
-  const { mode, setMode } = useThemePreference();
+  const { preference, resolved, setPreference } = useThemePreference();
 
   return (
-    <select value={mode} onChange={(e) => setMode(e.target.value as ThemeMode)}>
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-      <option value="system">System</option>
+    <select
+      value={preference}
+      onChange={(e) => setPreference(e.target.value as ThemePreference)}
+    >
+      <option value="light">라이트</option>
+      <option value="dark">다크</option>
+      <option value="system">시스템</option>
     </select>
   );
 }
 ```
 
-### `useThemeContract()`
-
-활성 `NoxionThemeContract`를 반환합니다:
-
-```tsx
-import { useThemeContract } from "@noxion/renderer";
-
-function MyComponent() {
-  const contract = useThemeContract();
-  console.log(contract.name); // "default", "beacon" 등
-}
-```
-
-### `useThemeComponent(name)`
-
-활성 테마 계약에서 특정 컴포넌트를 반환합니다:
-
-```tsx
-import { useThemeComponent } from "@noxion/renderer";
-
-function MyPage() {
-  const PostList = useThemeComponent("PostList");
-  return <PostList posts={posts} />;
-}
-```
-
-### `useThemeLayout(name)` / `useThemeTemplate(name)`
-
-계약에서 레이아웃 또는 템플릿 컴포넌트를 반환합니다:
-
-```tsx
-import { useThemeLayout, useThemeTemplate } from "@noxion/renderer";
-
-function MyPage() {
-  const BlogLayout = useThemeLayout("blog");
-  const HomePage = useThemeTemplate("home");
-  // ...
-}
-```
-
-모든 훅은 `<NoxionThemeProvider>`로 감싸진 컴포넌트 안에서 사용해야 합니다.
+| 속성 | 타입 | 설명 |
+|------|------|------|
+| `preference` | `ThemePreference` | 사용자의 저장된 설정: `"light"`, `"dark"`, 또는 `"system"`. |
+| `resolved` | `"light" \| "dark"` | OS 설정에 대해 `"system"`을 해석한 후 실제 적용된 모드. |
+| `setPreference` | `(pref: ThemePreference) => void` | 설정을 업데이트합니다. `localStorage`에 저장되고 즉시 적용됩니다. |

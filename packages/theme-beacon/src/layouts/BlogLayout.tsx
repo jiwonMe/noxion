@@ -17,12 +17,12 @@ export function BlogLayout({ slots, children, className }: NoxionLayoutProps) {
       )}
 
       {slots.hero && (
-        <div className="max-w-7xl mx-auto w-full px-6 py-10">
+        <div className="max-w-[1320px] mx-auto w-full px-6 py-10">
           {renderSlot(slots.hero)}
         </div>
       )}
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
+      <main className="flex-1 max-w-[1320px] mx-auto w-full px-6 py-10">
         {children}
       </main>
 

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 10
 title: 커스텀 테마 만들기
-description: 계약 기반 테마 시스템을 사용하여 커스텀 Noxion 테마 패키지를 만들고 배포하세요.
+description: 직접 컴포넌트 임포트와 Tailwind CSS를 사용하여 커스텀 Noxion 테마를 만들고 배포하세요.
 ---
 
 # 커스텀 테마 만들기
 
-이 가이드는 npm 패키지로 공유할 수 있는 재사용 가능한 Noxion 테마를 만드는 과정을 안내합니다.
+이 가이드에서는 npm 패키지로 공유할 수 있는 재사용 가능한 Noxion 테마를 만드는 과정을 안내합니다.
 
 ---
 
@@ -21,100 +21,130 @@ bun create noxion my-theme --theme
 ```
 my-theme/
 ├── src/
-│   ├── index.ts            # 테마 계약 내보내기
+│   ├── index.ts            # 컴포넌트, 레이아웃, 템플릿을 re-export
 │   ├── components/         # React 컴포넌트 (Header, Footer, PostCard 등)
 │   ├── layouts/            # 레이아웃 컴포넌트 (BaseLayout, BlogLayout)
 │   └── templates/          # 페이지 템플릿 (HomePage, PostPage 등)
 ├── styles/
-│   └── theme.css           # CSS 변수 오버라이드
+│   ├── tailwind.css        # 테마 변수가 포함된 Tailwind CSS 진입점
+│   └── theme.css           # 추가 CSS 변수 오버라이드
 ├── package.json
 └── tsconfig.json
 ```
 
 ---
 
-## 2단계: 테마 계약 정의
+## 2단계: Tailwind CSS 설정
 
-`src/index.ts`를 편집하여 테마 계약을 정의하세요. 테마 계약은 React 컴포넌트, 레이아웃, 템플릿을 묶습니다:
-
-```ts
-import { defineThemeContract } from "@noxion/renderer";
-import type { NoxionThemeContract } from "@noxion/renderer";
-
-import {
-  Header, Footer, PostCard, FeaturedPostCard, PostList,
-  HeroSection, TOC, Search, TagFilter, ThemeToggle,
-  EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
-  PortfolioProjectCard, PortfolioFilter,
-} from "./components";
-
-import { BaseLayout, BlogLayout } from "./layouts";
-import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
-
-export const myThemeContract: NoxionThemeContract = defineThemeContract({
-  name: "my-theme",
-
-  metadata: {
-    description: "커스텀 다크 테마",
-    author: "Your Name",
-    version: "1.0.0",
-  },
-
-  components: {
-    Header, Footer, PostCard, FeaturedPostCard, PostList,
-    HeroSection, TOC, Search, TagFilter, ThemeToggle,
-    EmptyState, NotionPage, DocsSidebar, DocsBreadcrumb,
-    PortfolioProjectCard, PortfolioFilter,
-  },
-
-  layouts: {
-    base: BaseLayout,
-    blog: BlogLayout,
-  },
-
-  templates: {
-    home: HomePage,
-    post: PostPage,
-    archive: ArchivePage,
-    tag: TagPage,
-  },
-
-  supports: ["blog", "docs"],
-});
-```
-
-### 필수 컴포넌트
-
-계약에는 `NoxionThemeContractComponents`에 나열된 모든 컴포넌트를 제공해야 합니다. 모든 prop 타입은 `@noxion/renderer`에서 내보내집니다.
-
----
-
-## 3단계: CSS 오버라이드 추가 (선택사항)
-
-시각적 커스터마이징을 위해 `styles/theme.css`를 편집하세요:
+테마의 `styles/tailwind.css`가 Tailwind 진입점입니다. 다음을 포함해야 합니다:
 
 ```css
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@source "../src/**/*.{ts,tsx}";
+
 :root {
-  --noxion-primary: #8b5cf6;
-  --noxion-primary-hover: #7c3aed;
-  --noxion-border-radius: 0.75rem;
-  --noxion-line-height-base: 1.8;
+  --color-primary: #8b5cf6;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --width-content: 1080px;
+  --radius-default: 0.5rem;
 }
 
 [data-theme="dark"] {
-  --noxion-background: #0f0f23;
-  --noxion-card: #1e1e3f;
+  --color-background: #0f0f23;
+  --color-foreground: #ededed;
+  --color-card: #1e1e3f;
+  --color-border: #2a2a2a;
+  --color-muted: #1a1a1a;
+}
+```
+
+핵심 사항:
+
+- **`@custom-variant dark`** — `dark:` Tailwind 유틸리티를 `[data-theme="dark"]`에 매핑하여, OS 미디어 쿼리 대신 테마 토글에 반응하도록 합니다.
+- **`@source`** — Tailwind에게 테마의 소스 파일에서 클래스 이름을 스캔하도록 지시합니다.
+- **CSS 변수** — 라이트와 다크 모드 모두의 디자인 토큰을 정의합니다.
+
+### 패키지 내보내기
+
+Tailwind 진입점을 내보내도록 `package.json`을 설정합니다:
+
+```json
+{
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./styles": "./styles/theme.css",
+    "./styles/tailwind": "./styles/tailwind.css"
+  },
+  "sideEffects": ["styles/**/*.css"]
 }
 ```
 
 ---
 
-## 4단계: 기본 테마 위에 구축
+## 3단계: 컴포넌트 만들기
 
-모든 컴포넌트를 처음부터 만들 필요가 없습니다. `@noxion/theme-default`에서 컴포넌트를 가져와 재사용하고, 변경하고 싶은 것만 오버라이드하세요:
+테마 컴포넌트는 Tailwind 유틸리티 클래스를 사용하는 표준 React 컴포넌트입니다. `@noxion/renderer`에서 prop 타입을 임포트합니다:
+
+```tsx
+// src/components/Header.tsx
+import type { HeaderProps } from "@noxion/renderer";
+
+export function Header({ siteName, navigation }: HeaderProps) {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+        <a href="/" className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          {siteName}
+        </a>
+        <nav className="flex items-center gap-6">
+          {navigation?.map((item) => (
+            <a key={item.href} href={item.href} className="text-sm text-gray-700 dark:text-gray-300">
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}
+```
+
+### 필수 내보내기
+
+테마는 다음 컴포넌트, 레이아웃, 템플릿을 내보내야 합니다:
+
+| 카테고리 | 필수 내보내기 |
+|----------|--------------|
+| **컴포넌트** | `Header`, `Footer`, `PostCard`, `FeaturedPostCard`, `PostList`, `HeroSection`, `TOC`, `Search`, `TagFilter`, `ThemeToggle`, `EmptyState`, `NotionPage`, `DocsSidebar`, `DocsBreadcrumb`, `PortfolioProjectCard`, `PortfolioFilter` |
+| **레이아웃** | `BaseLayout`, `BlogLayout`, `DocsLayout` |
+| **템플릿** | `HomePage`, `PostPage`, `ArchivePage`, `TagPage`, `DocsPage` |
+
+모든 prop 타입은 `@noxion/renderer`에서 내보냅니다.
+
+---
+
+## 4단계: 기본 테마 위에 구축하기
+
+모든 컴포넌트를 처음부터 만들 필요는 없습니다. `@noxion/theme-default`에서 컴포넌트를 임포트하고 re-export한 다음, 변경하고 싶은 것만 오버라이드하세요:
 
 ```ts
-// 기본 테마에서 대부분의 컴포넌트를 재사용
+// src/components/index.ts
+
+// 기본 테마의 대부분 컴포넌트를 재사용
 export { Footer, TOC, Search, TagFilter, ThemeToggle, EmptyState,
   NotionPage, DocsSidebar, DocsBreadcrumb, PortfolioProjectCard,
   PortfolioFilter } from "@noxion/theme-default";
@@ -122,25 +152,21 @@ export { Footer, TOC, Search, TagFilter, ThemeToggle, EmptyState,
 // 변경하고 싶은 컴포넌트만 직접 만들기
 export { Header } from "./Header";
 export { PostCard } from "./PostCard";
+// ...
 ```
 
 ---
 
-## 5단계: 지원하는 페이지 타입 선언
+## 5단계: 전체 내보내기
 
-`supports` 필드는 테마가 어떤 페이지 타입의 템플릿을 가지고 있는지 Noxion에 알려줍니다:
-
-```ts
-supports: ["blog", "docs", "portfolio"]
-```
-
-블로그 페이지만 지원하는 테마라면:
+테마의 진입점(`src/index.ts`)에서 모든 컴포넌트를 re-export합니다:
 
 ```ts
-supports: ["blog"]
+// src/index.ts
+export * from "./components";
+export * from "./layouts";
+export * from "./templates";
 ```
-
-Noxion은 지원되지 않는 페이지 타입에 대해 기본 테마의 템플릿으로 폴백합니다.
 
 ---
 
@@ -157,15 +183,22 @@ bun add noxion-theme-midnight
 ```
 
 ```tsx
-// app/providers.tsx
-import { NoxionThemeProvider } from "@noxion/renderer";
-import { myThemeContract } from "noxion-theme-midnight";
+// app/layout.tsx
+import "noxion-theme-midnight/styles/tailwind";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+// app/site-layout.tsx
+import { BlogLayout, Header, Footer } from "noxion-theme-midnight";
+
+export function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <NoxionThemeProvider themeContract={myThemeContract} defaultMode="system">
+    <BlogLayout
+      slots={{
+        header: () => <Header siteName="내 블로그" />,
+        footer: () => <Footer siteName="내 블로그" />,
+      }}
+    >
       {children}
-    </NoxionThemeProvider>
+    </BlogLayout>
   );
 }
 ```

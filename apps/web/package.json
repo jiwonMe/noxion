@@ -2,7 +2,7 @@
   "name": "@noxion/web",
   "version": "0.2.0",
   "private": true,
-  "description": "Demo blog application for Noxion",
+  "description": "Noxion showcase — demonstrates themes, plugins, SEO, and all framework features",
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
@@ -17,6 +17,7 @@
     "@noxion/notion-renderer": "workspace:*",
     "@noxion/renderer": "workspace:*",
     "@noxion/theme-default": "workspace:*",
+    "noxion-plugin-reading-time": "workspace:*",
     "katex": "^0.16.33",
     "next": "^16.1.6",
     "notion-client": "^7.8.2",

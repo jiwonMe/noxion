@@ -10,11 +10,16 @@ export interface DefaultNotionPageProps {
   darkMode?: boolean;
   previewImages?: boolean;
   pageUrlPrefix?: string;
+  className?: string;
 }
 
 export function NotionPage(props: DefaultNotionPageProps) {
+  const wrapperClassName = props.className
+    ? `notion-page-wrapper ${props.className}`
+    : "notion-page-wrapper";
+
   return (
-    <div className="notion-page-wrapper">
+    <div className={wrapperClassName}>
       <RendererNotionPage {...(props as RendererNotionPageProps)} />
     </div>
   );

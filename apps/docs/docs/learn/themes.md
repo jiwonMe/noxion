@@ -1,14 +1,14 @@
 ---
 sidebar_position: 7
 title: Themes
-description: Customize the look and feel of your Noxion site with theme contracts, CSS variables, and dark mode.
+description: Customize the look and feel of your Noxion site with Tailwind CSS, CSS variables, and dark mode.
 ---
 
 # Themes
 
-Noxion uses a **contract-based theme system**. Each theme is a `NoxionThemeContract` object that bundles components, layouts, and templates together. Visual customization is done through **CSS custom properties (CSS variables)** — no build step, no configuration changes, and no JavaScript required.
+Noxion uses a **direct import** theme system. Each theme is an npm package that exports React components, layouts, and templates. You import what you need and compose your app directly — no providers, no contracts, no runtime indirection.
 
-For advanced use cases, `defineThemeContract()` lets you create full theme contracts with custom components, layouts, and templates.
+Visual customization is done through **Tailwind CSS utility classes** and **CSS custom properties (CSS variables)**.
 
 ---
 
@@ -19,37 +19,105 @@ Noxion ships with **2 official themes**, each published as an independent npm pa
 | Theme | Package | Style |
 |-------|---------|-------|
 | **Default** | `@noxion/theme-default` | Clean, modern layout with system fonts, rounded cards, and a sticky header. The base theme for most sites. |
-| **Beacon** | `@noxion/theme-beacon` | Content-first reading experience — extra-wide content area (1320px), static header, large typography. Includes custom `HomePage` and `PostPage` components. |
+| **Beacon** | `@noxion/theme-beacon` | Content-first reading experience — extra-wide content area (1320px), static header, large typography. |
 
 ### Using a theme
 
-Install the theme package and pass the contract to the provider:
+Install the theme package and import the components you need:
 
 ```bash
 bun add @noxion/theme-default
 ```
 
 ```tsx
-// app/providers.tsx
-import { NoxionThemeProvider } from "@noxion/renderer";
-import { defaultThemeContract } from "@noxion/theme-default";
+// app/layout.tsx
+import "@noxion/theme-default/styles/tailwind";
+import "./globals.css";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <NoxionThemeProvider themeContract={defaultThemeContract} defaultMode="system">
-      {children}
-    </NoxionThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body>
+        <SiteLayout>{children}</SiteLayout>
+      </body>
+    </html>
   );
 }
 ```
 
-To switch themes, swap the contract:
+```tsx
+// app/site-layout.tsx
+"use client";
+import { BlogLayout, Header, Footer } from "@noxion/theme-default";
+
+export function SiteLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <BlogLayout
+      slots={{
+        header: () => <Header siteName="My Blog" navigation={[{ label: "Home", href: "/" }]} />,
+        footer: () => <Footer siteName="My Blog" author="Author" />,
+      }}
+    >
+      {children}
+    </BlogLayout>
+  );
+}
+```
+
+To switch themes, swap the imports:
 
 ```tsx
-import { beaconThemeContract } from "@noxion/theme-beacon";
-
-<NoxionThemeProvider themeContract={beaconThemeContract} defaultMode="system">
+import { BlogLayout, Header, Footer } from "@noxion/theme-beacon";
 ```
+
+### Theme exports
+
+Each theme package exports:
+
+| Category | Exports |
+|----------|---------|
+| **Components** | `Header`, `Footer`, `PostCard`, `FeaturedPostCard`, `PostList`, `HeroSection`, `TOC`, `Search`, `TagFilter`, `ThemeToggle`, `EmptyState`, `NotionPage`, `DocsSidebar`, `DocsBreadcrumb`, `PortfolioProjectCard`, `PortfolioFilter` |
+| **Layouts** | `BaseLayout`, `BlogLayout`, `DocsLayout` |
+| **Templates** | `HomePage`, `PostPage`, `ArchivePage`, `TagPage`, `DocsPage`, `PortfolioGrid`, `PortfolioProject` |
+| **Styles** | `@noxion/theme-default/styles/tailwind` (Tailwind CSS entry), `@noxion/theme-default/styles` (CSS variables only) |
+
+---
+
+## Tailwind CSS setup
+
+Noxion themes use **Tailwind CSS v4** with PostCSS. Each theme's `styles/tailwind.css` contains:
+
+1. `@import "tailwindcss"` — loads the Tailwind base
+2. `@custom-variant dark` — maps `dark:` utilities to `[data-theme="dark"]` instead of `@media (prefers-color-scheme: dark)`
+3. `@source` — tells Tailwind which files to scan for class names
+4. CSS variables for `:root` and `[data-theme="dark"]`
+
+### Required PostCSS config
+
+Your app needs a `postcss.config.mjs`:
+
+```js
+// postcss.config.mjs
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+### Scanning app-level classes
+
+If your app uses Tailwind classes (not just the theme), add `@source` in your `globals.css` to include your own files and workspace packages:
+
+```css
+/* app/globals.css */
+@source "../../../packages/*/src/**/*.{ts,tsx}";
+```
+
+This ensures Tailwind generates utility classes for all components across the monorepo.
 
 ---
 
@@ -74,17 +142,16 @@ export default defineConfig({
 
 The user's explicit choice (if they click the theme toggle) is persisted in `localStorage` and takes priority over `defaultTheme`.
 
-### How `"system"` works
+### How dark mode works
 
-When `defaultTheme: "system"`, Noxion uses the [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) media query to detect the user's OS preference:
+Noxion uses `data-theme="dark"` on `<html>` to activate dark mode. The Tailwind `dark:` variant is mapped to this attribute via `@custom-variant`:
 
 ```css
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* dark theme variables applied automatically */
-  }
-}
+/* In theme tailwind.css */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 ```
+
+This means all Tailwind `dark:` utilities (e.g. `dark:bg-gray-950`, `dark:text-gray-100`) respond to the `data-theme` attribute, not the OS media query directly.
 
 ---
 
@@ -116,47 +183,45 @@ The `suppressHydrationWarning` on `<html>` is necessary because `data-theme` is 
 
 ## CSS variables
 
-All visual properties are exposed as CSS custom properties on `:root` (light mode) and `[data-theme="dark"]`.
+Each theme defines CSS custom properties on `:root` (light mode) and `[data-theme="dark"]`. These are set in the theme's `styles/tailwind.css`.
 
-### Color tokens
+### Default theme tokens
 
 ```css
 :root {
-  --noxion-primary: #2563eb;          /* Primary accent color (links, buttons) */
-  --noxion-primary-hover: #1d4ed8;    /* Hover state for primary */
-  --noxion-background: #ffffff;       /* Page background */
-  --noxion-card: #ffffff;             /* Card/widget background */
-  --noxion-muted: #f5f5f5;            /* Subtle background (code blocks, etc.) */
-  --noxion-foreground: #0a0a0a;       /* Main text color */
-  --noxion-card-foreground: #0a0a0a;  /* Text on cards */
-  --noxion-muted-foreground: #737373; /* Secondary/disabled text */
-  --noxion-border: #e5e5e5;           /* Default border color */
-  --noxion-border-radius: 0.5rem;     /* Default border radius */
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+  --color-accent: #f5f5f5;
+  --color-accent-foreground: #171717;
+  --color-card: #ffffff;
+  --color-card-foreground: #171717;
+
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  --width-content: 1080px;
+  --width-sidebar: 260px;
+  --radius-default: 0.5rem;
 }
 
 [data-theme="dark"] {
-  --noxion-background: #0a0a0a;
-  --noxion-foreground: #fafafa;
-  --noxion-card: #1a1a1a;
-  --noxion-card-foreground: #fafafa;
-  --noxion-muted: #262626;
-  --noxion-muted-foreground: #a3a3a3;
-  --noxion-border: #2a2a2a;
-}
-```
-
-### Typography tokens
-
-```css
-:root {
-  --noxion-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, sans-serif;
-  --noxion-font-mono: "JetBrains Mono", "Fira Code", Menlo, Monaco,
-    "Cascadia Code", "Courier New", monospace;
-  --noxion-font-size-base: 1rem;
-  --noxion-line-height-base: 1.75;
-  --noxion-font-size-sm: 0.875rem;
-  --noxion-font-size-lg: 1.125rem;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-background: #0a0a0a;
+  --color-foreground: #ededed;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #888888;
+  --color-border: #1f1f1f;
+  --color-accent: #1a1a1a;
+  --color-accent-foreground: #ededed;
+  --color-card: #111111;
+  --color-card-foreground: #ededed;
 }
 ```
 
@@ -164,27 +229,20 @@ All visual properties are exposed as CSS custom properties on `:root` (light mod
 
 ## Customizing the theme
 
-Override variables in your `globals.css` (or equivalent global stylesheet):
+Override variables in your `globals.css`:
 
 ```css
 /* app/globals.css */
 
 :root {
-  --noxion-primary: #7c3aed;       /* Violet instead of blue */
-  --noxion-primary-hover: #6d28d9;
-  --noxion-border-radius: 0.25rem; /* More angular cards */
+  --color-primary: #7c3aed;       /* Violet instead of blue */
+  --radius-default: 0.25rem;      /* More angular cards */
 }
 
-/* Custom font (after loading via next/font or @font-face) */
-:root {
-  --noxion-font-sans: "Inter", system-ui, sans-serif;
-}
-
-/* Custom dark mode colors */
 [data-theme="dark"] {
-  --noxion-background: #0f0f23;
-  --noxion-card: #16213e;
-  --noxion-border: #1a1a2e;
+  --color-background: #0f0f23;
+  --color-card: #16213e;
+  --color-border: #1a1a2e;
 }
 ```
 
@@ -198,7 +256,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   return (
-    <html style={{ "--noxion-font-sans": inter.style.fontFamily } as React.CSSProperties}>
+    <html style={{ "--font-sans": inter.style.fontFamily } as React.CSSProperties}>
       <body className={inter.className}>{children}</body>
     </html>
   );
@@ -207,95 +265,12 @@ export default function RootLayout({ children }) {
 
 ---
 
-## Theme contracts with `defineThemeContract()`
-
-A theme contract bundles all the React components, layouts, and templates that make up a theme. Use `defineThemeContract()` to create one:
-
-```ts
-import { defineThemeContract } from "@noxion/renderer";
-import type { NoxionThemeContract } from "@noxion/renderer";
-
-import { Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
-  TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
-  DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
-} from "./components";
-
-import { BaseLayout, BlogLayout } from "./layouts";
-import { HomePage, PostPage, ArchivePage, TagPage } from "./templates";
-
-export const myThemeContract: NoxionThemeContract = defineThemeContract({
-  name: "my-theme",
-
-  metadata: {
-    description: "A custom theme for Noxion",
-    author: "Your Name",
-    version: "1.0.0",
-  },
-
-  components: {
-    Header, Footer, PostCard, FeaturedPostCard, PostList, HeroSection,
-    TOC, Search, TagFilter, ThemeToggle, EmptyState, NotionPage,
-    DocsSidebar, DocsBreadcrumb, PortfolioProjectCard, PortfolioFilter,
-  },
-
-  layouts: {
-    base: BaseLayout,
-    blog: BlogLayout,
-  },
-
-  templates: {
-    home: HomePage,
-    post: PostPage,
-    archive: ArchivePage,
-    tag: TagPage,
-  },
-
-  supports: ["blog"],
-});
-```
-
-### Creating a theme package
-
-Use the CLI to scaffold a theme starter:
-
-```bash
-bun create noxion my-theme --theme
-```
-
-This creates a package with:
-- `src/index.ts` — exports a `NoxionThemeContract` object
-- `styles/` — CSS variable overrides
-- `package.json` — configured for npm publishing
-
-See [Creating a Custom Theme](./creating-theme) for a full walkthrough.
-
-### Theme metadata
-
-Themes can declare metadata and which page types they support:
-
-```ts
-interface NoxionThemeMetadata {
-  description?: string;
-  author?: string;
-  version?: string;
-  preview?: string;
-}
-```
-
-The `supports` field declares which page types the theme has templates for:
-
-```ts
-supports: ["blog", "docs"]  // This theme only has blog and docs templates
-```
-
----
-
 ## Theme toggle component
 
-The scaffolded app includes a `<ThemeToggle>` component in the header that lets users switch between light, dark, and system modes. The toggle:
+Each theme includes a `<ThemeToggle>` component that lets users switch between light, dark, and system modes. The toggle:
 
-1. Reads the current mode from context (`useThemePreference()`)
-2. Cycles through `light -> dark -> system` on click
+1. Reads the current preference via `useThemePreference()` from `@noxion/renderer`
+2. Cycles through `system -> light -> dark` on click
 3. Persists the choice to `localStorage`
 4. Updates `data-theme` on `<html>` without a full page reload
 
@@ -317,20 +292,25 @@ Then remove the `<ThemeToggle>` from your `<Header>` component.
 
 ## Hooks
 
-For advanced customization, `@noxion/renderer` exports these React hooks:
+For advanced customization, `@noxion/renderer` exports this React hook:
 
 ### `useThemePreference()`
 
-Returns the user's **preference setting** (including `"system"`) and a setter:
+Returns the user's **preference setting** (including `"system"`), the **resolved** value, and a setter:
 
 ```tsx
+"use client";
 import { useThemePreference } from "@noxion/renderer";
+import type { ThemePreference } from "@noxion/renderer";
 
 function ThemeSelector() {
-  const { mode, setMode } = useThemePreference();
+  const { preference, resolved, setPreference } = useThemePreference();
 
   return (
-    <select value={mode} onChange={(e) => setMode(e.target.value as ThemeMode)}>
+    <select
+      value={preference}
+      onChange={(e) => setPreference(e.target.value as ThemePreference)}
+    >
       <option value="light">Light</option>
       <option value="dark">Dark</option>
       <option value="system">System</option>
@@ -339,44 +319,8 @@ function ThemeSelector() {
 }
 ```
 
-### `useThemeContract()`
-
-Returns the active `NoxionThemeContract`:
-
-```tsx
-import { useThemeContract } from "@noxion/renderer";
-
-function MyComponent() {
-  const contract = useThemeContract();
-  console.log(contract.name); // "default", "beacon", etc.
-}
-```
-
-### `useThemeComponent(name)`
-
-Returns a specific component from the active theme contract:
-
-```tsx
-import { useThemeComponent } from "@noxion/renderer";
-
-function MyPage() {
-  const PostList = useThemeComponent("PostList");
-  return <PostList posts={posts} />;
-}
-```
-
-### `useThemeLayout(name)` / `useThemeTemplate(name)`
-
-Returns layout or template components from the contract:
-
-```tsx
-import { useThemeLayout, useThemeTemplate } from "@noxion/renderer";
-
-function MyPage() {
-  const BlogLayout = useThemeLayout("blog");
-  const HomePage = useThemeTemplate("home");
-  // ...
-}
-```
-
-All hooks must be used inside a component wrapped by `<NoxionThemeProvider>`.
+| Property | Type | Description |
+|----------|------|-------------|
+| `preference` | `ThemePreference` | The user's stored preference: `"light"`, `"dark"`, or `"system"`. |
+| `resolved` | `"light" \| "dark"` | The actual applied mode after resolving `"system"` against the OS setting. |
+| `setPreference` | `(pref: ThemePreference) => void` | Update the preference. Persisted to `localStorage` and immediately applied. |

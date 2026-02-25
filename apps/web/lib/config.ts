@@ -8,10 +8,11 @@ function createConfig(): NoxionConfig {
   } catch {
     return {
       rootNotionPageId: noxionConfigInput.rootNotionPageId ?? "",
-      name: noxionConfigInput.name ?? "Noxion Blog",
+      name: noxionConfigInput.name ?? "Noxion Demo",
       domain: noxionConfigInput.domain ?? "localhost:3000",
       author: noxionConfigInput.author ?? "Noxion",
-      description: noxionConfigInput.description ?? "A blog powered by Noxion",
+      description:
+        noxionConfigInput.description ?? "A blog powered by Noxion",
       language: noxionConfigInput.language ?? "en",
       defaultTheme: noxionConfigInput.defaultTheme ?? "system",
       defaultPageType: noxionConfigInput.defaultPageType ?? "blog",

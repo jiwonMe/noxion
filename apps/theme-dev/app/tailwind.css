@@ -1,0 +1,41 @@
+@import "@noxion/theme-default/styles/tailwind";
+
+@source "../../../packages/theme-beacon/src/**/*.{ts,tsx}";
+@source "../../../packages/renderer/src/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+[data-noxion-theme="beacon"] {
+  --color-primary: #000000;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #15171a;
+  --color-muted: #f0f0f0;
+  --color-muted-foreground: #738a94;
+  --color-border: #e5eff5;
+  --color-accent: #1a1a2e;
+  --color-accent-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-card-foreground: #15171a;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --width-content: 1320px;
+  --width-sidebar: 300px;
+  --radius-default: 0;
+}
+
+[data-noxion-theme="beacon"][data-theme="dark"] {
+  --color-primary: #ffffff;
+  --color-primary-foreground: #000000;
+  --color-background: #0a0a0a;
+  --color-foreground: #ededed;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #888888;
+  --color-border: #262626;
+  --color-accent: #1a1a2e;
+  --color-accent-foreground: #ffffff;
+  --color-card: #111111;
+  --color-card-foreground: #ededed;
+}

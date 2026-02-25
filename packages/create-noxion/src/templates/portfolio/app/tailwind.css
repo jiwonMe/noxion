@@ -1,0 +1,3 @@
+@import "@noxion/theme-default/styles/tailwind";
+
+@source "../**/*.{ts,tsx}";

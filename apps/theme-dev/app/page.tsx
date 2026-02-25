@@ -9,8 +9,54 @@ import {
   Tablet,
   Smartphone,
   Columns2,
+  Clock,
+  X,
 } from "lucide-react";
 import { themeRegistry, type ThemeEntry } from "@/lib/themes";
+
+const STORAGE_KEY = "noxion-theme-dev-recent-pages";
+const MAX_RECENT = 10;
+
+interface RecentPage {
+  id: string;
+  usedAt: string;
+}
+
+function getRecentPages(): RecentPage[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed as RecentPage[];
+  } catch {
+    return [];
+  }
+}
+
+function addRecentPage(pageId: string): RecentPage[] {
+  const trimmed = pageId.trim();
+  if (!trimmed) return getRecentPages();
+
+  const existing = getRecentPages().filter((p) => p.id !== trimmed);
+  const updated: RecentPage[] = [
+    { id: trimmed, usedAt: new Date().toISOString() },
+    ...existing,
+  ].slice(0, MAX_RECENT);
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch { /* quota exceeded */ }
+  return updated;
+}
+
+function removeRecentPage(pageId: string): RecentPage[] {
+  const updated = getRecentPages().filter((p) => p.id !== pageId);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch { /* noop */ }
+  return updated;
+}
 
 type PageView = "home" | "archive" | "tag" | "portfolio" | "docs-sidebar" | "notion";
 type Viewport = "desktop" | "tablet" | "mobile";
@@ -38,7 +84,17 @@ export default function ThemeDevPage() {
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [viewMode, setViewMode] = useState<ViewMode>("single");
   const [notionPageId, setNotionPageId] = useState("");
+  const [fetchNonce, setFetchNonce] = useState(0);
+  const [recentPages, setRecentPages] = useState<RecentPage[]>([]);
   const { resolved: resolvedMode, setPreference: setThemePreference } = useThemePreference();
+
+  useEffect(() => {
+    const pages = getRecentPages();
+    setRecentPages(pages);
+    if (pages.length > 0) {
+      setNotionPageId(pages[0]!.id);
+    }
+  }, []);
   const isDark = resolvedMode === "dark";
 
   const currentTheme = themeRegistry.find((t) => t.id === themeId) ?? themeRegistry[0]!;
@@ -74,7 +130,19 @@ export default function ThemeDevPage() {
         <div className="dev-header__right">
           {pageView === "notion" && (
             <>
-              <NotionPageIdInput value={notionPageId} onSubmit={setNotionPageId} />
+              <NotionPageIdInput
+                value={notionPageId}
+                recentPages={recentPages}
+                onSubmit={(id) => {
+                  setNotionPageId(id);
+                  setFetchNonce((n) => n + 1);
+                  setRecentPages(addRecentPage(id));
+                }}
+                onRemoveRecent={(id) => {
+                  setRecentPages(removeRecentPage(id));
+                  if (notionPageId === id) setNotionPageId("");
+                }}
+              />
               <div className="dev-header__sep" />
             </>
           )}
@@ -144,21 +212,21 @@ export default function ThemeDevPage() {
         <div className="dev-preview-area">
           {viewMode === "single" ? (
             <div className="dev-preview-frame" style={{ maxWidth: VIEWPORT_WIDTHS[viewport] }}>
-              <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
+              <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} fetchNonce={fetchNonce} />
             </div>
           ) : (
             <div className="dev-compare" style={{ "--compare-viewport-width": VIEWPORT_WIDTHS[viewport] } as React.CSSProperties}>
               <div className="dev-compare__pane">
                 <div className="dev-compare__label">{currentTheme.label}</div>
                 <div className="dev-preview-frame">
-                  <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
+                  <PreviewFrame themeId={themeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} fetchNonce={fetchNonce} />
                 </div>
               </div>
               <div className="dev-compare__divider" />
               <div className="dev-compare__pane">
                 <div className="dev-compare__label">{compareTheme.label}</div>
                 <div className="dev-preview-frame">
-                  <PreviewFrame themeId={compareThemeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} />
+                  <PreviewFrame themeId={compareThemeId} pageView={pageView} isDark={isDark} notionPageId={notionPageId} fetchNonce={fetchNonce} />
                 </div>
               </div>
             </div>
@@ -169,24 +237,59 @@ export default function ThemeDevPage() {
   );
 }
 
-function NotionPageIdInput({ value, onSubmit }: { value: string; onSubmit: (id: string) => void }) {
+function NotionPageIdInput({
+  value,
+  recentPages,
+  onSubmit,
+  onRemoveRecent,
+}: {
+  value: string;
+  recentPages: RecentPage[];
+  onSubmit: (id: string) => void;
+  onRemoveRecent: (id: string) => void;
+}) {
   const [input, setInput] = useState(value);
+  const [showRecent, setShowRecent] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setInput(value); }, [value]);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowRecent(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const submit = useCallback(() => {
     const trimmed = input.trim();
-    if (trimmed) onSubmit(trimmed);
+    if (trimmed) {
+      onSubmit(trimmed);
+      setShowRecent(false);
+    }
   }, [input, onSubmit]);
 
+  const selectRecent = useCallback((id: string) => {
+    setInput(id);
+    onSubmit(id);
+    setShowRecent(false);
+  }, [onSubmit]);
+
+  const formatId = (id: string) =>
+    id.length > 28 ? `${id.slice(0, 12)}…${id.slice(-12)}` : id;
+
   return (
-    <div className="dev-header__group dev-header__notion-input">
+    <div className="dev-header__group dev-header__notion-input" ref={containerRef}>
       <input
         className="dev-header__input"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+        onFocus={() => { if (recentPages.length > 0) setShowRecent(true); }}
         placeholder="Notion page ID or URL"
         spellCheck={false}
         autoComplete="off"
@@ -198,6 +301,39 @@ function NotionPageIdInput({ value, onSubmit }: { value: string; onSubmit: (id: 
       >
         Fetch
       </button>
+
+      {showRecent && recentPages.length > 0 && (
+        <div className="dev-recent-dropdown">
+          <div className="dev-recent-dropdown__header">
+            <Clock size={11} />
+            <span>Recent</span>
+          </div>
+          {recentPages.map((page) => (
+            <div
+              key={page.id}
+              className={`dev-recent-dropdown__item ${page.id === value ? "dev-recent-dropdown__item--active" : ""}`}
+            >
+              <button
+                className="dev-recent-dropdown__select"
+                onClick={() => selectRecent(page.id)}
+                title={page.id}
+              >
+                {formatId(page.id)}
+              </button>
+              <button
+                className="dev-recent-dropdown__remove"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveRecent(page.id);
+                }}
+                title="Remove from recent"
+              >
+                <X size={10} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -207,16 +343,18 @@ function PreviewFrame({
   pageView,
   isDark,
   notionPageId,
+  fetchNonce,
 }: {
   themeId: string;
   pageView: PageView;
   isDark: boolean;
   notionPageId: string;
+  fetchNonce: number;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const readyRef = useRef(false);
-  const stateRef = useRef({ themeId, pageView, isDark, notionPageId });
-  stateRef.current = { themeId, pageView, isDark, notionPageId };
+  const stateRef = useRef({ themeId, pageView, isDark, notionPageId, fetchNonce });
+  stateRef.current = { themeId, pageView, isDark, notionPageId, fetchNonce };
 
   const sendState = useCallback(() => {
     iframeRef.current?.contentWindow?.postMessage({
@@ -227,7 +365,7 @@ function PreviewFrame({
 
   useEffect(() => {
     if (readyRef.current) sendState();
-  }, [themeId, pageView, isDark, notionPageId, sendState]);
+  }, [themeId, pageView, isDark, notionPageId, fetchNonce, sendState]);
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
