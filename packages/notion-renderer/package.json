@@ -11,6 +11,10 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./plugins": {
+      "import": "./dist/plugins/index.js",
+      "types": "./dist/plugins/index.d.ts"
+    },
     "./styles": "./src/styles/notion-renderer.css",
     "./katex-css": "./node_modules/katex/dist/katex.min.css"
   },
@@ -53,7 +57,13 @@
   "peerDependencies": {
     "notion-types": ">=7.0.0",
     "notion-utils": ">=7.0.0",
-    "react": ">=18.0.0"
+    "react": ">=18.0.0",
+    "mermaid": ">=10.0.0",
+    "chart.js": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "mermaid": { "optional": true },
+    "chart.js": { "optional": true }
   },
   "dependencies": {
     "katex": "^0.16.0",

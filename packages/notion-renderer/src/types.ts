@@ -1,5 +1,6 @@
 import type { ExtendedRecordMap, Block, BlockType, Decoration } from "notion-types";
 import type { ComponentType, ReactNode } from "react";
+import type { RendererPlugin } from "./plugin/types";
 
 export type MapPageUrlFn = (pageId: string) => string;
 export type MapImageUrlFn = (url: string, block: Block) => string;
@@ -39,6 +40,7 @@ export type FloatTOCPosition = "right";
 
 export interface NotionRendererProps {
   recordMap: ExtendedRecordMap;
+  plugins?: RendererPlugin[];
   rootPageId?: string;
   fullPage?: boolean;
   darkMode?: boolean;
@@ -60,10 +62,13 @@ export interface NotionRendererProps {
   defaultPageCover?: string | null;
   defaultPageCoverPosition?: number;
   floatTOC?: FloatTOCPosition;
+  showBlockActions?: boolean | ((blockType: string) => boolean);
 }
+
 
 export interface NotionRendererContextValue {
   recordMap: ExtendedRecordMap;
+  plugins?: RendererPlugin[];
   mapPageUrl: MapPageUrlFn;
   mapImageUrl: MapImageUrlFn;
   components: NotionComponents;
@@ -77,6 +82,9 @@ export interface NotionRendererContextValue {
   defaultPageCoverPosition?: number;
   hiddenBlockIds?: Set<string>;
   floatTOC?: FloatTOCPosition;
+  showBlockActions?: boolean | ((blockType: string) => boolean);
+  headingIds?: Set<string>;
 }
+
 
 export type { ExtendedRecordMap, Block, BlockType, Decoration };
