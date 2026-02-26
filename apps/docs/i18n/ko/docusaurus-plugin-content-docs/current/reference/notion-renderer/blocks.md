@@ -90,13 +90,22 @@ interface NotionBlockProps {
 
 **Notion 타입**: `header` (H1), `sub_header` (H2), `sub_sub_header` (H3)
 
-제목을 렌더링합니다. 레벨은 `level` prop이 아닌 블록 타입으로 결정됩니다.
+앵커 링크를 위해 자동으로 생성된 URL 안전 ID와 함께 제목을 렌더링합니다. ID는 `generateHeadingId()`를 통해 생성되며, `headingIds` 컨텍스트 세트를 사용하여 페이지 내에서 자동으로 중복이 제거됩니다.
+
+각 제목에는 호버 시 표시되는 `HeadingAnchor` 컴포넌트가 포함되어 있으며, 클릭 시 제목 링크를 클립보드에 복사합니다.
 
 ```html
-<h1 class="noxion-heading noxion-heading--1">{텍스트}</h1>
-<h2 class="noxion-heading noxion-heading--2">{텍스트}</h2>
-<h3 class="noxion-heading noxion-heading--3">{텍스트}</h3>
+<h2 id="my-heading" class="noxion-heading noxion-heading--2">
+  <a class="noxion-heading-anchor" href="#my-heading" aria-label="Link to heading my-heading">#</a>
+  {텍스트}
+</h2>
 ```
+
+제목 ID는 다음 규칙을 따릅니다:
+- 소문자로 변환
+- 공백을 하이픈으로 대체
+- 특수 문자 제거 (한글은 보존됨)
+- 중복된 경우 `-1`, `-2` 접미사 추가
 
 ---
 
@@ -128,10 +137,12 @@ interface NotionBlockProps {
 
 **Notion 타입**: `to_do`
 
-체크박스 항목을 렌더링합니다. 체크박스는 `disabled`(읽기 전용)이며 Notion의 체크 상태를 반영합니다.
+체크박스 항목을 렌더링합니다. 체크박스는 `disabled`(읽기 전용)이며 Notion의 체크 상태를 반영합니다. 키보드 접근성이 포함되어 있어 Enter와 Space 키로 체크박스 시각적 피드백을 트리거할 수 있습니다.
 
 ```html
-<div class="noxion-to-do [noxion-to-do--checked]">
+<div class="noxion-to-do [noxion-to-do--checked]"
+     role="checkbox" aria-checked="true|false"
+     tabindex="0" onkeydown="handleKeyboardActivation">
   <input type="checkbox" disabled [checked] />
   <span class="noxion-to-do__label">{텍스트}</span>
 </div>
@@ -180,16 +191,22 @@ interface NotionBlockProps {
 
 **Notion 타입**: `toggle`
 
-접을 수 있는 `<details>/<summary>` 블록을 렌더링합니다.
+`useState`를 사용하여 접을 수 있는 토글을 렌더링하는 클라이언트 컴포넌트(`"use client"`)입니다. 전체 키보드 접근성이 포함되어 있어 Enter와 Space 키로 콘텐츠를 토글할 수 있습니다.
 
 ```html
-<details class="noxion-toggle">
-  <summary class="noxion-toggle__summary">{요약 텍스트}</summary>
-  <div class="noxion-toggle__content">{자식}</div>
-</details>
+<div class="noxion-toggle" aria-expanded="true|false">
+  <div class="noxion-toggle__summary" role="button" tabindex="0"
+       aria-controls="toggle-content-{blockId}">
+    {요약 텍스트}
+  </div>
+  <div class="noxion-toggle__content" id="toggle-content-{blockId}">
+    {자식}
+  </div>
+</div>
 ```
 
----
+토글 상태는 클라이언트 사이드에서 관리됩니다. `aria-expanded` 속성과 콘텐츠 가시성이 동적으로 업데이트됩니다.
+,
 
 ### `PageBlock`
 
@@ -228,7 +245,7 @@ Notion 하위 페이지로의 링크를 렌더링합니다. URL은 `mapPageUrl(b
 
 **Notion 타입**: `code`
 
-선택적 Shiki 구문 강조가 있는 코드 블록을 렌더링합니다. 렌더러 컨텍스트에 `highlightCode`가 없으면 언어 클래스가 있는 일반 `<pre><code>`로 폴백됩니다.
+선택적 Shiki 구문 강조가 있는 코드 블록을 렌더링합니다. 성능을 위해 `highlightCode` 결과는 `useMemo`로 메모이제이션됩니다. `highlightCode`가 제공되지 않으면 일반 `<pre><code>`로 폴백됩니다.
 
 ```html
 <div class="noxion-code">
@@ -239,16 +256,17 @@ Notion 하위 페이지로의 링크를 렌더링합니다. URL은 `mapPageUrl(b
   <div class="noxion-code__body">{shiki HTML}</div>
   <!-- Shiki 미사용 시: -->
   <pre class="noxion-code__body">
-    <code class="noxion-code__content language-{lang}">{코드}</code>
+    <code class="noxion-code__content language-{lang}"
+          role="code"
+          aria-label="{언어} 코드 블록">{코드}</code>
   </pre>
   <!-- 선택적 캡션: -->
   <figcaption class="noxion-code__caption">{캡션}</figcaption>
 </div>
 ```
 
-구문 강조 설정은 [Shiki](./shiki)를 참조하세요.
-
----
+스크린 리더의 정확성을 위해 `aria-label`은 외부 래퍼가 아닌 `<code>` 엘리먼트에 배치됩니다. 구문 강조 설정은 [Shiki](./shiki)를 참조하세요.
+,
 
 ### `ImageBlock`
 
@@ -363,8 +381,33 @@ Notion 표를 렌더링합니다. `block.content`를 사용하여 `table_row` �
 
 ---
 
-### `CollectionViewPlaceholder`
+### `CollectionViewBlock`
 
 **Notion 타입**: `collection_view`, `collection_view_page`
 
-Notion 데이터베이스 뷰의 플레이스홀더를 렌더링합니다. 전체 데이터베이스 렌더링은 지원되지 않으며, Notion 페이지로의 링크와 함께 안내 메시지를 렌더링합니다.
+Notion 데이터베이스의 대화형 테이블 뷰를 렌더링합니다. 성능을 위해 대화형 컴포넌트는 `createLazyBlock`을 통해 지연 로딩되며, 컬렉션 뷰 블록이 나타날 때만 로드됩니다.
+
+기능:
+- **테이블 렌더링** — 컬렉션 데이터를 정렬 가능한 테이블로 표시합니다.
+- **열 정렬** — 열 헤더를 클릭하여 오름차순/내림차순으로 정렬합니다.
+- **필터링** — 열 값으로 행을 필터링합니다.
+- **지연 로딩** — 대화형 컴포넌트는 `React.lazy` + Suspense를 통해 필요할 때 로드됩니다.
+
+```html
+<!-- 로딩 중: -->
+<div class="noxion-loading-placeholder">로딩 중...</div>
+
+<!-- 로드 후: -->
+<div class="noxion-collection-view">
+  <table class="noxion-collection-view__table">
+    <thead>...</thead>
+    <tbody>...</tbody>
+  </table>
+</div>
+```
+
+:::note
+1단계에서는 테이블 뷰만 지원합니다. 다른 데이터베이스 뷰(갤러리, 보드, 캘린더, 리스트)는 아직 구현되지 않았습니다.
+:::
+
+레거시 `CollectionViewPlaceholder` 컴포넌트는 하위 호환성을 위해 여전히 익스포트됩니다.

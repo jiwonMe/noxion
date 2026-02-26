@@ -36,6 +36,8 @@ import { NotionRenderer } from "@noxion/notion-renderer";
 | `defaultPageIcon` | `string \| null` | — | `undefined` | 아이콘이 없는 페이지의 폴백 이모지 또는 이미지 URL. |
 | `defaultPageCover` | `string \| null` | — | `undefined` | 커버가 없는 페이지의 폴백 커버 이미지 URL. |
 | `defaultPageCoverPosition` | `number` | — | `undefined` | 폴백 커버 수직 위치 (0–1). |
+| `plugins` | `RendererPlugin[]` | — | `[]` | 렌더러 플러그인 배열. 플러그인은 블록 렌더링 오버라이드, 콘텐츠 변환, 사이드 이펙트 수행 등을 할 수 있습니다. [플러그인 시스템](./plugins)을 참조하세요. |
+| `showBlockActions` | `boolean | ((blockType: string) => boolean)` | — | `undefined` | 블록에 복사/공유 액션 버튼 표시 여부. 모든 블록에 대해 `true`를 전달하거나, 블록 타입별로 선택적으로 활성화하는 함수를 전달할 수 있습니다. |
 
 ---
 
@@ -224,6 +226,52 @@ interface NotionComponents {
   blockOverrides?: Partial<Record<BlockType | string, ComponentType<NotionBlockProps>>>;
 }
 ```
+---
+
+## 플러그인 사용
+
+```tsx
+import {
+  NotionRenderer,
+  createMermaidPlugin,
+  createCalloutTransformPlugin,
+  createTextTransformPlugin,
+} from "@noxion/notion-renderer";
+
+const plugins = [
+  createMermaidPlugin({ theme: "default" }),
+  createCalloutTransformPlugin(),
+  createTextTransformPlugin({ enableWikilinks: true }),
+];
+
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  plugins={plugins}
+/>
+```
+
+플러그인은 우선순위 순서(낮은 우선순위 값이 먼저)로 실행됩니다. 전체 API는 [플러그인 시스템](./plugins)을 참조하세요.
+
+---
+
+## 블록 액션 사용
+
+```tsx
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  showBlockActions={true}
+/>
+
+// 또는 선택적으로:
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  showBlockActions={(blockType) => blockType === "code"}
+/>
+```
+
 
 ---
 

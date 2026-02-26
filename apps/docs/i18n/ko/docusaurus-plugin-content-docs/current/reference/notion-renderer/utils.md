@@ -202,3 +202,208 @@ function MyBlock({ block, active }: { block: Block; active: boolean }) {
   );
 }
 ```
+`string` — `"toggle-content-{blockId}"` 형식으로 포맷팅된 문자열입니다.
+```ts
+function getToggleContentId(blockId: string): string
+```
+
+### 반환값
+,
+```ts
+import { getToggleContentId } from "@noxion/notion-renderer";
+```
+
+### 시그니처
+,
+토글 콘텐츠에 대한 고유 ID를 생성합니다. `aria-controls`와 `id` 속성에 사용됩니다.
+
+### 임포트
+,
+```tsx
+<div
+  role="button"
+  tabIndex={0}
+  onKeyDown={(e) => handleKeyboardActivation(e, () => setIsOpen(!isOpen))}
+>
+  Toggle
+</div>
+```
+
+---
+
+## `getToggleContentId()` {#gettogglecontentid}
+,
+```ts
+function handleKeyboardActivation(
+  event: React.KeyboardEvent,
+  callback: () => void
+): void
+```
+
+Space 키를 누를 때의 스크롤이나 Enter 키를 누를 때의 폼 제출과 같은 기본 동작을 방지한 후 콜백을 호출합니다.
+
+### 사용법
+,
+```ts
+import { handleKeyboardActivation } from "@noxion/notion-renderer";
+```
+
+### 시그니처
+,
+대화형 요소에 대한 키보드 활성화를 처리합니다. Enter 또는 Space 키를 눌렀을 때 콜백을 호출합니다.
+
+### 임포트
+,
+`aria-label` 속성에 사용할 설명 문자열:
+
+| 블록 타입 | 레이블 형식 |
+|-----------|--------------|
+| `toggle` | `"Toggle: {title}"` |
+| `callout` | `"Callout: {title}"` |
+| `to_do` | `"To-do: {title}"` |
+| `code` | `"Code block in {language}"` |
+| `table` | `"Data table"` |
+| `image` | `"Image"` |
+| `quote` | `"Quote: {title}"` |
+| `header` | `"Heading: {title}"` |
+| `sub_header` | `"Subheading: {title}"` |
+| `sub_sub_header` | `"Sub-subheading: {title}"` |
+| (기본값) | `"{title}"` 또는 `"{blockType}"` |
+
+---
+
+## `handleKeyboardActivation()` {#handlekeyboardactivation}
+,
+```ts
+function getAriaLabel(block: Block): string
+```
+
+### 반환값
+,
+```ts
+import { getAriaLabel } from "@noxion/notion-renderer";
+```
+
+### 시그니처
+,
+### 임포트
+,
+```ts
+generateHeadingId("Hello World");           // → "hello-world"
+generateHeadingId("C++ Guide");             // → "c-guide"
+generateHeadingId("한국어 제목");              // → "한국어-제목"
+
+const ids = new Set(["hello-world"]);
+generateHeadingId("Hello World", ids);      // → "hello-world-1"
+```
+
+---
+
+## `getAriaLabel()` {#getarialabel}
+
+Notion 블록의 타입과 내용에 기반하여 접근성 레이블을 생성합니다.
+,
+1. 소문자로 변환합니다.
+2. 공백을 하이픈으로 바꿉니다.
+3. 특수 문자를 제거합니다 (영문자, 숫자, 한국어 문자, 하이픈은 유지).
+4. 연속된 하이픈을 하나로 합칩니다.
+5. `existingIds`에 이미 해당 슬러그가 있다면 `-1`, `-2` 등을 붙입니다.
+
+### 예제
+,
+`string` — URL-safe한 제목 ID입니다.
+
+### 규칙
+,
+| 매개변수 | 타입 | 설명 |
+|-----------|------|-------------|
+| `text` | `string` | 변환할 제목 텍스트 |
+| `existingIds` | `Set<string>` | 중복을 피하기 위해 이미 사용 중인 ID 집합 (선택 사항) |
+
+### 반환값
+,
+```ts
+function generateHeadingId(text: string, existingIds?: Set<string>): string
+```
+
+### 매개변수
+,
+```ts
+import { generateHeadingId } from "@noxion/notion-renderer";
+```
+
+### 시그니처
+,
+```tsx
+import { createLazyBlock } from "@noxion/notion-renderer";
+
+// 기본 내보내기 (Default export)
+const LazyMermaidBlock = createLazyBlock(() => import("./mermaid-renderer"));
+
+// 명명된 내보내기 (Named export)
+const LazyChartBlock = createLazyBlock(
+  () => import("./chart-block"),
+  "ChartBlock"
+);
+
+// 커스텀 폴백
+const LazyCustomBlock = createLazyBlock(
+  () => import("./custom-block"),
+  undefined,
+  { fallback: <div>Loading diagram...</div> }
+);
+```
+
+이 컴포넌트는 클라이언트 컴포넌트(`"use client"`)입니다. 클라이언트 사이드 렌더링이 필요한 `React.lazy`와 `Suspense`를 사용합니다.
+
+---
+
+## `generateHeadingId()` {#generateheadingid}
+
+제목 텍스트로부터 안정적이고 URL-safe한 ID를 생성합니다. 한국어 문자와 자동 중복 제거를 지원합니다.
+
+### 임포트
+,
+1. 임포트 함수로 `React.lazy()`를 호출합니다.
+2. `<LoadingPlaceholder />` 폴백이 있는 `Suspense` 경계로 감쌉니다.
+3. 임포트 실패를 포착하는 `LazyBlockErrorBoundary`로 감쌉니다.
+4. 임포트가 실패하면 크래시 대신 에러 폴백을 표시합니다.
+
+### 사용법
+,
+`ComponentType<P>` — Suspense와 에러 경계로 감싸진 지연 로딩 모듈을 렌더링하는 컴포넌트입니다.
+
+### 동작 방식
+,
+| 매개변수 | 타입 | 설명 |
+|-----------|------|-------------|
+| `importFn` | `() => Promise<module>` | 동적 임포트 함수 (예: `() => import("./my-renderer")`) |
+| `exportName` | `string` | `default` 대신 사용할 선택적 명명된 내보내기(named export) 이름 |
+| `options.fallback` | `ReactNode` | 커스텀 로딩 폴백 (기본값: `<LoadingPlaceholder />`) |
+
+### 반환값
+,
+```ts
+function createLazyBlock<P extends NotionBlockProps = NotionBlockProps>(
+  importFn: () => Promise<{ default?: ComponentType<P>; [key: string]: any }>,
+  exportName?: string,
+  options?: { fallback?: ReactNode }
+): ComponentType<P>
+```
+
+### 매개변수
+,
+### 임포트
+
+```tsx
+import { createLazyBlock } from "@noxion/notion-renderer";
+```
+
+### 시그니처
+,
+---
+
+## `createLazyBlock()` {#createlazyblock}
+
+동적 임포트된 블록 컴포넌트를 `React.lazy()`, `Suspense` 경계, 그리고 에러 경계로 감쌉니다. Mermaid나 차트 렌더러와 같이 무거운 블록 컴포넌트를 지연 로딩(lazy-load)하는 표준 방법입니다.
+,

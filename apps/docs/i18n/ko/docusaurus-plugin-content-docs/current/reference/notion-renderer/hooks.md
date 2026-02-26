@@ -128,6 +128,71 @@ function MyCustomBlock({ blockId }: { blockId: string }) {
 
 ---
 
+## `useRendererPlugins()`
+
+컨텍스트에서 렌더러 플러그인 배열에 접근합니다.
+
+### 시그니처
+
+```ts
+function useRendererPlugins(): RendererPlugin[]
+```
+
+### 반환값
+
+`RendererPlugin[]` — 렌더러 컨텍스트의 플러그인 배열, 또는 설정된 플러그인이 없으면 빈 배열.
+
+### 사용법
+
+```tsx
+import { useRendererPlugins } from "@noxion/notion-renderer";
+
+function MyCustomBlock({ block, blockId }: NotionBlockProps) {
+  const plugins = useRendererPlugins();
+  // 커스텀 블록 결정 로직을 위해 플러그인 사용
+}
+```
+
+---
+
+## `useResolvedBlockRenderer()`
+
+플러그인 오버라이드를 고려하여 특정 블록을 렌더링해야 하는 컴포넌트를 결정합니다.
+
+### 시그니처
+
+```ts
+function useResolvedBlockRenderer(): (
+  block: Block,
+  blockId: string,
+  parent?: Block
+) => BlockOverrideResult | null
+```
+
+### 반환값
+
+플러그인이 제공하는 경우 오버라이드 결과(컴포넌트 + props)를 반환하고, 기본 렌더링의 경우 `null`을 반환하는 함수입니다.
+
+### 사용법
+
+```tsx
+import { useResolvedBlockRenderer } from "@noxion/notion-renderer";
+
+function CustomBlockDispatch({ block, blockId }: { block: Block; blockId: string }) {
+  const resolveRenderer = useResolvedBlockRenderer();
+  const override = resolveRenderer(block, blockId);
+  
+  if (override) {
+    const { component: Component, props } = override;
+    return <Component block={block} blockId={blockId} level={0} {...props} />;
+  }
+  
+  return <DefaultBlock block={block} />;
+}
+```
+
+---
+
 ## 컨텍스트 값
 
 ### `NotionRendererContextValue`
@@ -171,6 +236,15 @@ interface NotionRendererContextValue {
 
   // 폴백 커버 수직 위치 (0–1)
   defaultPageCoverPosition?: number;
+
+  // 렌더러 플러그인 배열
+  plugins?: RendererPlugin[];
+
+  // 블록 액션 버튼 표시 여부
+  showBlockActions?: boolean | ((blockType: string) => boolean);
+
+  // 이미 사용된 헤딩 ID 세트 (중복 제거용)
+  headingIds?: Set<string>;
 }
 ```
 
@@ -187,6 +261,8 @@ interface NotionRendererContextValue {
   fullPage: true,
   darkMode: false,
   previewImages: false,
+  plugins: [],
+  headingIds: new Set(),
 }
 ```
 

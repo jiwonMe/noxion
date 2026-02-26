@@ -8,6 +8,9 @@ description: "@noxion/notion-renderer Shiki 구문 강조 — createShikiHighlig
 ```ts
 import { createShikiHighlighter, normalizeLanguage } from "@noxion/notion-renderer";
 ```
+:::tip
+`@noxion/renderer`의 `<NotionPage />`는 이미 Shiki를 자동으로 설정합니다. 수동 제어가 필요할 때만 `NotionRenderer`를 직접 사용하세요.
+:::
 
 `@noxion/notion-renderer`는 CSS 커스텀 속성을 통한 듀얼 테마(라이트 + 다크)를 지원하는 VS Code 수준의 구문 강조를 위해 [Shiki](https://shiki.style)를 통합합니다.
 

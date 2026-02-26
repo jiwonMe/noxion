@@ -15,6 +15,8 @@ bun add @noxion/notion-renderer
 Notion 페이지를 위한 완전 커스텀 React 렌더러입니다. Noxion의 렌더링 코어로서 `react-notion-x`를 대체하며, 마크업, CSS, 접근성, 렌더링 동작에 대한 완전한 제어권을 제공합니다.
 
 **피어 의존성**: `react >= 18.0.0`, `notion-types >= 7.0.0`, `notion-utils >= 7.0.0`
+**선택적 피어 의존성**: `mermaid` (Mermaid 플러그인용), `chart.js` (Chart 플러그인용)
+
 
 ---
 
@@ -31,6 +33,10 @@ Notion 페이지를 위한 완전 커스텀 React 렌더러입니다. Noxion의 
 | 트리 셰이킹 | ❌ | ✅ 각 블록이 named export |
 | 커스텀 블록 오버라이드 | 제한적 | ✅ `components.blockOverrides` |
 | 다크 모드 | 테마 기반 | ✅ CSS 변수 + `darkMode` prop |
+| 플러그인 시스템 | ❌ | ✅ 렌더 타임 플러그인 훅 |
+| 에러 바운더리 | ❌ | ✅ 블록별 에러 격리 |
+| 지연 로딩 | ❌ | ✅ Suspense를 사용한 `createLazyBlock` |
+| 접근성 | 기본 | ✅ ARIA 레이블, 키보드 네비게이션 |
 
 ---
 
@@ -129,6 +135,8 @@ export function MyNotionPage({ recordMap, pageId }: Props) {
 | `AliasBlock` | 블록 별칭 |
 | `TableOfContentsBlock` | 자동 목차 |
 | `CollectionViewPlaceholder` | 데이터베이스 / 컬렉션 뷰 (플레이스홀더) |
+| `CollectionViewBlock` | Notion 데이터베이스를 위한 인터랙티브 테이블 뷰 (지연 로딩) |
+
 
 ### 인라인 컴포넌트
 
@@ -136,6 +144,36 @@ export function MyNotionPage({ recordMap, pageId }: Props) {
 |---------|------|
 | [`<Text />`](./components#text) | 리치 텍스트 렌더러 — 모든 Notion 인라인 데코레이션 처리 |
 | [`<InlineEquation />`](./components#inlineequation) | 인라인 KaTeX 수식 |
+### 플러그인 시스템
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`RendererPlugin`](./plugins#rendererplugin) | 블록 오버라이드, 변환, 라이프사이클 훅을 포함한 플러그인 인터페이스 |
+| [`RendererPluginFactory`](./plugins#rendererplugin-factory) | 플러그인 생성을 위한 타입 안정성 팩토리 함수 |
+| [`resolveBlockRenderer`](./plugins#executor-functions) | 블록을 렌더링할 컴포넌트 결정 (플러그인 오버라이드 또는 내장) |
+| [`executeBlockTransforms`](./plugins#executor-functions) | 모든 플러그인의 `transformBlock` 훅 실행 |
+| [`executeTextTransforms`](./plugins#executor-functions) | 모든 플러그인의 `transformText` 훅 실행 |
+| [`applyTextTransforms`](./plugins#executor-functions) | 텍스트 변환을 적용하고 ReactNode 배열 반환 |
+
+### 내장 플러그인
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`createMermaidPlugin`](./built-in-plugins#mermaid) | 코드 블록에서 Mermaid 다이어그램 렌더링 (`mermaid` 피어 의존성 필요) |
+| [`createChartPlugin`](./built-in-plugins#chart) | 코드 블록에서 Chart.js 차트 렌더링 (`chart.js` 피어 의존성 필요) |
+| [`createCalloutTransformPlugin`](./built-in-plugins#callout-transform) | 이모지 아이콘에 따라 콜아웃을 아코디언이나 탭으로 변환 |
+| [`createEmbedEnhancedPlugin`](./built-in-plugins#embed-enhanced) | 제공자별 강화된 임베드 렌더링 |
+| [`createTextTransformPlugin`](./built-in-plugins#text-transform) | 위키링크 `[[Page]]` 및 `#hashtag` 텍스트 변환 |
+
+### 새 컴포넌트
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`BlockErrorBoundary`](./components#blockerrorboundary) | 블록별 에러 격리를 위한 React 에러 바운더리 |
+| [`HeadingAnchor`](./components#headinganchor) | 헤딩을 위한 클릭 가능한 앵커 링크 |
+| [`BlockActions`](./components#blockactions) | 블록을 위한 복사/공유 액션 버튼 |
+| [`LoadingPlaceholder`](./components#loadingplaceholder) | 지연 로딩되는 블록을 위한 로딩 상태 플레이스홀더 |
+
 
 ### 유틸리티
 
@@ -145,6 +183,16 @@ export function MyNotionPage({ recordMap, pageId }: Props) {
 | [`unwrapBlockValue(record)`](./utils#unwrapblockvalue) | Notion 레코드에서 `{ role, value }` 래퍼 언래핑 |
 | [`getBlockTitle(block)`](./utils#getblocktitle) | 블록의 properties에서 일반 텍스트 제목 추출 |
 | [`cs(...classes)`](./utils#cs) | 조건부 클래스명 유틸리티 (`clsx`와 유사) |
+### 새 유틸리티
+
+| 익스포트 | 설명 |
+|---------|------|
+| [`createLazyBlock`](./utils#createlazyblock) | 블록 컴포넌트를 위해 Suspense와 에러 바운더리로 `React.lazy()` 래핑 |
+| [`generateHeadingId`](./utils#generateheadingid) | 중복 제거 기능이 포함된 안정적이고 URL 안전한 헤딩 ID 생성 |
+| [`getAriaLabel`](./utils#getarialabel) | 블록을 위한 접근성 레이블 생성 |
+| [`handleKeyboardActivation`](./utils#handlekeyboardactivation) | 인터랙티브 요소를 위한 Enter/Space 키보드 이벤트 처리 |
+| [`getToggleContentId`](./utils#gettogglecontentid) | 토글 콘텐츠를 위한 고유 ID 생성 (aria-controls) |
+
 
 ### Shiki
 
@@ -168,6 +216,15 @@ export function MyNotionPage({ recordMap, pageId }: Props) {
 | `Block` | `notion-types`에서 재익스포트 |
 | `BlockType` | `notion-types`에서 재익스포트 |
 | `Decoration` | `notion-types`에서 재익스포트 |
+| `RendererPlugin` | 플러그인 인터페이스 |
+| `RendererPluginFactory` | 플러그인 팩토리 타입 |
+| `BlockOverrideArgs` | 플러그인 blockOverride 훅에 전달되는 인자 |
+| `BlockOverrideResult` | 플러그인 blockOverride 훅의 결과 |
+| `TransformBlockArgs` | transformBlock 훅에 전달되는 인자 |
+| `TransformTextArgs` | transformText 훅에 전달되는 인자 |
+| `TextReplacement` | 컴포넌트를 포함한 텍스트 교체 |
+| `TextTransformResult` | transformText 훅의 결과 |
+| `PluginPriority` | 플러그인 실행 우선순위 열거형 |
 
 ---
 
@@ -220,7 +277,7 @@ export function MyNotionPage({ recordMap, pageId }: Props) {
 | `transclusion_reference` | `SyncedReferenceBlock` | 동기화된 블록 (참조) |
 | `alias` | `AliasBlock` | 블록 별칭 |
 | `table_of_contents` | `TableOfContentsBlock` | 목차 |
-| `collection_view` | `CollectionViewPlaceholder` | 데이터베이스 뷰 |
-| `collection_view_page` | `CollectionViewPlaceholder` | 전체 페이지 데이터베이스 |
+| `collection_view` | `CollectionViewBlock` | 인터랙티브 테이블 뷰 (지연 로딩) |
+| `collection_view_page` | `CollectionViewBlock` | 전체 페이지 인터랙티브 테이블 뷰 |
 | `breadcrumb` | `DividerBlock` | 브레드크럼 (구분선으로 렌더링) |
 | `external_object_instance` | `EmbedBlock` | 외부 객체 |

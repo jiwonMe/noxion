@@ -8,6 +8,9 @@ description: "@noxion/notion-renderer Shiki syntax highlighting — createShikiH
 ```ts
 import { createShikiHighlighter, normalizeLanguage } from "@noxion/notion-renderer";
 ```
+:::tip
+`@noxion/renderer`'s `<NotionPage />` already configures Shiki automatically. Only use `NotionRenderer` directly when you need manual control.
+:::
 
 `@noxion/notion-renderer` integrates [Shiki](https://shiki.style) for VS Code-quality syntax highlighting with dual-theme support (light + dark) via CSS custom properties.
 
