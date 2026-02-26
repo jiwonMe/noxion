@@ -25,6 +25,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@noxion/theme-carbon": [
+        "../../packages/theme-carbon/src/index.ts"
+      ],
+      "@noxion/renderer": [
+        "../../packages/renderer/src/index.ts"
       ]
     }
   },

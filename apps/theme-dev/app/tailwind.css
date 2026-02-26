@@ -1,6 +1,7 @@
 @import "@noxion/theme-default/styles/tailwind";
 
 @source "../../../packages/theme-beacon/src/**/*.{ts,tsx}";
+@source "../../../packages/theme-carbon/src/**/*.{ts,tsx}";
 @source "../../../packages/renderer/src/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
@@ -38,4 +39,56 @@
   --color-accent-foreground: #ffffff;
   --color-card: #111111;
   --color-card-foreground: #ededed;
+}
+
+[data-noxion-theme="carbon"] {
+  --color-primary: #0f62fe;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #161616;
+  --color-muted: #e8e8e8;
+  --color-muted-foreground: #525252;
+  --color-border: #000000;
+  --color-accent: #f4f4f4;
+  --color-accent-foreground: #161616;
+  --color-card: #ffffff;
+  --color-card-foreground: #161616;
+  --color-hover: #e8e8e8;
+  --color-active: #c6c6c6;
+  --color-tag-green-bg: #defbe6;
+  --color-tag-green-text: #0e6027;
+  --color-tag-green-hover-bg: #a7f0ba;
+  --color-footer-bg: #161616;
+  --color-footer-text: #c6c6c6;
+  --color-footer-heading: #f4f4f4;
+
+  --font-sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --width-content: 1584px;
+  --width-sidebar: 280px;
+  --radius-default: 0;
+}
+
+[data-noxion-theme="carbon"][data-theme="dark"] {
+  --color-primary: #78a9ff;
+  --color-primary-foreground: #161616;
+  --color-background: #161616;
+  --color-foreground: #f4f4f4;
+  --color-muted: #262626;
+  --color-muted-foreground: #c6c6c6;
+  --color-border: #f4f4f4;
+  --color-accent: #262626;
+  --color-accent-foreground: #f4f4f4;
+  --color-card: #262626;
+  --color-card-foreground: #f4f4f4;
+  --color-hover: #353535;
+  --color-active: #525252;
+  --color-tag-green-bg: #044317;
+  --color-tag-green-text: #6fdc8c;
+  --color-tag-green-hover-bg: #0e6027;
+  --color-footer-bg: #000000;
+  --color-footer-text: #c6c6c6;
+  --color-footer-heading: #f4f4f4;
 }

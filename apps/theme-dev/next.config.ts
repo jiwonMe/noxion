@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     "@noxion/notion-renderer",
     "@noxion/theme-default",
     "@noxion/theme-beacon",
+    "@noxion/theme-carbon",
     "@carbon/react",
     "@carbon/styles",
     "notion-client",

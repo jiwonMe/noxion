@@ -20,6 +20,16 @@ import {
   TagPage as BeaconTagPage,
   DocsSidebar as BeaconDocsSidebar,
 } from "@noxion/theme-beacon";
+import {
+  Header as CarbonHeader,
+  Footer as CarbonFooter,
+  BlogLayout as CarbonBlogLayout,
+  HomePage as CarbonHomePage,
+  PostPage as CarbonPostPage,
+  ArchivePage as CarbonArchivePage,
+  TagPage as CarbonTagPage,
+  DocsSidebar as CarbonDocsSidebar,
+} from "@noxion/theme-carbon";
 import type { ComponentType } from "react";
 import type { NoxionLayoutProps, NoxionTemplateProps } from "@noxion/renderer";
 
@@ -82,6 +92,25 @@ export const themeRegistry: ThemeEntry[] = [
       post: BeaconPostPage,
       archive: BeaconArchivePage,
       tag: BeaconTagPage,
+    },
+  },
+  {
+    id: "carbon",
+    label: "Carbon",
+    components: {
+      Header: CarbonHeader as ThemeEntry["components"]["Header"],
+      Footer: CarbonFooter as ThemeEntry["components"]["Footer"],
+      DocsSidebar: CarbonDocsSidebar as ThemeEntry["components"]["DocsSidebar"],
+    },
+    layouts: {
+      BlogLayout: CarbonBlogLayout,
+      DocsLayout: CarbonBlogLayout,
+    },
+    templates: {
+      home: CarbonHomePage,
+      post: CarbonPostPage,
+      archive: CarbonArchivePage,
+      tag: CarbonTagPage,
     },
   },
 ];

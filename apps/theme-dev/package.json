@@ -14,6 +14,7 @@
   "dependencies": {
     "@noxion/notion-renderer": "workspace:*",
     "@noxion/renderer": "workspace:*",
+    "@noxion/theme-carbon": "workspace:*",
     "@noxion/theme-default": "workspace:*",
     "@noxion/theme-beacon": "workspace:*",
     "lucide-react": "^0.575.0",
