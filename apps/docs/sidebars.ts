@@ -26,6 +26,16 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Content Features',
+      items: [
+        'learn/syntax-highlighting',
+        'learn/math-equations',
+        'learn/block-overrides',
+        'learn/renderer-plugins',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Page Types',
       items: [
         'learn/building-docs',
@@ -60,9 +70,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Advanced',
+      items: [
+        'learn/performance',
+        'learn/troubleshooting',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Upgrading',
       items: [
         'learn/migration-v02',
+        'learn/migration-v04',
       ],
     },
   ],
