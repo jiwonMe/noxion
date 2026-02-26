@@ -2,22 +2,49 @@
 
 import React from "react";
 import type { Block, Decoration } from "notion-types";
-import { useNotionRenderer } from "../context";
+import { useNotionRenderer, useRendererPlugins } from "../context";
+import { applyTextTransforms } from "../plugin/executor";
 import { formatNotionDate, unwrapBlockValue, getBlockTitle } from "../utils";
 import { InlineEquation } from "./inline-equation";
 
 export interface TextProps {
   value?: Decoration[];
+  block?: Block;
 }
 
-export function Text({ value }: TextProps) {
+function createFallbackTextBlock(): Block {
+  return {
+    id: "text-fallback-block",
+    type: "text",
+    properties: { title: [] },
+    parent_id: "",
+    parent_table: "block",
+    version: 1,
+    created_time: 0,
+    last_edited_time: 0,
+    alive: true,
+    created_by_table: "notion_user",
+    created_by_id: "",
+    last_edited_by_table: "notion_user",
+    last_edited_by_id: "",
+  };
+}
+
+export function Text({ value, block }: TextProps) {
   const { components, recordMap, mapPageUrl } = useNotionRenderer();
+  const plugins = useRendererPlugins();
 
   if (!value) return null;
 
+  const transformedDecorations = applyTextTransforms(
+    value,
+    block ?? createFallbackTextBlock(),
+    plugins
+  );
+
   return (
     <React.Fragment>
-      {value.map(([text, decorations], index) => {
+      {transformedDecorations.map(([text, decorations], index) => {
         if (!decorations) {
           if (text === ",") {
             return <span key={index} style={{ padding: "0.5em" }} />;
@@ -173,5 +200,3 @@ export function Text({ value }: TextProps) {
     </React.Fragment>
   );
 }
-
-

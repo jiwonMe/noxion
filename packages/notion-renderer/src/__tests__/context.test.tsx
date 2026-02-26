@@ -38,6 +38,7 @@ describe("NotionRendererProvider", () => {
     const recordMap = createMinimalRecordMap({});
     const value: NotionRendererContextValue = {
       recordMap,
+      plugins: [],
       mapPageUrl: (id) => `/${id}`,
       mapImageUrl: (url) => url,
       components: {},
@@ -71,6 +72,7 @@ describe("useNotionRenderer", () => {
       <NotionRendererProvider
         value={{
           recordMap,
+          plugins: [],
           mapPageUrl: (id) => `/page/${id}`,
           mapImageUrl: (url) => url,
           components: {},
@@ -109,6 +111,7 @@ describe("useNotionBlock", () => {
       <NotionRendererProvider
         value={{
           recordMap,
+          plugins: [],
           mapPageUrl: (id) => `/${id}`,
           mapImageUrl: (url) => url,
           components: {},
@@ -139,6 +142,7 @@ describe("useNotionBlock", () => {
       <NotionRendererProvider
         value={{
           recordMap,
+          plugins: [],
           mapPageUrl: (id) => `/${id}`,
           mapImageUrl: (url) => url,
           components: {},
@@ -171,6 +175,7 @@ describe("useNotionBlock", () => {
       <NotionRendererProvider
         value={{
           recordMap,
+          plugins: [],
           mapPageUrl: (id) => `/${id}`,
           mapImageUrl: (url) => url,
           components: {},

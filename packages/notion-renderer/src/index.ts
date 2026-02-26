@@ -2,6 +2,8 @@ export {
   NotionRendererProvider,
   useNotionRenderer,
   useNotionBlock,
+  useRendererPlugins,
+  useResolvedBlockRenderer,
 } from "./context";
 
 export type {
@@ -44,7 +46,10 @@ export {
   AliasBlock,
   TableOfContentsBlock,
   CollectionViewPlaceholder,
+  CollectionViewBlock,
 } from "./blocks";
+
+export type { CollectionViewProps, CollectionViewExtensionPoint } from "./blocks";
 
 export { InlineEquation } from "./components/inline-equation";
 
@@ -70,3 +75,55 @@ export type {
   BlockType,
   Decoration,
 } from "./types";
+
+// Plugin system
+export type {
+  RendererPlugin,
+  RendererPluginFactory,
+  BlockOverrideArgs,
+  BlockOverrideResult,
+  TextReplacement,
+  TextTransformResult,
+  TransformBlockArgs,
+  TransformTextArgs,
+  PluginPriority,
+} from "./plugin/types";
+
+export {
+  resolveBlockRenderer,
+  executeBlockTransforms,
+  executeTextTransforms,
+  applyTextTransforms,
+} from "./plugin/executor";
+
+// Built-in plugins
+export {
+  createMermaidPlugin,
+  createChartPlugin,
+  createCalloutTransformPlugin,
+  AccordionBlock,
+  TabGroupBlock,
+  createEmbedEnhancedPlugin,
+  detectEmbedProvider,
+  createTextTransformPlugin,
+} from "./plugins";
+
+export type {
+  MermaidPluginOptions,
+  ChartPluginOptions,
+  ChartConfig,
+  CalloutTransformOptions,
+  EmbedEnhancedOptions,
+  TextTransformOptions,
+} from "./plugins";
+
+// Components
+export { BlockErrorBoundary } from "./components/error-boundary";
+export { HeadingAnchor } from "./components/heading-anchor";
+export { BlockActions } from "./components/block-actions";
+export { LoadingPlaceholder } from "./components/loading-placeholder";
+
+// Utilities
+export { createLazyBlock } from "./utils/lazy-block";
+export { generateHeadingId } from "./utils/heading-id";
+export { getAriaLabel, handleKeyboardActivation, getToggleContentId } from "./utils/a11y";

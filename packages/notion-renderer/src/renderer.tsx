@@ -76,6 +76,7 @@ const defaultMapImageUrl = (url: string) => url;
 
 export function NotionRenderer({
   recordMap,
+  plugins = [],
   rootPageId,
   fullPage = true,
   darkMode = false,
@@ -92,8 +93,12 @@ export function NotionRenderer({
   defaultPageCover,
   defaultPageCoverPosition,
   highlightCode,
+  showBlockActions,
 }: NotionRendererProps) {
+
   const blockIds = Object.keys(recordMap.block);
+  const headingIds = new Set<string>();
+
   const resolvedRootId = rootPageId ?? blockIds[0];
 
   if (!resolvedRootId) return null;
@@ -105,6 +110,7 @@ export function NotionRenderer({
 
   const contextValue: NotionRendererContextValue = {
     recordMap,
+    plugins,
     mapPageUrl,
     mapImageUrl,
     components,
@@ -118,6 +124,8 @@ export function NotionRenderer({
     defaultPageCoverPosition,
     hiddenBlockIds: frontmatterResult?.hiddenBlockIds,
     floatTOC: frontmatterResult?.floatTOC,
+    headingIds,
+    showBlockActions,
   };
 
   return (

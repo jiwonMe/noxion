@@ -49,6 +49,7 @@ function wrapInProvider(element: React.JSX.Element, recordMap?: ExtendedRecordMa
   const rm = recordMap ?? createMinimalRecordMap({});
   const value: NotionRendererContextValue = {
     recordMap: rm,
+    plugins: [],
     mapPageUrl: (id) => `/${id}`,
     mapImageUrl: (url) => url,
     components: {},

@@ -3,7 +3,7 @@
 import type { ComponentType } from "react";
 import type { Block } from "notion-types";
 import type { NotionBlockProps } from "./types";
-import { useNotionRenderer, useNotionBlock } from "./context";
+import { useNotionRenderer, useNotionBlock, useRendererPlugins } from "./context";
 import { TextBlock } from "./blocks/text";
 import { HeadingBlock } from "./blocks/heading";
 import { BulletedListBlock } from "./blocks/bulleted-list";
@@ -16,6 +16,7 @@ import { ToggleBlock } from "./blocks/toggle";
 import { PageBlock } from "./blocks/page";
 import { EquationBlock } from "./blocks/equation";
 import { CodeBlock } from "./blocks/code";
+import { BlockActions } from "./components/block-actions";
 import { ImageBlock } from "./blocks/image";
 import { VideoBlock } from "./blocks/video";
 import { AudioBlock } from "./blocks/audio";
@@ -29,7 +30,9 @@ import { ColumnBlock } from "./blocks/column";
 import { SyncedContainerBlock, SyncedReferenceBlock } from "./blocks/synced-block";
 import { AliasBlock } from "./blocks/alias";
 import { TableOfContentsBlock } from "./blocks/table-of-contents";
-import { CollectionViewPlaceholder } from "./blocks/collection-view-placeholder";
+import { CollectionViewBlock } from "./blocks/collection-view";
+import { BlockErrorBoundary } from "./components/error-boundary";
+import { executeBlockTransforms, resolveBlockRenderer } from "./plugin/executor";
 
 const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = {
   text: TextBlock,
@@ -71,8 +74,8 @@ const defaultBlockComponents: Record<string, ComponentType<NotionBlockProps>> = 
   transclusion_reference: SyncedReferenceBlock,
   alias: AliasBlock,
   table_of_contents: TableOfContentsBlock,
-  collection_view: CollectionViewPlaceholder,
-  collection_view_page: CollectionViewPlaceholder,
+  collection_view: CollectionViewBlock,
+  collection_view_page: CollectionViewBlock,
   breadcrumb: DividerBlock,
   external_object_instance: EmbedBlock,
 };
@@ -83,18 +86,40 @@ export interface NotionBlockRendererProps {
 }
 
 export function NotionBlock({ blockId, level }: NotionBlockRendererProps) {
-  const { components, hiddenBlockIds } = useNotionRenderer();
+  const { components, hiddenBlockIds, showBlockActions: showBlockActionsProp } = useNotionRenderer();
+
   const block = useNotionBlock(blockId);
+  const plugins = useRendererPlugins();
 
   if (!block) return null;
   if (!block.alive) return null;
   if (hiddenBlockIds?.has(blockId)) return null;
 
-  const blockType = block.type;
-  const BlockComponent =
-    components.blockOverrides?.[blockType] ??
-    defaultBlockComponents[blockType] ??
-    null;
+  const transformedBlock = executeBlockTransforms(block, blockId, plugins);
+  const blockType = transformedBlock.type;
+
+  const lifecycleArgs = { block: transformedBlock, blockId };
+  for (const plugin of plugins) {
+    if (!plugin.onBlockRender) continue;
+    try {
+      plugin.onBlockRender(lifecycleArgs);
+    } catch (error) {
+      console.warn("[noxion] Plugin onBlockRender error:", plugin.name, error);
+    }
+  }
+
+  let pluginOverrideProps: Record<string, unknown> | undefined;
+  let BlockComponent = components.blockOverrides?.[blockType];
+
+  if (!BlockComponent) {
+    const pluginOverride = resolveBlockRenderer(transformedBlock, blockId, plugins);
+    if (pluginOverride) {
+      BlockComponent = pluginOverride.component;
+      pluginOverrideProps = pluginOverride.props;
+    }
+  }
+
+  BlockComponent ??= defaultBlockComponents[blockType] ?? null;
 
   if (!BlockComponent) {
     if (process.env.NODE_ENV !== "production") {
@@ -107,15 +132,52 @@ export function NotionBlock({ blockId, level }: NotionBlockRendererProps) {
     return null;
   }
 
-  const children = renderChildren(block, level);
+  const children = renderChildren(transformedBlock, level);
 
-  return (
+  const shouldShowActions =
+    typeof showBlockActionsProp === "function"
+      ? showBlockActionsProp(blockType)
+      : showBlockActionsProp ?? blockType === "code";
+
+
+  const blockElement = (
     <BlockComponent
-      block={block}
+      block={transformedBlock}
       blockId={blockId}
       level={level}
       children={children}
+      {...pluginOverrideProps}
     />
+  );
+
+  const wrappedElement = shouldShowActions ? (
+    <div className="noxion-block-with-actions">
+      {blockElement}
+      <BlockActions
+        blockId={blockId}
+        blockType={blockType}
+        content={(block.properties as { title?: Array<[string]> })?.title
+          ?.map((segment) => segment[0])
+          .join("") ?? ""}
+      />
+    </div>
+  ) : (
+    blockElement
+  );
+
+  for (const plugin of plugins) {
+    if (!plugin.onBlockRendered) continue;
+    try {
+      plugin.onBlockRendered(lifecycleArgs);
+    } catch (error) {
+      console.warn("[noxion] Plugin onBlockRendered error:", plugin.name, error);
+    }
+  }
+
+  return (
+    <BlockErrorBoundary blockId={blockId} blockType={blockType}>
+      {wrappedElement}
+    </BlockErrorBoundary>
   );
 }
 
