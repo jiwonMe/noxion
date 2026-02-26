@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     "@noxion/notion-renderer",
     "@noxion/theme-default",
     "@noxion/theme-beacon",
+    "@noxion/theme-carbon",
     "notion-client",
     "notion-types",
     "notion-utils",

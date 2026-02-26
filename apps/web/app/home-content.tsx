@@ -1,10 +1,10 @@
 "use client";
 
-import { HeroSection, PostList, TagFilter, Search } from "@noxion/theme-default";
+import { FeaturedPostCard, FeedCard, Search } from "@noxion/theme-carbon";
 import type { PostCardProps } from "@noxion/renderer";
 import { useState, useCallback, useRef, useEffect } from "react";
 
-const HERO_COUNT = 3;
+const HERO_FEED_OFFSET = 1;
 
 interface HomeContentProps {
   initialPosts: PostCardProps[];
@@ -156,40 +156,90 @@ export function HomeContent({
   }, []);
 
   const isFiltering = selectedTags.length > 0 || Boolean(searchQuery.trim());
-  const heroPosts =
-    !isFiltering && state.posts.length >= HERO_COUNT
-      ? state.posts.slice(0, HERO_COUNT)
-      : [];
-  const feedPosts =
-    heroPosts.length > 0 ? state.posts.slice(HERO_COUNT) : state.posts;
+  const featuredPost = !isFiltering && state.posts.length > 0 ? state.posts[0] : null;
+  const feedPosts = featuredPost ? state.posts.slice(HERO_FEED_OFFSET) : state.posts;
+  const categories = Array.from(
+    new Set(state.posts.map((post) => post.category).filter((category): category is string => Boolean(category))),
+  );
+  const popularTopics = allTags.slice(0, 8);
 
   return (
-    <div className="space-y-12">
-      {heroPosts.length > 0 && <HeroSection posts={heroPosts} />}
+    <div>
+      {/* ── Hero: sidebar + featured ── */}
+      {featuredPost && (
+        <section className="grid gap-0 lg:grid-cols-[320px_1fr]">
+          {/* Sidebar */}
+          <aside className="hidden lg:block">
+            <div className="border-b border-[var(--color-border)] px-6 pb-4 pt-6">
+              <a href="/" className="text-sm text-[var(--color-primary)] transition-colors duration-[110ms] hover:opacity-80">
+                Home
+              </a>
+              <p className="mt-0.5 text-sm text-[var(--color-foreground)]">↳ Blog</p>
+            </div>
 
-      <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <Search onSearch={handleSearch} placeholder="Search posts..." />
-          {allTags.length > 0 && (
-            <TagFilter
-              tags={allTags}
-              selectedTags={selectedTags}
-              onToggle={handleToggleTag}
-              maxVisible={8}
-            />
-          )}
-        </div>
+            <div className="border-b border-[var(--color-border)] px-6 py-5">
+              <h3 className="mb-3 text-sm font-semibold text-[var(--color-foreground)]">Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <a
+                    key={category}
+                    href={`/tag/${encodeURIComponent(category)}`}
+                    className="inline-flex items-center rounded-full border border-[var(--color-border)] px-3 py-1 text-sm text-[var(--color-foreground)] transition-all duration-[110ms] ease-[cubic-bezier(0.2,0,0.38,0.9)] hover:bg-[var(--color-hover)]"
+                  >
+                    {category}
+                  </a>
+                ))}
+              </div>
+            </div>
 
-        <PostList posts={feedPosts} />
+            <div className="px-6 py-5">
+              <h3 className="mb-3 text-sm font-semibold text-[var(--color-foreground)]">Popular topics</h3>
+              <div className="flex flex-wrap gap-2">
+                {popularTopics.map((tag) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleToggleTag(tag)}
+                      className={
+                        active
+                          ? "inline-flex items-center rounded-full border border-[var(--color-primary)] bg-[var(--color-primary)] px-3 py-1 text-sm text-[var(--color-primary-foreground)] transition-colors duration-[110ms]"
+                          : "inline-flex items-center rounded-full bg-[var(--color-tag-green-bg)] px-3 py-1 text-sm text-[var(--color-tag-green-text)] transition-colors duration-[110ms] ease-[cubic-bezier(0.2,0,0.38,0.9)] hover:bg-[var(--color-tag-green-hover-bg)]"
+                      }
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </aside>
 
-        <div ref={sentinelRef} style={{ height: 1 }} />
-
-        {state.loading && (
-          <div className="flex justify-center py-8">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900 dark:border-gray-700 dark:border-t-gray-100" />
+          {/* Featured */}
+          <div className="border-l border-[var(--color-border)]">
+            <FeaturedPostCard {...featuredPost} />
           </div>
-        )}
-      </section>
+        </section>
+      )}
+
+      {/* ── Search bar ── */}
+      <div className="border-y border-[var(--color-border)]">
+        <Search onSearch={handleSearch} placeholder="Search topics, titles and authors" />
+      </div>
+
+      {/* ── Feed ── */}
+      {feedPosts.map((post) => (
+        <FeedCard key={post.slug} {...post} />
+      ))}
+
+      <div ref={sentinelRef} style={{ height: 1 }} />
+
+      {state.loading && (
+        <div className="flex justify-center py-8">
+          <div className="h-5 w-5 animate-spin border-2 border-[var(--color-border)] border-t-[var(--color-foreground)]" />
+        </div>
+      )}
     </div>
   );
 }

@@ -16,6 +16,7 @@
     "@noxion/core": "workspace:*",
     "@noxion/notion-renderer": "workspace:*",
     "@noxion/renderer": "workspace:*",
+    "@noxion/theme-carbon": "workspace:*",
     "@noxion/theme-default": "workspace:*",
     "noxion-plugin-reading-time": "workspace:*",
     "katex": "^0.16.33",

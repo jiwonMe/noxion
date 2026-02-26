@@ -1,6 +1,6 @@
 "use client";
 
-import { BlogLayout, Header, Footer } from "@noxion/theme-default";
+import { BlogLayout, Header, Footer } from "@noxion/theme-carbon";
 
 interface SiteLayoutProps {
   siteName: string;

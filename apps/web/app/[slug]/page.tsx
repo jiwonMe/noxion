@@ -7,7 +7,7 @@ import {
   generateBreadcrumbLD,
 } from "@noxion/adapter-nextjs";
 import { createNotionClient } from "@noxion/core";
-import { PostPage } from "@noxion/theme-default";
+import { PostPage } from "@noxion/theme-carbon";
 import { resolvePostWithFrontmatter } from "../../lib/notion";
 import { siteConfig } from "../../lib/config";
 
