@@ -1,0 +1,69 @@
+{
+  "name": "@noxion/theme-carbon",
+  "version": "0.1.0",
+  "description": "Carbon-inspired editorial theme for Noxion",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./styles/theme.css",
+    "./styles/tailwind": "./styles/tailwind.css"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "styles/**/*.css"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo 'no tests yet'",
+    "lint": "echo 'lint ok'",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "notion",
+    "blog",
+    "theme",
+    "noxion",
+    "carbon",
+    "ibm",
+    "editorial"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jiwonme/noxion.git",
+    "directory": "packages/theme-carbon"
+  },
+  "homepage": "https://github.com/jiwonme/noxion#readme",
+  "bugs": {
+    "url": "https://github.com/jiwonme/noxion/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@noxion/renderer": ">=0.3.0",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@noxion/renderer": "workspace:*",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.7.0",
+    "@types/bun": "^1.2.0",
+    "notion-types": "^7.1.6"
+  }
+}

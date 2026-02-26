@@ -1,0 +1,81 @@
+/* IBM Plex font family — loaded from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&display=swap");
+
+:root {
+  /* ── Color tokens (Carbon Gray 100 / Blue 60 palette) ── */
+  --color-primary: #0f62fe;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #161616;
+  --color-muted: #e8e8e8;
+  --color-muted-foreground: #525252;
+  --color-border: #000000;
+  --color-accent: #f4f4f4;
+  --color-accent-foreground: #161616;
+  --color-card: #ffffff;
+  --color-card-foreground: #161616;
+  --color-hover: #e8e8e8;
+  --color-active: #c6c6c6;
+  --color-tag-green-bg: #defbe6;
+  --color-tag-green-text: #0e6027;
+  --color-tag-green-hover-bg: #a7f0ba;
+  --color-footer-bg: #161616;
+  --color-footer-text: #c6c6c6;
+  --color-footer-heading: #f4f4f4;
+
+  /* ── Typography ── */
+  --font-sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* ── Spacing & Layout ── */
+  --width-content: 1584px;
+  --width-sidebar: 280px;
+  --radius-default: 0;
+
+  /* ── Carbon motion tokens ── */
+  --motion-duration-fast-01: 70ms;
+  --motion-duration-fast-02: 110ms;
+  --motion-duration-moderate-01: 150ms;
+  --motion-duration-moderate-02: 240ms;
+  --motion-duration-slow-01: 400ms;
+  --motion-duration-slow-02: 700ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --motion-easing-entrance: cubic-bezier(0, 0, 0.38, 0.9);
+  --motion-easing-exit: cubic-bezier(0.2, 0, 1, 0.9);
+  --motion-easing-expressive: cubic-bezier(0.4, 0.14, 0.3, 1);
+
+  /* ── Noxion bridge tokens ── */
+  --noxion-primary: var(--color-primary);
+  --noxion-primaryForeground: var(--color-primary-foreground);
+  --noxion-background: var(--color-background);
+  --noxion-foreground: var(--color-foreground);
+  --noxion-muted: var(--color-muted);
+  --noxion-mutedForeground: var(--color-muted-foreground);
+  --noxion-border: var(--color-border);
+  --noxion-font-sans: var(--font-sans);
+  --noxion-font-mono: var(--font-mono);
+  --noxion-border-radius: var(--radius-default);
+}
+
+[data-theme="dark"] {
+  --color-primary: #78a9ff;
+  --color-primary-foreground: #161616;
+  --color-background: #161616;
+  --color-foreground: #f4f4f4;
+  --color-muted: #262626;
+  --color-muted-foreground: #c6c6c6;
+  --color-border: #f4f4f4;
+  --color-accent: #262626;
+  --color-accent-foreground: #f4f4f4;
+  --color-card: #262626;
+  --color-card-foreground: #f4f4f4;
+  --color-hover: #353535;
+  --color-active: #525252;
+  --color-tag-green-bg: #044317;
+  --color-tag-green-text: #6fdc8c;
+  --color-tag-green-hover-bg: #0e6027;
+  --color-footer-bg: #000000;
+  --color-footer-text: #c6c6c6;
+  --color-footer-heading: #f4f4f4;
+}

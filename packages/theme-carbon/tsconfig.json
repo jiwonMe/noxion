@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noUnusedLocals": false,
+    "strict": false,
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "@noxion/renderer": ["../renderer/dist/index.d.ts"],
+      "react": ["../theme-beacon/node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["../theme-beacon/node_modules/@types/react/jsx-runtime.d.ts"]
+    },
+    "types": ["react"],
+    "typeRoots": ["../theme-beacon/node_modules/@types"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

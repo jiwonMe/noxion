@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@source "../src/**/*.{ts,tsx}";
+
+@import "./theme.css";
+
+.notion-page-wrapper--carbon {
+  --article-text: var(--color-foreground);
+  --article-muted: var(--color-muted-foreground);
+  --article-border: var(--color-border);
+  --article-surface: var(--color-muted);
+  --article-link: var(--color-primary);
+}
+
+.notion-page-wrapper--carbon .noxion-page {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.notion-page-wrapper--carbon .noxion-page__main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding-bottom: 0;
+}
+
+.notion-page-wrapper--carbon .noxion-renderer {
+  font-family: var(--font-sans);
+  color: var(--article-text);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.notion-page-wrapper--carbon .noxion-page__content > * + * {
+  margin-top: 2rem;
+}
+
+.notion-page-wrapper--carbon .noxion-heading {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--article-text);
+  padding: 0;
+}
+
+.notion-page-wrapper--carbon .noxion-heading--h1 {
+  font-size: 2.5rem;
+  line-height: 1.15;
+  margin-top: 0;
+}
+
+.notion-page-wrapper--carbon .noxion-heading--h2 {
+  font-size: 2rem;
+  margin-top: 3rem;
+}
+
+.notion-page-wrapper--carbon .noxion-heading--h3 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.notion-page-wrapper--carbon .noxion-link {
+  color: var(--article-link);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 0.06em;
+}
+
+.notion-page-wrapper--carbon .noxion-link:hover {
+  opacity: 0.85;
+}
+
+.notion-page-wrapper--carbon .noxion-callout,
+.notion-page-wrapper--carbon .noxion-code,
+.notion-page-wrapper--carbon .noxion-equation--block {
+  border-radius: 0;
+  border: 1px solid var(--article-border);
+  background: var(--article-surface);
+}
+
+.notion-page-wrapper--carbon .noxion-code__body {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+.notion-page-wrapper--carbon .noxion-divider {
+  border-bottom: 1px solid var(--article-border);
+}
+
+.notion-page-wrapper--carbon .noxion-image__caption,
+.notion-page-wrapper--carbon .noxion-video__caption,
+.notion-page-wrapper--carbon .noxion-audio__caption,
+.notion-page-wrapper--carbon .noxion-embed__caption,
+.notion-page-wrapper--carbon .noxion-bookmark__caption,
+.notion-page-wrapper--carbon .noxion-file__caption,
+.notion-page-wrapper--carbon .noxion-pdf__caption {
+  color: var(--article-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .notion-page-wrapper--carbon .noxion-renderer {
+    font-size: 1rem;
+  }
+
+  .notion-page-wrapper--carbon .noxion-heading--h1 {
+    font-size: 2rem;
+  }
+
+  .notion-page-wrapper--carbon .noxion-heading--h2 {
+    font-size: 1.6rem;
+  }
+
+  .notion-page-wrapper--carbon .noxion-heading--h3 {
+    font-size: 1.3rem;
+  }
+}
