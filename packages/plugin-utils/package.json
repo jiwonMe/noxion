@@ -1,6 +1,6 @@
 {
   "name": "@noxion/plugin-utils",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Test utilities and helpers for Noxion plugin development",
   "license": "MIT",
   "type": "module",

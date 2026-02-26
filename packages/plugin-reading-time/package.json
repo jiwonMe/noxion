@@ -1,6 +1,6 @@
 {
   "name": "noxion-plugin-reading-time",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Adds estimated reading time to Noxion pages — reference plugin for community authors",
   "license": "MIT",
   "type": "module",
@@ -35,7 +35,7 @@
     "directory": "packages/plugin-reading-time"
   },
   "peerDependencies": {
-    "@noxion/core": ">=0.3.0"
+    "@noxion/core": ">=0.4.0"
   },
   "dependencies": {
     "@noxion/core": "workspace:*"

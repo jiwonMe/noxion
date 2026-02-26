@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@noxion/core": "^0.3.0",
-    "@noxion/renderer": "^0.3.0",
-    "@noxion/adapter-nextjs": "^0.3.0",
+    "@noxion/core": "^0.4.0",
+    "@noxion/renderer": "^0.4.0",
+    "@noxion/adapter-nextjs": "^0.4.0",
     "next": "^16.1.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -1,6 +1,6 @@
 {
   "name": "@noxion/theme-carbon",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Carbon-inspired editorial theme for Noxion",
   "license": "MIT",
   "type": "module",
@@ -54,7 +54,7 @@
     "node": ">=18.0.0"
   },
   "peerDependencies": {
-    "@noxion/renderer": ">=0.3.0",
+    "@noxion/renderer": ">=0.4.0",
     "react": ">=18.0.0"
   },
   "devDependencies": {
