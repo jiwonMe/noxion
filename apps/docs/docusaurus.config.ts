@@ -114,6 +114,8 @@ Key packages:
           'reference/notion-renderer/components',
           'reference/notion-renderer/utils',
           'reference/notion-renderer/shiki',
+          'reference/notion-renderer/plugins',
+          'reference/notion-renderer/built-in-plugins',
           'reference/renderer/notion-page',
           'reference/renderer/post-list',
           'reference/renderer/post-card',

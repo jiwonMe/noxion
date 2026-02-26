@@ -10,6 +10,77 @@ All notable changes to the Noxion project are documented here.
 
 ---
 
+## v0.4.0
+
+**Released: 2026-02-27**
+
+Major enhancement to `@noxion/notion-renderer`: a render-time plugin system with 5 built-in plugins, collection view renderer, lazy loading, error boundaries, heading anchors, block actions, and comprehensive accessibility improvements.
+
+### New: Render-time plugin system
+
+- **`RendererPlugin` interface** — hook into the rendering lifecycle with `blockOverride`, `transformBlock`, `transformText`, `onBlockRender`, and `onBlockRendered` hooks
+- **`RendererPluginFactory<T>`** — type-safe factory pattern for configurable plugins
+- **`PluginPriority`** — control plugin execution order (FIRST=0, NORMAL=50, LAST=100)
+- **Error isolation** — each plugin hook is wrapped in try/catch; a broken plugin logs a warning but never crashes the page
+- **Backward compatible** — the existing `blockOverrides` API continues to work; plugins layer on top
+
+### New: 5 built-in renderer plugins
+
+- **`createMermaidPlugin()`** — renders Mermaid diagrams from code blocks with `language: "mermaid"`. Dynamically imports `mermaid` at runtime via `useEffect`. Requires `mermaid` as optional peer dependency.
+- **`createChartPlugin()`** — renders Chart.js charts from code blocks with `language: "chart"` (JSON config body). Dynamically imports `chart.js` at runtime. Requires `chart.js` as optional peer dependency.
+- **`createCalloutTransformPlugin()`** — transforms callout blocks into interactive accordions or tab groups based on emoji icon (📋/▶️ → accordion, 🗂️ → tabs). Fully keyboard accessible.
+- **`createEmbedEnhancedPlugin()`** — detects embed providers (YouTube, CodePen, Figma, StackBlitz, CodeSandbox) and renders provider-specific enhanced embeds.
+- **`createTextTransformPlugin()`** — transforms `[[wikilinks]]` into page links and `#hashtags` into styled spans or links. Supports custom URL mappers.
+
+### New: Collection view renderer
+
+- **`CollectionViewBlock`** — interactive table view for Notion databases, replacing the old placeholder
+- **Sorting** — click column headers to sort ascending/descending
+- **Filtering** — filter rows by column values
+- **Lazy loaded** — the interactive component loads on demand via `createLazyBlock`
+- Table view only (Phase 1); other views are not yet supported
+
+### New: Infrastructure components
+
+- **`BlockErrorBoundary`** — React Error Boundary for per-block error isolation with customizable fallback UI
+- **`HeadingAnchor`** — clickable `#` anchor next to headings; copies heading link to clipboard on click
+- **`BlockActions`** — copy/share action buttons for blocks, enabled via `showBlockActions` prop
+- **`LoadingPlaceholder`** — default loading state for lazy-loaded block components
+- **`createLazyBlock()`** — wraps `React.lazy()` with Suspense boundary + error boundary for block components
+
+### New: Accessibility
+
+- **`getAriaLabel()`** — generates descriptive `aria-label` strings for all block types
+- **`handleKeyboardActivation()`** — Enter/Space keyboard handler for interactive elements
+- **`getToggleContentId()`** — generates `aria-controls` compatible IDs for toggle blocks
+- **ToggleBlock** — now uses `"use client"`, `useState`, dynamic `aria-expanded`, keyboard handler
+- **ToDoBlock** — added keyboard activation handler
+- **CodeBlock** — `aria-label` on `<code>` element, `role="code"`
+- **HeadingBlock** — auto-generated, deduplicated heading IDs via `generateHeadingId()`
+
+### New: Performance
+
+- **`useMemo` for Shiki output** in `CodeBlock` — prevents re-highlighting on re-renders
+- **Lazy loading** via `createLazyBlock()` for Mermaid, Chart, and Collection View components
+- **Dynamic imports** — `mermaid` and `chart.js` are imported at runtime, not bundled
+
+### New: CSS
+
+- Complete CSS for all new components: `.noxion-accordion`, `.noxion-tab-group`, `.noxion-mermaid`, `.noxion-chart`, `.noxion-error-boundary`, `.noxion-error-fallback`, `.noxion-loading-placeholder`, `.noxion-heading-anchor`, `.noxion-block-actions`, `.noxion-collection-view`
+
+### New: Renderer props
+
+- **`plugins`** — `RendererPlugin[]` array for registering renderer plugins
+- **`showBlockActions`** — `boolean | ((blockType: string) => boolean)` to enable block action buttons
+
+### Improved
+
+- **255 tests** passing in `@noxion/notion-renderer` (up from 94 in v0.1.0)
+- All new components follow `"use client"` boundary rules — interactive wrappers are client components, block components remain server-renderable
+- `mermaid` and `chart.js` declared as optional `peerDependencies` in `package.json`
+
+---
+
 ## v0.3.0
 
 **Released: 2026-02-25**

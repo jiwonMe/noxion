@@ -128,6 +128,71 @@ function MyCustomBlock({ blockId }: { blockId: string }) {
 
 ---
 
+## `useRendererPlugins()`
+
+Access the array of renderer plugins from the context.
+
+### Signature
+
+```ts
+function useRendererPlugins(): RendererPlugin[]
+```
+
+### Returns
+
+`RendererPlugin[]` — the plugins array from the renderer context, or an empty array if no plugins are configured.
+
+### Usage
+
+```tsx
+import { useRendererPlugins } from "@noxion/notion-renderer";
+
+function MyCustomBlock({ block, blockId }: NotionBlockProps) {
+  const plugins = useRendererPlugins();
+  // Use plugins for custom block resolution logic
+}
+```
+
+---
+
+## `useResolvedBlockRenderer()`
+
+Resolve the component that should render a specific block, considering plugin overrides.
+
+### Signature
+
+```ts
+function useResolvedBlockRenderer(): (
+  block: Block,
+  blockId: string,
+  parent?: Block
+) => BlockOverrideResult | null
+```
+
+### Returns
+
+A function that takes a block and returns the override result (component + props) if a plugin provides one, or `null` for default rendering.
+
+### Usage
+
+```tsx
+import { useResolvedBlockRenderer } from "@noxion/notion-renderer";
+
+function CustomBlockDispatch({ block, blockId }: { block: Block; blockId: string }) {
+  const resolveRenderer = useResolvedBlockRenderer();
+  const override = resolveRenderer(block, blockId);
+  
+  if (override) {
+    const { component: Component, props } = override;
+    return <Component block={block} blockId={blockId} level={0} {...props} />;
+  }
+  
+  return <DefaultBlock block={block} />;
+}
+```
+
+---
+
 ## Context value
 
 ### `NotionRendererContextValue`
@@ -171,6 +236,14 @@ interface NotionRendererContextValue {
 
   // Fallback cover vertical position (0–1)
   defaultPageCoverPosition?: number;
+  // Array of renderer plugins
+  plugins?: RendererPlugin[];
+
+  // Whether to show block action buttons
+  showBlockActions?: boolean | ((blockType: string) => boolean);
+
+  // Set of heading IDs already used (for duplicate dedup)
+  headingIds?: Set<string>;
 }
 ```
 
@@ -187,6 +260,8 @@ When accessed outside a provider, `useNotionRenderer()` returns a safe default:
   fullPage: true,
   darkMode: false,
   previewImages: false,
+  plugins: [],
+  headingIds: new Set(),
 }
 ```
 

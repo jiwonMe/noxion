@@ -165,3 +165,138 @@ import "@noxion/notion-renderer/katex-css";
 :::note
 `<Text />` automatically renders inline equations using `<InlineEquation />` when it encounters an `"e"` decoration. You only need to use `<InlineEquation />` directly in custom components that render LaTeX without going through `<Text />`.
 :::
+---
+
+## `<BlockErrorBoundary />` {#blockerrorboundary}
+
+A React Error Boundary that catches render errors in individual Notion blocks and displays a fallback UI instead of crashing the entire page.
+
+### Import
+
+```tsx
+import { BlockErrorBoundary } from "@noxion/notion-renderer";
+```
+
+### Props
+
+```ts
+interface BlockErrorBoundaryProps {
+  blockId: string;
+  blockType: string;
+  children: ReactNode;
+  fallback?: ComponentType<{ error: Error; blockId: string; blockType: string }>;
+  onError?: (error: Error, blockId: string, blockType: string) => void;
+}
+```
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `blockId` | `string` | Yes | The block ID (for error reporting) |
+| `blockType` | `string` | Yes | The block type (for error reporting) |
+| `children` | `ReactNode` | Yes | Block content to wrap |
+| `fallback` | `ComponentType` | No | Custom fallback component (defaults to `ErrorFallback`) |
+| `onError` | `function` | No | Callback when an error is caught |
+,
+
+### Behavior
+
+- Wraps each block component to catch render errors
+- Displays `ErrorFallback` by default (shows error message with block type)
+- Logs errors to console in development mode
+- In SSR (`renderToString`), errors propagate up — error boundaries only activate during client hydration
+
+### Usage
+
+```tsx
+import { BlockErrorBoundary } from "@noxion/notion-renderer";
+
+<BlockErrorBoundary blockId="abc123" blockType="code" onError={(err) => reportError(err)}>
+  <CodeBlock block={block} blockId="abc123" level={0} />
+</BlockErrorBoundary>
+```
+
+---
+
+## `<HeadingAnchor />` {#headinganchor}
+
+A clickable anchor link rendered next to headings. Hidden by default, visible on parent hover.
+
+### Import
+
+```tsx
+import { HeadingAnchor } from "@noxion/notion-renderer";
+```
+
+### Props
+,
+```ts
+interface HeadingAnchorProps {
+  id: string;       // The heading ID (used for href="#id")
+  className?: string;
+}
+```
+
+### Behavior
+,
+- Renders `<a href="#id" class="noxion-heading-anchor">#</a>`
+- On click: prevents default navigation, copies the full URL with hash to clipboard
+- Hidden by default via CSS, shown on parent `:hover`
+
+---
+
+## `<BlockActions />` {#blockactions}
+
+Copy and share action buttons for blocks. Enabled via the `showBlockActions` prop on `NotionRenderer`.
+
+### Import
+,
+```tsx
+import { BlockActions } from "@noxion/notion-renderer";
+```
+
+### Props
+,
+```ts
+interface BlockActionsProps {
+  blockId: string;
+  blockType: string;
+  content?: string;     // Content to copy (e.g., code block text)
+  className?: string;
+}
+```
+
+### Behavior
+,
+- **Copy button** — copies `content` to clipboard (only shown when `content` is provided)
+- **Share button** — copies a link to the block (`#{blockId}`) to clipboard
+- Both buttons show "Copied!" feedback for 2 seconds after clicking
+- This is a Client Component (`"use client"`)
+
+```html
+<div class="noxion-block-actions">
+  <button class="noxion-block-actions__button noxion-block-actions__copy">Copy</button>
+  <button class="noxion-block-actions__button noxion-block-actions__share">Share</button>
+</div>
+```
+
+---
+
+## `<LoadingPlaceholder />` {#loadingplaceholder}
+
+A placeholder shown while lazy-loaded block components are loading.
+
+### Import
+,
+```tsx
+import { LoadingPlaceholder } from "@noxion/notion-renderer";
+```
+
+### Behavior
+,
+Used as the default `fallback` in `createLazyBlock()` Suspense boundaries.
+
+```html
+<div class="noxion-loading-placeholder">Loading...</div>
+```
+
+You can provide a custom fallback to `createLazyBlock()` to replace this component.

@@ -16,6 +16,8 @@ A fully custom React renderer for Notion pages. It replaces `react-notion-x` as 
 
 **Peer dependencies**: `react >= 18.0.0`, `notion-types >= 7.0.0`, `notion-utils >= 7.0.0`
 
+**Optional peer dependencies**: `mermaid` (for Mermaid plugin), `chart.js` (for Chart plugin)
+
 ---
 
 ## Why a custom renderer?
@@ -31,6 +33,10 @@ A fully custom React renderer for Notion pages. It replaces `react-notion-x` as 
 | Tree shaking | ❌ | ✅ Each block is a named export |
 | Custom block overrides | Limited | ✅ `components.blockOverrides` |
 | Dark mode | Theme-based | ✅ CSS vars + `darkMode` prop |
+| Plugin system | ❌ | ✅ Render-time plugin hooks |
+| Error boundaries | ❌ | ✅ Per-block error isolation |
+| Lazy loading | ❌ | ✅ `createLazyBlock` with Suspense |
+| Accessibility | Basic | ✅ ARIA labels, keyboard navigation |
 
 ---
 
@@ -129,6 +135,7 @@ All 30+ block components are named exports. Use them directly or override them v
 | `AliasBlock` | Block alias |
 | `TableOfContentsBlock` | Auto table of contents |
 | `CollectionViewPlaceholder` | Database / collection view (placeholder) |
+| `CollectionViewBlock` | Interactive table view for Notion databases (lazy-loaded) |
 
 ### Inline components
 
@@ -136,6 +143,36 @@ All 30+ block components are named exports. Use them directly or override them v
 |--------|-------------|
 | [`<Text />`](./components#text) | Rich-text renderer — handles all Notion inline decorations |
 | [`<InlineEquation />`](./components#inlineequation) | Inline KaTeX math expression |
+### Plugin system
+
+| Export | Description |
+|--------|-------------|
+| [`RendererPlugin`](./plugins#rendererplugin) | Plugin interface with block override, transform, and lifecycle hooks |
+| [`RendererPluginFactory`](./plugins#rendererplugin-factory) | Type-safe factory function for creating plugins |
+| [`resolveBlockRenderer`](./plugins#executor-functions) | Resolve which component renders a block (plugin override or built-in) |
+| [`executeBlockTransforms`](./plugins#executor-functions) | Run all plugin `transformBlock` hooks |
+| [`executeTextTransforms`](./plugins#executor-functions) | Run all plugin `transformText` hooks |
+| [`applyTextTransforms`](./plugins#executor-functions) | Apply text transforms and return ReactNode array |
+
+### Built-in plugins
+
+| Export | Description |
+|--------|-------------|
+| [`createMermaidPlugin`](./built-in-plugins#mermaid) | Render Mermaid diagrams from code blocks (requires `mermaid` peer dep) |
+| [`createChartPlugin`](./built-in-plugins#chart) | Render Chart.js charts from code blocks (requires `chart.js` peer dep) |
+| [`createCalloutTransformPlugin`](./built-in-plugins#callout-transform) | Transform callouts into accordions or tabs based on emoji icon |
+| [`createEmbedEnhancedPlugin`](./built-in-plugins#embed-enhanced) | Provider-specific enhanced embed rendering |
+| [`createTextTransformPlugin`](./built-in-plugins#text-transform) | Wikilink `[[Page]]` and `#hashtag` text transforms |
+
+### New components
+
+| Export | Description |
+|--------|-------------|
+| [`BlockErrorBoundary`](./components#blockerrorboundary) | React Error Boundary for per-block error isolation |
+| [`HeadingAnchor`](./components#headinganchor) | Clickable anchor link for headings |
+| [`BlockActions`](./components#blockactions) | Copy/share action buttons for blocks |
+| [`LoadingPlaceholder`](./components#loadingplaceholder) | Loading state placeholder for lazy-loaded blocks |
+
 
 ### Utilities
 
@@ -145,6 +182,16 @@ All 30+ block components are named exports. Use them directly or override them v
 | [`unwrapBlockValue(record)`](./utils#unwrapblockvalue) | Unwrap `{ role, value }` wrapper from a Notion record |
 | [`getBlockTitle(block)`](./utils#getblocktitle) | Extract plain text title from a block's properties |
 | [`cs(...classes)`](./utils#cs) | Conditional className utility (like `clsx`) |
+
+### New utilities
+
+| Export | Description |
+|--------|-------------|
+| [`createLazyBlock`](./utils#createlazyblock) | Wrap `React.lazy()` with Suspense and error boundary for block components |
+| [`generateHeadingId`](./utils#generateheadingid) | Generate stable, URL-safe heading IDs with duplicate dedup |
+| [`getAriaLabel`](./utils#getarialabel) | Generate accessible labels for blocks |
+| [`handleKeyboardActivation`](./utils#handlekeyboardactivation) | Handle Enter/Space keyboard events for interactive elements |
+| [`getToggleContentId`](./utils#gettogglecontentid) | Generate unique ID for toggle content (aria-controls) |
 
 ### Shiki
 
@@ -168,6 +215,15 @@ All 30+ block components are named exports. Use them directly or override them v
 | `Block` | Re-export from `notion-types` |
 | `BlockType` | Re-export from `notion-types` |
 | `Decoration` | Re-export from `notion-types` |
+| `RendererPlugin` | Plugin interface |
+| `RendererPluginFactory` | Plugin factory type |
+| `BlockOverrideArgs` | Arguments passed to plugin blockOverride hook |
+| `BlockOverrideResult` | Result from plugin blockOverride hook |
+| `TransformBlockArgs` | Arguments passed to transformBlock hook |
+| `TransformTextArgs` | Arguments passed to transformText hook |
+| `TextReplacement` | Text replacement with component |
+| `TextTransformResult` | Result from transformText hook |
+| `PluginPriority` | Plugin execution priority enum |
 
 ---
 
@@ -220,7 +276,7 @@ All 30+ block components are named exports. Use them directly or override them v
 | `transclusion_reference` | `SyncedReferenceBlock` | Synced block (reference) |
 | `alias` | `AliasBlock` | Block alias |
 | `table_of_contents` | `TableOfContentsBlock` | TOC |
-| `collection_view` | `CollectionViewPlaceholder` | Database view |
-| `collection_view_page` | `CollectionViewPlaceholder` | Full-page database |
+| `collection_view` | `CollectionViewBlock` | Interactive table view (lazy-loaded) |
+| `collection_view_page` | `CollectionViewBlock` | Full-page interactive table view |
 | `breadcrumb` | `DividerBlock` | Breadcrumb (renders as divider) |
 | `external_object_instance` | `EmbedBlock` | External object |

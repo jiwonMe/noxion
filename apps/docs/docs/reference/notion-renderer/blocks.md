@@ -90,6 +90,25 @@ Empty text blocks render as `<p class="noxion-text noxion-text--empty">&nbsp;</p
 
 **Notion types**: `header` (H1), `sub_header` (H2), `sub_sub_header` (H3)
 
+Renders a heading with an auto-generated, URL-safe ID for anchor links. IDs are generated via `generateHeadingId()` and automatically deduplicated within a page using the `headingIds` context set.
+
+Each heading includes a `HeadingAnchor` component (visible on hover) that copies the heading link to clipboard.
+
+```html
+<h2 id="my-heading" class="noxion-heading noxion-heading--2">
+  <a class="noxion-heading-anchor" href="#my-heading" aria-label="Link to heading my-heading">#</a>
+  {text}
+</h2>
+```
+
+Heading IDs follow these rules:
+- Converted to lowercase
+- Spaces replaced with hyphens
+- Special characters removed (Korean characters preserved)
+- Duplicates get a `-1`, `-2` suffix
+
+**Notion types**: `header` (H1), `sub_header` (H2), `sub_sub_header` (H3)
+
 Renders a heading. The level is determined by the block type, not the `level` prop.
 
 ```html
@@ -125,6 +144,19 @@ Same as `BulletedListBlock` but renders `<li>` with an `<ol>` wrapper via CSS.
 ---
 
 ### `ToDoBlock`
+
+**Notion type**: `to_do`
+
+Renders a checkbox item. The checkbox is `disabled` (read-only) and reflects the Notion checked state. Includes keyboard accessibility — Enter and Space keys trigger the checkbox visual feedback.
+
+```html
+<div class="noxion-to-do [noxion-to-do--checked]"
+     role="checkbox" aria-checked="true|false"
+     tabindex="0" onkeydown="handleKeyboardActivation">
+  <input type="checkbox" disabled [checked] />
+  <span class="noxion-to-do__label">{text}</span>
+</div>
+```
 
 **Notion type**: `to_do`
 
@@ -180,6 +212,24 @@ Renders a callout box with an emoji or custom icon from `block.format.page_icon`
 
 **Notion type**: `toggle`
 
+A Client Component (`"use client"`) that renders a collapsible toggle using `useState`. Includes full keyboard accessibility — Enter and Space keys toggle the content.
+
+```html
+<div class="noxion-toggle" aria-expanded="true|false">
+  <div class="noxion-toggle__summary" role="button" tabindex="0"
+       aria-controls="toggle-content-{blockId}">
+    {summary text}
+  </div>
+  <div class="noxion-toggle__content" id="toggle-content-{blockId}">
+    {children}
+  </div>
+</div>
+```
+
+The toggle state is managed client-side. The `aria-expanded` attribute and content visibility update dynamically.
+
+**Notion type**: `toggle`
+
 Renders a collapsible `<details>/<summary>` block.
 
 ```html
@@ -225,6 +275,30 @@ On render error, falls back to `<code class="noxion-equation-error">{raw express
 ---
 
 ### `CodeBlock`
+
+**Notion type**: `code`
+
+Renders a code block with optional Shiki syntax highlighting. The `highlightCode` result is memoized with `useMemo` for performance. If `highlightCode` is not provided, falls back to plain `<pre><code>`.
+
+```html
+<div class="noxion-code">
+  <div class="noxion-code__header">
+    <span class="noxion-code__language">{language}</span>
+  </div>
+  <!-- with Shiki: -->
+  <div class="noxion-code__body">{shiki HTML}</div>
+  <!-- without Shiki: -->
+  <pre class="noxion-code__body">
+    <code class="noxion-code__content language-{lang}"
+          role="code"
+          aria-label="Code block in {language}">{code}</code>
+  </pre>
+  <!-- optional caption: -->
+  <figcaption class="noxion-code__caption">{caption}</figcaption>
+</div>
+```
+
+The `aria-label` is placed on the `<code>` element (not the outer wrapper) for screen reader accuracy. See [Shiki](./shiki) for configuring syntax highlighting.
 
 **Notion type**: `code`
 
@@ -436,7 +510,36 @@ Collects all heading blocks from the page and renders a navigable list.
 
 ---
 
-### `CollectionViewPlaceholder`
+### `CollectionViewBlock`
+
+**Notion types**: `collection_view`, `collection_view_page`
+
+Renders an interactive table view of a Notion database. The interactive component is lazy-loaded via `createLazyBlock` for performance — only loaded when a collection view block is encountered.
+
+Features:
+- **Table rendering** — displays collection data in a sortable table
+- **Column sorting** — click column headers to sort ascending/descending
+- **Filtering** — filter rows by column values
+- **Lazy loading** — the interactive component is loaded on demand via `React.lazy` + Suspense
+
+```html
+<!-- While loading: -->
+<div class="noxion-loading-placeholder">Loading...</div>
+
+<!-- After load: -->
+<div class="noxion-collection-view">
+  <table class="noxion-collection-view__table">
+    <thead>...</thead>
+    <tbody>...</tbody>
+  </table>
+</div>
+```
+
+:::note
+Phase 1 supports table view only. Other database views (gallery, board, calendar, list) are not yet implemented.
+:::
+
+The legacy `CollectionViewPlaceholder` component is still exported for backward compatibility.
 
 **Notion types**: `collection_view`, `collection_view_page`
 

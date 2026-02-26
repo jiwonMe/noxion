@@ -36,6 +36,8 @@ This is a **Client Component** (`"use client"`).
 | `defaultPageIcon` | `string \| null` | — | `undefined` | Fallback emoji or image URL for pages without an icon. |
 | `defaultPageCover` | `string \| null` | — | `undefined` | Fallback cover image URL for pages without a cover. |
 | `defaultPageCoverPosition` | `number` | — | `undefined` | Fallback cover vertical position (0–1). |
+| `plugins` | `RendererPlugin[]` | — | `[]` | Array of renderer plugins. Plugins can override block rendering, transform content, and perform side effects. See [Plugin System](./plugins). |
+| `showBlockActions` | `boolean | ((blockType: string) => boolean)` | — | `undefined` | Show copy/share action buttons on blocks. Pass `true` for all blocks, or a function to selectively enable per block type. |
 
 ---
 
@@ -223,6 +225,52 @@ interface NotionComponents {
   // Override specific block types by Notion type string
   blockOverrides?: Partial<Record<BlockType | string, ComponentType<NotionBlockProps>>>;
 }
+```
+
+---
+
+## With plugins
+
+```tsx
+import {
+  NotionRenderer,
+  createMermaidPlugin,
+  createCalloutTransformPlugin,
+  createTextTransformPlugin,
+} from "@noxion/notion-renderer";
+
+const plugins = [
+  createMermaidPlugin({ theme: "default" }),
+  createCalloutTransformPlugin(),
+  createTextTransformPlugin({ enableWikilinks: true }),
+];
+
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  plugins={plugins}
+/>
+```
+
+Plugins are executed in priority order (lower priority values first). See [Plugin System](./plugins) for the full API.
+
+---
+
+## With block actions
+
+```tsx
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  showBlockActions={true}
+/>
+
+// Or selectively:
+<NotionRenderer
+  recordMap={recordMap}
+  rootPageId={pageId}
+  showBlockActions={(blockType) => blockType === "code"}
+/>
 ```
 
 ---
