@@ -1,6 +1,6 @@
+import React from "react";
 import type { NotionBlockProps } from "../types";
-
-export function ColumnBlock({ block, children }: NotionBlockProps) {
+export const ColumnBlock = React.memo(function ColumnBlock({ block, children }: NotionBlockProps) {
   const format = block.format as { column_ratio?: number } | undefined;
   const ratio = format?.column_ratio ?? 1;
 
@@ -9,4 +9,4 @@ export function ColumnBlock({ block, children }: NotionBlockProps) {
       {children}
     </div>
   );
-}
+});

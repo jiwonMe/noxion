@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { Decoration } from "notion-types";
 import type { NotionBlockProps } from "../types";
 import { useNotionRenderer } from "../context";
@@ -25,14 +26,15 @@ export function CodeBlock({ block }: NotionBlockProps) {
   const language = normalizeLanguage(rawLanguage);
   const displayLanguage = rawLanguage || "Plain Text";
 
-  let highlightedHtml: string | null = null;
-  if (highlightCode && code) {
+  const highlightedHtml = useMemo(() => {
+    if (!highlightCode || !code) return null;
+
     try {
-      highlightedHtml = highlightCode(code, rawLanguage);
+      return highlightCode(code, rawLanguage);
     } catch {
-      highlightedHtml = null;
+      return null;
     }
-  }
+  }, [highlightCode, code, rawLanguage]);
 
   return (
     <div className="noxion-code">
@@ -47,7 +49,7 @@ export function CodeBlock({ block }: NotionBlockProps) {
         />
       ) : (
         <pre className="noxion-code__body">
-          <code className={cs("noxion-code__content", `language-${language}`)}>
+          <code role="code" aria-label={`code block in ${displayLanguage}`} className={cs("noxion-code__content", `language-${language}`)}>
             {code}
           </code>
         </pre>

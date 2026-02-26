@@ -1,9 +1,16 @@
+import React from "react";
 import type { Decoration } from "notion-types";
 import type { NotionBlockProps } from "../types";
 import { Text } from "../components/text";
-import { cs } from "../utils";
+import { HeadingAnchor } from "../components/heading-anchor";
+import { cs, getBlockTitle } from "../utils";
+import { generateHeadingId } from "../utils/heading-id";
+import { useNotionRenderer } from "../context";
 
-export function HeadingBlock({ block, blockId, children }: NotionBlockProps) {
+
+
+
+export const HeadingBlock = React.memo(function HeadingBlock({ block, children }: NotionBlockProps) {
   const properties = block.properties as { title?: Decoration[] } | undefined;
   const format = block.format as { block_color?: string; toggleable?: boolean } | undefined;
   const blockColor = format?.block_color;
@@ -15,7 +22,13 @@ export function HeadingBlock({ block, blockId, children }: NotionBlockProps) {
     3;
 
   const Tag = `h${headingLevel}` as const;
-  const id = blockId;
+  const { headingIds } = useNotionRenderer();
+  const textContent = getBlockTitle(block);
+  const id = generateHeadingId(textContent, headingIds);
+  headingIds?.add(id);
+
+
+
 
   const heading = (
     <Tag
@@ -27,6 +40,7 @@ export function HeadingBlock({ block, blockId, children }: NotionBlockProps) {
       id={id}
     >
       <Text value={properties?.title} />
+      <HeadingAnchor id={id} />
     </Tag>
   );
 
@@ -45,4 +59,4 @@ export function HeadingBlock({ block, blockId, children }: NotionBlockProps) {
       {children}
     </>
   );
-}
+});

@@ -1,8 +1,9 @@
+import React from "react";
 import type { Decoration } from "notion-types";
 import type { NotionBlockProps } from "../types";
 import { Text } from "../components/text";
 
-export function BookmarkBlock({ block }: NotionBlockProps) {
+export const BookmarkBlock = React.memo(function BookmarkBlock({ block }: NotionBlockProps) {
   const properties = block.properties as {
     link?: Decoration[];
     title?: Decoration[];
@@ -51,4 +52,4 @@ export function BookmarkBlock({ block }: NotionBlockProps) {
       )}
     </figure>
   );
-}
+});

@@ -24,3 +24,5 @@ export { SyncedContainerBlock, SyncedReferenceBlock } from "./synced-block";
 export { AliasBlock } from "./alias";
 export { TableOfContentsBlock } from "./table-of-contents";
 export { CollectionViewPlaceholder } from "./collection-view-placeholder";
+export { CollectionViewBlock } from "./collection-view";
+export type { CollectionViewProps, CollectionViewExtensionPoint } from "./collection-view";

@@ -2,6 +2,7 @@ import type { Decoration } from "notion-types";
 import type { NotionBlockProps } from "../types";
 import { Text } from "../components/text";
 import { cs } from "../utils";
+import { handleKeyboardActivation } from "../utils/a11y";
 
 export function ToDoBlock({ block, blockId, children }: NotionBlockProps) {
   const properties = block.properties as {
@@ -14,13 +15,21 @@ export function ToDoBlock({ block, blockId, children }: NotionBlockProps) {
 
   return (
     <div className={cs("noxion-to-do", isChecked && "noxion-to-do--checked", blockColor && `noxion-color--${blockColor}`)}>
-      <div className="noxion-to-do__checkbox">
+      <div
+        className="noxion-to-do__checkbox"
+        role="checkbox"
+        aria-checked={isChecked}
+        tabIndex={0}
+        aria-label="To-do checkbox"
+        id={`todo-${blockId}`}
+        onKeyDown={(e) => handleKeyboardActivation(e, () => { /* toggle handled by parent */ })}
+      >
         <input
           type="checkbox"
           checked={isChecked}
           readOnly
-          aria-label="To-do checkbox"
-          id={`todo-${blockId}`}
+          aria-hidden="true"
+          tabIndex={-1}
         />
       </div>
       <div className="noxion-to-do__content">

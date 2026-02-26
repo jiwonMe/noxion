@@ -1,9 +1,9 @@
+import React from "react";
 import type { NotionBlockProps } from "../types";
-
-export function ColumnListBlock({ children }: NotionBlockProps) {
+export const ColumnListBlock = React.memo(function ColumnListBlock({ children }: NotionBlockProps) {
   return (
     <div className="noxion-column-list">
       {children}
     </div>
   );
-}
+});

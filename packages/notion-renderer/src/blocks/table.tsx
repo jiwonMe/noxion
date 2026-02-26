@@ -33,12 +33,14 @@ export function TableBlock({ block }: NotionBlockProps) {
 
   return (
     <table className="noxion-table">
+      <caption className="sr-only">Data table</caption>
       {hasColumnHeader && rows.length > 0 && (
         <thead className="noxion-table__head">
           <tr className="noxion-table__row">
             {columnOrder.map((colId, colIndex) => (
               <th
                 key={colId}
+                scope="col"
                 className={`noxion-table__cell noxion-table__cell--header${colIndex === 0 && hasRowHeader ? " noxion-table__cell--row-header" : ""}`}
               >
                 <Text value={rows[0].properties?.[colId]} />
@@ -55,6 +57,7 @@ export function TableBlock({ block }: NotionBlockProps) {
               return (
                 <CellTag
                   key={colId}
+                  scope={colIndex === 0 && hasRowHeader ? "row" : undefined}
                   className={`noxion-table__cell${colIndex === 0 && hasRowHeader ? " noxion-table__cell--row-header" : ""}`}
                 >
                   <Text value={row.properties?.[colId]} />

@@ -27,7 +27,11 @@ export function ImageBlock({ block }: NotionBlockProps) {
   if (!source) return null;
 
   const src = mapImageUrl(source, block);
-  const alt = properties?.alt_text?.map((s) => s[0]).join("") ?? "";
+  // Use caption as alt text if available, otherwise use alt_text property, fallback to "Image"
+  const captionText = properties?.caption?.map((s) => s[0]).join("") ?? "";
+  const altText = properties?.alt_text?.map((s) => s[0]).join("") ?? "";
+  const alt = captionText || altText || "Image";
+  
   const width = format?.block_width;
   const aspectRatio = format?.block_aspect_ratio;
   // Compute height from width + aspect_ratio when block_height is missing.
